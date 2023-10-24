@@ -255,6 +255,7 @@ export class RoomService {
       throw new HttpException("Cards sum is not 15", HttpStatus.BAD_REQUEST);
     }
   }
+
   private async handleTurnEnd(room: Room, playerId: string) {
     const player = room.players.find((p) => p.id === playerId);
     const roomAfterDraw = this.drawCardsIfPossible(room, player);
@@ -268,6 +269,7 @@ export class RoomService {
       : roomAfterTurnUpdate;
 
     await this.roomModel.updateOne({ id: updatedRoom.id }, updatedRoom).exec();
+    // Enviar notificação para todos os jogadores (Socket IO ou SSE)
   }
 
   private drawCardsIfPossible(room: Room, player: Player) {

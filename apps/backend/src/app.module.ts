@@ -1,4 +1,5 @@
 import { Module } from "@nestjs/common";
+import { ConfigModule } from "@nestjs/config";
 import { MongooseModule } from "@nestjs/mongoose";
 
 import { AppController } from "./app.controller";
@@ -7,8 +8,8 @@ import { RoomModule } from "./room/room.module";
 
 @Module({
   imports: [
-    //TODO EXTRAIR MONGO URI PARA ENV
-    MongooseModule.forRoot("YOUR MONGO DB URI HERE"),
+    ConfigModule.forRoot(),
+    MongooseModule.forRoot(process.env.MONGODB_CONNECTION_STRING),
     RoomModule,
   ],
   controllers: [AppController],

@@ -8,7 +8,7 @@
 - Shared eslint config and tsconfig need to be fixed and evaluated if it's worth being in packages instead of in the root
 - UI packaged will probably be deleted since there will be only one frontend project
 - Currently only the backend is being developed and the frontend is the default turbo sample
-- This projects uses mongodb please run it locally for development and update the connection string manually in `app.module.ts`
+- This projects uses mongodb please run it locally for development and set the connection string in a .env file on the backend root
 - Run the development version using npm run dev
 
 ### Mongodb compose for development

@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "_dev": "next dev",
+    "dev": "echo \"Skipping Next.js\"",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"

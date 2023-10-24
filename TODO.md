@@ -4,7 +4,7 @@
 - Organize files and folder structure
 - Check if types and mappers are where they should be
 - Check if mappers should really be a class
-- Server side events
+- Server side events or Sockets
 - Frontend
 - Delete getAll deleteAll
 - Prevent \_id from being sent
@@ -12,8 +12,13 @@
 - Allow players to send reactions when playing (Like rocket league, but emojis)
 - Fix eslint and tsconfig packages, decide wether the should be a package or just in the root
 - Delete the UI package
-- Create docker compose that runs everything (including mongodb)
+- Create docker compose that runs everything (including mongodb) check if env is working
 - Add github actions for auto-deploy
+
+#### Frontend
+
+- Change icon
+- Add G-TAG and add cookie banner
 
 ### Game flow
 

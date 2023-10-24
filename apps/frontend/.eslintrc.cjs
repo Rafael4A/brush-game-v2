@@ -21,15 +21,15 @@ module.exports = {
       "warn",
       { allowConstantExport: true },
     ],
-    "no-unused-vars": "off",
-    "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
-    "no-console": ["warn", { allow: ["warn", "error"] }],
+    "no-console": "warn",
     "react/jsx-uses-react": "error",
     "react/jsx-uses-vars": "error",
     "import/prefer-default-export": "off",
     "react/jsx-props-no-spreading": "off",
     "react/react-in-jsx-scope": "off",
     "react/prop-types": "off",
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
     "import-helpers/order-imports": [
       "warn",
       {
@@ -38,6 +38,5 @@ module.exports = {
         alphabetize: { order: "asc", ignoreCase: true },
       },
     ],
-    "import/order": "off",
   },
 };
