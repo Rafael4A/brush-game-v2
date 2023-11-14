@@ -24,7 +24,7 @@ export class GetRoomResponseDto {
   table: Card[];
   player: Player;
   remainingCards: number;
-  currentTurn: number;
+  currentTurn: string;
   gameState: GameState;
   opponents: Opponent[];
 }

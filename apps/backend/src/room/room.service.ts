@@ -1,20 +1,26 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
-import { InjectModel } from "@nestjs/mongoose";
+import { InjectEntityManager, InjectRepository } from "@nestjs/typeorm";
 
 import * as crypto from "crypto";
-import { Model } from "mongoose";
-import { GameState, Player } from "shared-types";
+import { GameState, Player as PlayerInterface } from "shared-types";
+import { EntityManager, Repository } from "typeorm";
 
-import { drawCards, nextTurnIndex } from "../utils";
+import { dbRoomToRoom, drawCards, nextTurnIndex, roomToDbRoom } from "../utils";
 import { willSumToFifteen } from "../utils/will-sum-to-fifteen";
-import { Room, BasicRoomMapper, RequestedRoomMapper } from "./room.interface";
-import { PLAYER_MODEL_NAME, ROOM_MODEL_NAME } from "./room.schema";
+import { Card, Player, Room } from "./entities";
+import {
+  Room as RoomInterface,
+  BasicRoomMapper,
+  RequestedRoomMapper,
+} from "./room.interface";
 
 @Injectable()
 export class RoomService {
   constructor(
-    @InjectModel(ROOM_MODEL_NAME) private roomModel: Model<Room>,
-    @InjectModel(PLAYER_MODEL_NAME) private playerModel: Model<Player>
+    @InjectRepository(Room) private roomRepository: Repository<Room>,
+    @InjectRepository(Player) private playerRepository: Repository<Player>,
+    @InjectRepository(Card) private cardRepository: Repository<Card>,
+    @InjectEntityManager() private entityManager: EntityManager
   ) {}
 
   private generateId() {
@@ -22,45 +28,68 @@ export class RoomService {
   }
 
   private async findById(id: string, playerId?: string) {
-    const room = await this.roomModel.findOne({ id }).lean().exec();
-    if (!room) throw new HttpException("Room not found", HttpStatus.NOT_FOUND);
+    const dbRoom = await this.roomRepository.findOne({
+      where: { id },
+      relations: ["players"],
+    });
 
-    if (!playerId) return room;
+    if (!dbRoom) {
+      throw new HttpException("Room not found", HttpStatus.NOT_FOUND);
+    }
+    const room = dbRoomToRoom(dbRoom);
+
+    if (!playerId) {
+      return room;
+    }
 
     const player = room.players.some((p) => p.id === playerId);
-    if (!player)
+
+    if (!player) {
       throw new HttpException(
         "This player cannot access the requested room",
         HttpStatus.UNAUTHORIZED
       );
+    }
 
     return room;
   }
 
   // TODO APAGAR ANTES DE CHEGAR EM PRODUÇÃO
   async getAll() {
-    return this.roomModel.find().lean().exec();
+    return (
+      await this.roomRepository.find({
+        relations: ["players"],
+      })
+    ).map((room) => dbRoomToRoom(room));
   }
+
   // TODO APAGAR ANTES DE CHEGAR EM PRODUÇÃO
   async deleteAll() {
-    return this.roomModel.deleteMany({}).exec();
+    await this.entityManager.transaction(async (manager) => {
+      await manager.delete(Room, {});
+    });
   }
 
   async create(nickname: string) {
     try {
       let id = this.generateId();
 
-      while (await this.roomModel.findOne({ id }).lean().exec()) {
+      while (await this.roomRepository.findOne({ where: { id } })) {
         id = this.generateId();
       }
 
-      const room = new this.roomModel({ id, players: [{ nickname }] });
+      const room = this.roomRepository.create({
+        id,
+        players: [{ nickname, isOwner: true, id: crypto.randomUUID() }],
+      });
 
-      const savedRoom = await room.save();
+      const savedRoom = await this.roomRepository.save(room);
 
-      return BasicRoomMapper.map(savedRoom, savedRoom.players[0].id);
+      return BasicRoomMapper.map(
+        dbRoomToRoom(savedRoom),
+        savedRoom.players[0].id
+      );
     } catch (error) {
-      console.error(error);
       throw new HttpException(
         "Error creating room",
         HttpStatus.INTERNAL_SERVER_ERROR
@@ -90,27 +119,30 @@ export class RoomService {
         HttpStatus.BAD_REQUEST
       );
 
-    const newPlayer = new this.playerModel({ nickname });
+    const newPlayer = this.playerRepository.create({
+      nickname,
+      id: crypto.randomUUID(),
+    });
 
-    const updatedRoom = await this.roomModel
-      .findOneAndUpdate(
-        { id },
-        { $push: { players: newPlayer } },
-        { returnDocument: "after" }
-      )
-      .lean()
-      .exec();
+    await this.roomRepository.manager.transaction(async (manager) => {
+      // TODO try to change the following two lines to be: const updatedRoom = await manager.findOne(Room, { where: { id } });
+      const roomRepository = manager.getRepository(Room);
+      const updatedRoom = await roomRepository.findOne({
+        where: { id },
+        relations: ["players"],
+      });
+      updatedRoom.players.push(newPlayer);
+      await manager.save(Room, updatedRoom);
+    });
 
-    const updatedNewPlayer =
-      updatedRoom.players[updatedRoom.players.length - 1];
-
-    return BasicRoomMapper.map(updatedRoom, updatedNewPlayer.id);
+    return BasicRoomMapper.map(room, newPlayer.id);
   }
 
   async startGame(id: string, playerId: string) {
     const room = await this.findById(id, playerId);
+    const player = room.players.find((p) => p.id === playerId);
 
-    if (room.players[0].id !== playerId) {
+    if (player.isOwner === false) {
       throw new HttpException(
         "Only the room owner can start the game",
         HttpStatus.BAD_REQUEST
@@ -129,7 +161,8 @@ export class RoomService {
         HttpStatus.BAD_REQUEST
       );
 
-    const startingPlayer = crypto.randomInt(0, room.players.length);
+    const startingPlayer =
+      room.players[crypto.randomInt(0, room.players.length)].nickname;
 
     const {
       drawn: roomTableCards,
@@ -160,7 +193,7 @@ export class RoomService {
       players: updatedPlayers,
     };
 
-    await this.roomModel.updateOne({ id }, updatedRoom).exec();
+    await this.roomRepository.save(roomToDbRoom(updatedRoom));
   }
 
   async playCard(
@@ -256,23 +289,30 @@ export class RoomService {
     }
   }
 
-  private async handleTurnEnd(room: Room, playerId: string) {
+  private async handleTurnEnd(room: RoomInterface, playerId: string) {
     const player = room.players.find((p) => p.id === playerId);
-    const roomAfterDraw = this.drawCardsIfPossible(room, player);
-    const roomAfterTurnUpdate = this.updateTurn(roomAfterDraw);
-    const isRoundOver = this.checkIfRoundIsOver(roomAfterTurnUpdate);
-    const updatedRoom = isRoundOver
-      ? {
-          ...room,
-          gameState: GameState.RoundOver,
-        }
-      : roomAfterTurnUpdate;
 
-    await this.roomModel.updateOne({ id: updatedRoom.id }, updatedRoom).exec();
+    await this.roomRepository.manager.transaction(async (manager) => {
+      const updatedRoom = await manager.findOne(Room, {
+        where: { id: room.id },
+      });
+      const roomAfterDraw = this.drawCardsIfPossible(
+        dbRoomToRoom(updatedRoom),
+        player
+      );
+      const roomAfterTurnUpdate = this.updateTurn(roomAfterDraw);
+      const isRoundOver = this.checkIfRoundIsOver(roomAfterTurnUpdate);
+      const finalRoom = isRoundOver
+        ? { ...roomAfterTurnUpdate, gameState: GameState.RoundOver }
+        : roomAfterTurnUpdate;
+
+      await manager.save(Room, roomToDbRoom(finalRoom));
+      // Additional logic or notifications can be added here.
+    });
     // Enviar notificação para todos os jogadores (Socket IO ou SSE)
   }
 
-  private drawCardsIfPossible(room: Room, player: Player) {
+  private drawCardsIfPossible(room: RoomInterface, player: PlayerInterface) {
     if (player.cards.length === 0 && room.cards.length >= 3) {
       const { drawn, remainingCards: updatedRoomCards } = drawCards(
         room.cards,
@@ -294,7 +334,7 @@ export class RoomService {
     return room;
   }
 
-  private checkIfRoundIsOver(room: Room) {
+  private checkIfRoundIsOver(room: RoomInterface) {
     return (
       room.cards.length +
         room.players.reduce((acc, p) => acc + p.cards.length, 0) ===
@@ -302,11 +342,11 @@ export class RoomService {
     );
   }
 
-  private updateTurn(room: Room) {
+  private updateTurn(room: RoomInterface) {
     const nextPlayerIndex = nextTurnIndex(
-      room.currentTurn,
+      room.players.findIndex((player) => player.nickname === room.currentTurn),
       room.players.length
     );
-    return { ...room, currentTurn: nextPlayerIndex };
+    return { ...room, currentTurn: room.players[nextPlayerIndex].nickname };
   }
 }

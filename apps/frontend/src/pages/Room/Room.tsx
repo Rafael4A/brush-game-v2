@@ -5,7 +5,7 @@ import { GameState } from "shared-types";
 import { MainContainer } from "../../components";
 import { usePlayerId } from "../../context";
 import { useRoom } from "./hooks";
-import { WaitingForPlayers } from "./sections";
+import { GamePlay, WaitingForPlayers } from "./sections";
 
 export function RoomScreen() {
   const { id } = useParams();
@@ -14,20 +14,16 @@ export function RoomScreen() {
   const { data } = useRoom(id ?? "", playerId);
 
   const section = () => {
-    // switch (data?.gameState) {
-    // case GameState.WaitingForPlayers:
-    //   return <WaitingForPlayers data={data} />;
-    // case GameState.Playing:
-    //   return <></>;
-    // case GameState.RoundOver:
-    //   return <></>;
-    // case GameState.GameOver:
-    //   return <></>;
-    // }
-    if (data?.gameState === GameState.WaitingForPlayers) {
-      return <WaitingForPlayers data={data} />;
+    switch (data?.gameState) {
+      case GameState.WaitingForPlayers:
+        return <WaitingForPlayers data={data} />;
+      case GameState.Playing:
+        return <GamePlay data={data} />;
+      case GameState.RoundOver:
+        return <></>;
+      case GameState.GameOver:
+        return <></>;
     }
-    return <></>;
   };
 
   return (

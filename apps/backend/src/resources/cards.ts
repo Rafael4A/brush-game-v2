@@ -242,3 +242,5 @@ export const CARDS: Card[] = [
     suit: "HEARTS",
   },
 ];
+
+export const CARDS_CODES = CARDS.map((card) => card.code);

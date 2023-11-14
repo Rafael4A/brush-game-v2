@@ -43,6 +43,11 @@ select {
   font: inherit;
 }
 
+::placeholder {
+  color: #c8c8c8;
+  opacity: 1; /* Firefox */
+}
+
 p,
 h1,
 h2,

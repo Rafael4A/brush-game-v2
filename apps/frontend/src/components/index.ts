@@ -5,3 +5,4 @@ export * from "./UnstyledButton";
 export * from "./MainContainer";
 export * from "./Switch";
 export * from "./Tooltip";
+export * from "./LineLoader";

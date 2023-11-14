@@ -13,8 +13,8 @@ export interface Room {
   cards: Card[];
   table: Card[];
   players: Player[];
-  firstPlayerIndex?: number;
-  currentTurn?: number;
+  firstPlayerIndex?: string;
+  currentTurn?: string;
   gameState: GameState;
 }
 
@@ -48,6 +48,7 @@ export class PlayerToOpponentMapper {
     return {
       nickname: player.nickname,
       previousPoints: player.previousPoints,
+      isOwner: player.isOwner,
     };
   }
 }

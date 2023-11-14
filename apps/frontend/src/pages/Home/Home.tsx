@@ -13,7 +13,7 @@ import {
 } from "../../components";
 import { useQueryParams } from "../../hooks";
 import { CardsPlayingIcon } from "../../resources/icons";
-import { useEditNickname, useJoinRoom } from "./hooks";
+import { useEditNickname, useJoinRoom, useCreateRoom } from "./hooks";
 import { Title } from "./styles";
 
 export function HomeScreen() {
@@ -34,6 +34,7 @@ export function HomeScreen() {
   const { roomId: routeRoomId } = useQueryParams();
   const [roomId, setRoomId] = useState(routeRoomId ?? "");
   const { joinRoom } = useJoinRoom();
+  const { createRoom } = useCreateRoom();
 
   const handleJoinRoom = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -52,7 +53,7 @@ export function HomeScreen() {
           <CardsPlayingIcon width="48px" height="48px" />
         </Title>
 
-        <Column gap="8px" alignItems="flex-start" width="550px">
+        <Column gap="8px" alignItems="flex-start" width="min(550px, 90vw)">
           <Row fullWidth>
             <Tooltip
               width="200px"
@@ -88,7 +89,7 @@ export function HomeScreen() {
               </label>
               <TextInput
                 id={nicknameId}
-                placeholder="Room ID"
+                placeholder="Ask your friend or create a room"
                 value={roomId}
                 onChange={({ target }) => setRoomId(target.value)}
               />
@@ -108,6 +109,7 @@ export function HomeScreen() {
             color={theme.colors.palette_blue}
             style={{ marginTop: "12px" }}
             disabled={!hasValidNickname}
+            onClick={() => createRoom(nickname)}
           >
             Create new room
           </Button>

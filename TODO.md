@@ -14,11 +14,17 @@
 - Delete the UI package
 - Create docker compose that runs everything (including mongodb) check if env is working
 - Add github actions for auto-deploy
+- Fix file naming (casing)
+- Delete mongoDB files
+- Delete Card entity
+- Move PostgreSQL connection parameters to env
 
 #### Frontend
 
 - Change icon
 - Add G-TAG and add cookie banner
+- Add titles
+- Change room id placeholder and add tooltip with phrase
 
 ### Game flow
 

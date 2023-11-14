@@ -1,4 +1,4 @@
-import * as crypto from "crypto";
+// TODO DELETE!
 import mongoose from "mongoose";
 import { Card, GameState, Player, PlayerReport } from "shared-types";
 
@@ -23,11 +23,12 @@ const ReportSchema = new mongoose.Schema<PlayerReport>({
 
 export const PlayerSchema = new mongoose.Schema<Player>({
   cards: { type: [CardSchema], required: true, default: [] },
-  id: { type: String, required: true, default: crypto.randomUUID },
+  id: { type: String, required: true, default: "crypto.randomUUID" },
   nickname: { type: String, required: [true, "Player nickname is required"] },
   collectedCards: { type: [CardSchema], required: true, default: [] },
   currentBrushCount: { type: Number, required: true, default: 0 },
   previousPoints: { type: Number, required: true, default: 0 },
+  isOwner: { type: Boolean, required: true, default: false },
 });
 
 export const RoomSchema = new mongoose.Schema<Room>({
@@ -43,8 +44,8 @@ export const RoomSchema = new mongoose.Schema<Room>({
   cards: { type: [CardSchema], required: true, default: CARDS },
   table: { type: [CardSchema], required: true, default: [] },
   players: { type: [PlayerSchema], required: true, default: [] },
-  firstPlayerIndex: { type: Number, required: false },
-  currentTurn: { type: Number, required: false },
+  firstPlayerIndex: { type: String, required: false },
+  currentTurn: { type: String, required: false },
   gameState: {
     type: String,
     required: true,

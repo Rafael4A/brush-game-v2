@@ -18,6 +18,7 @@ interface JoinRoomProps extends NewRoomDtoType {
 export function useJoinRoom() {
   const [, setPlayerId] = usePlayerId();
   const navigate = useNavigate();
+
   async function post({
     nickname,
     id,

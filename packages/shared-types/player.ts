@@ -7,6 +7,7 @@ export interface Player {
   previousPoints: number;
   collectedCards: Card[];
   currentBrushCount: number;
+  isOwner: boolean;
 }
 
 export interface PlayerReport {
@@ -20,5 +21,6 @@ export interface PlayerReport {
 
 export interface Opponent {
   nickname: string;
+  isOwner: boolean;
   previousPoints: number;
 }

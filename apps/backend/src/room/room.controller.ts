@@ -48,4 +48,6 @@ export class RoomController {
   async start(@Param("id") id: string, @Body() { playerId }: StartGameDto) {
     return this.roomService.startGame(id, playerId);
   }
+
+  // TODO: Create play card endpoint
 }
