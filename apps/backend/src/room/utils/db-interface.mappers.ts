@@ -1,11 +1,12 @@
 import { Card, Player } from "shared-types";
 
-import { CARDS } from "../resources";
-import { DBPlayer, DBRoom } from "../room/entities";
-import { Room } from "../room/room.interface";
+import { CARDS } from "../../resources";
+import { DBPlayer, DBRoom } from "../entities";
+import { Room } from "../room.interface";
 
 // DB to Interface
 
+// TODO, do it in a more performant way
 export const cardCodeToCard = (cardCode: string): Card =>
   CARDS.find((card) => card.code === cardCode);
 

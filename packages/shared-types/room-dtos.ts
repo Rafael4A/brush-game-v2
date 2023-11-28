@@ -1,4 +1,10 @@
-import { IsNotEmpty, IsString, Length } from "class-validator";
+import {
+  ArrayUnique,
+  IsArray,
+  IsNotEmpty,
+  IsString,
+  Length,
+} from "class-validator";
 
 import type { Card } from "./card";
 import type { Opponent, Player } from "./player";
@@ -43,3 +49,23 @@ export class StartGameDto {
 }
 
 export type StartGameDtoType = typeof StartGameDto.prototype;
+
+export class PlayCardDto {
+  @IsNotEmpty({ message: "Player id is required" })
+  @IsString({ message: "Player id must be a string" })
+  playerId: string;
+
+  @IsNotEmpty({ message: "Card code is required" })
+  @IsString({ message: "Card code must be a string" })
+  cardCode: string;
+
+  @IsArray({ message: "Table card codes must be an array" })
+  @ArrayUnique({ message: "Table card codes must be unique" })
+  @IsString({
+    each: true,
+    message: "Each table card code in the array must be a string",
+  })
+  tableCardCodes: string[];
+}
+
+export type PlayCardDtoType = typeof PlayCardDto.prototype;

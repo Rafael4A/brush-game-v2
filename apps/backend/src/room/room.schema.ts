@@ -12,14 +12,14 @@ const CardSchema = new mongoose.Schema<Card>({
   value: String,
 });
 
-const ReportSchema = new mongoose.Schema<PlayerReport>({
-  brushCount: { type: Number, default: 0 },
-  cardCount: { type: Number, default: 0 },
-  cardSum: { type: Number, default: 0 },
-  diamondCount: { type: Number, default: 0 },
-  hasBeauty: { type: Boolean, default: false },
-  previousPoints: { type: Number, default: 0 },
-});
+// const ReportSchema = new mongoose.Schema<PlayerReport>({
+//   brushCount: { type: Number, default: 0 },
+//   cardCount: { type: Number, default: 0 },
+//   cardSum: { type: Number, default: 0 },
+//   diamondCount: { type: Number, default: 0 },
+//   hasBeauty: { type: Boolean, default: false },
+//   previousPoints: { type: Number, default: 0 },
+// });
 
 export const PlayerSchema = new mongoose.Schema<Player>({
   cards: { type: [CardSchema], required: true, default: [] },

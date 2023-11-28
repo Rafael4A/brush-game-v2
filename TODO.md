@@ -1,30 +1,31 @@
 ## Todo
 
-- Add images to public folder and possibly fix path
 - Organize files and folder structure
 - Check if types and mappers are where they should be
 - Check if mappers should really be a class
 - Server side events or Sockets
-- Frontend
 - Delete getAll deleteAll
-- Prevent \_id from being sent
 - Free up old and completed games id
 - Allow players to send reactions when playing (Like rocket league, but emojis)
 - Fix eslint and tsconfig packages, decide wether the should be a package or just in the root
 - Delete the UI package
-- Create docker compose that runs everything (including mongodb) check if env is working
+- Create docker compose that runs everything (including PostgreSQL) check if env is working
 - Add github actions for auto-deploy
 - Fix file naming (casing)
 - Delete mongoDB files
 - Delete Card entity
 - Move PostgreSQL connection parameters to env
+- Shuffle deck when creating room
+- Room creator may kick anyone
+- Leader Board
 
 #### Frontend
 
-- Change icon
+- Fix manifest
 - Add G-TAG and add cookie banner
 - Add titles
 - Change room id placeholder and add tooltip with phrase
+- Check query keys on hooks
 
 ### Game flow
 

@@ -1,23 +1,22 @@
 import { CSSTransition, TransitionGroup } from "react-transition-group";
-import { GetRoomResponseDto } from "shared-types";
 import { useTheme } from "styled-components";
 
 import { Button } from "../../../../components";
+import { useRoom } from "../../../../context";
 import {
   Card,
   MainContainer,
   PlayerCardsContainer,
   TableCardsContainer,
 } from "./components";
+import { BrushBanner } from "./components/BrushBanner";
 import { GameHeader } from "./components/GameHeader";
 import { useGamePlay } from "./hooks";
 
-interface GamePlayProps {
-  data: GetRoomResponseDto;
-}
-
-export function GamePlay({ data }: Readonly<GamePlayProps>) {
+export function GamePlay() {
   const { colors } = useTheme();
+  const [roomData] = useRoom();
+  const data = roomData!;
 
   const {
     getRotation,
@@ -44,7 +43,15 @@ export function GamePlay({ data }: Readonly<GamePlayProps>) {
                 />
               </CSSTransition>
             ))}
-            {data?.table?.length <= 0 ? <>Brush! The table is empty!</> : null}
+            {data?.table?.length <= 0 && (
+              <CSSTransition
+                timeout={0}
+                classNames="brush-banner"
+                unmountOnExit
+              >
+                <BrushBanner>Brush! The table is empty!</BrushBanner>
+              </CSSTransition>
+            )}
           </TransitionGroup>
         </TableCardsContainer>
 
@@ -63,7 +70,7 @@ export function GamePlay({ data }: Readonly<GamePlayProps>) {
               key={card.code}
               card={card}
               onSelect={handleSelectOwnCard}
-              isSelected={card === selectedCard}
+              isSelected={card.code === selectedCard?.code}
               isPersonalCard
               rotation={getRotation(index)}
             />

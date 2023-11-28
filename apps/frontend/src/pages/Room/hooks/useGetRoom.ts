@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { GetRoomResponseDto } from "shared-types";
 
+import { useRoom } from "../../../context";
 import {
   RequestError,
   axiosInstance,
@@ -15,8 +16,9 @@ interface GetRoomProps {
   playerId: string;
 }
 
-export function useRoom(id: string, playerId: string) {
+export function useGetRoom(id: string, playerId: string) {
   const navigate = useNavigate();
+  const [, setRoom] = useRoom();
 
   async function get({
     id,
@@ -26,6 +28,8 @@ export function useRoom(id: string, playerId: string) {
       const response = await axiosInstance.get(`/room/${id}`, {
         params: { playerId },
       });
+
+      setRoom(response.data);
       return response.data;
     } catch (error) {
       if (isAxiosError(error)) {
@@ -37,7 +41,7 @@ export function useRoom(id: string, playerId: string) {
 
         toast.error(getRequestErrorMessage(response?.data));
       } else {
-        toast.error("Unable to join room");
+        toast.error("Unable to get room information");
       }
       throw error;
     }

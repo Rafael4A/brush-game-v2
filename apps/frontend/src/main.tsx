@@ -8,7 +8,7 @@ import { BrowserRouter } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import { StyleSheetManager, ThemeProvider } from "styled-components";
 
-import { NicknameProvider, PlayerIdProvider } from "./context";
+import { NicknameProvider, PlayerIdProvider, RoomProvider } from "./context";
 import { theme } from "./resources/theme";
 import Router from "./Router";
 
@@ -25,20 +25,22 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             <QueryClientProvider client={queryClient}>
               <PlayerIdProvider>
                 <NicknameProvider>
-                  <Router />
-                  <ToastContainer
-                    position="top-right"
-                    autoClose={2500}
-                    hideProgressBar={false}
-                    newestOnTop={false}
-                    closeOnClick
-                    rtl={false}
-                    pauseOnFocusLoss
-                    draggable={false}
-                    pauseOnHover
-                    theme="dark"
-                    className="custom-toast"
-                  />
+                  <RoomProvider>
+                    <Router />
+                    <ToastContainer
+                      position="top-right"
+                      autoClose={2500}
+                      hideProgressBar={false}
+                      newestOnTop={false}
+                      closeOnClick
+                      rtl={false}
+                      pauseOnFocusLoss
+                      draggable={false}
+                      pauseOnHover
+                      theme="dark"
+                      className="custom-toast"
+                    />
+                  </RoomProvider>
                 </NicknameProvider>
               </PlayerIdProvider>
             </QueryClientProvider>

@@ -10,7 +10,7 @@ import {
   HttpStatus,
 } from "@nestjs/common";
 
-import { NewRoomDto, StartGameDto } from "shared-types";
+import { NewRoomDto, PlayCardDto, StartGameDto } from "shared-types";
 
 import { RoomService } from "./room.service";
 
@@ -39,6 +39,7 @@ export class RoomController {
   }
 
   @Post("/room/:id/join")
+  @HttpCode(HttpStatus.OK)
   async join(@Param("id") id: string, @Body() { nickname }: NewRoomDto) {
     return this.roomService.join(id, nickname);
   }
@@ -49,5 +50,20 @@ export class RoomController {
     return this.roomService.startGame(id, playerId);
   }
 
-  // TODO: Create play card endpoint
+  @Post("/room/:id/play-card")
+  @HttpCode(HttpStatus.OK)
+  async playCard(
+    @Param("id") id: string,
+    @Body() { playerId, cardCode, tableCardCodes }: PlayCardDto
+  ) {
+    return this.roomService.playCard(id, playerId, cardCode, tableCardCodes);
+  }
+
+  @Get("/room/:id/report")
+  async getReport(
+    @Param("id") id: string,
+    @Query("playerId") playerId: string
+  ) {
+    return this.roomService.getReport(id, playerId);
+  }
 }

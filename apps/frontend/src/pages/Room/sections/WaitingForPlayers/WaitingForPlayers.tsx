@@ -1,4 +1,3 @@
-import { GetRoomResponseDto } from "shared-types";
 import { useTheme } from "styled-components";
 
 import { ShareIcon } from "../../../../assets/icons/share";
@@ -9,17 +8,16 @@ import {
   Row,
   UnstyledButton,
 } from "../../../../components";
+import { useRoom } from "../../../../context";
 import { PlayerNicknameLabel } from "./components";
 import { useStartRoom } from "./hooks";
 import { shareRoom } from "./utils";
 
-interface WaitingForPlayersProps {
-  data: GetRoomResponseDto;
-}
-
 const OPPONENT_INDEX_OFFSET = 2;
 
-export function WaitingForPlayers({ data }: Readonly<WaitingForPlayersProps>) {
+export function WaitingForPlayers() {
+  const [roomData] = useRoom();
+  const data = roomData!;
   const handleShare = () => shareRoom(data.id);
 
   const { colors } = useTheme();

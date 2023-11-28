@@ -2,15 +2,20 @@ import { useState } from "react";
 
 import { Card, GetRoomResponseDto } from "shared-types";
 
+import { usePlayCards } from "./usePlayCards";
+
 export function useGamePlay(data: GetRoomResponseDto) {
   const [selectedCard, setSelectedCard] = useState<Card>();
   const [selectedTableCards, setSelectedTableCards] = useState<Card[]>([]);
+  const { playCards } = usePlayCards();
 
   const handleSelectTableCard = (card: Card) => {
     if (!isOnTurn()) return;
 
-    if (selectedTableCards.includes(card)) {
-      setSelectedTableCards(selectedTableCards.filter((c) => c !== card));
+    if (selectedTableCards.some((c) => c.code === card.code)) {
+      setSelectedTableCards(
+        selectedTableCards.filter((c) => c.code !== card.code)
+      );
     } else {
       setSelectedTableCards([...selectedTableCards, card]);
     }
@@ -24,7 +29,7 @@ export function useGamePlay(data: GetRoomResponseDto) {
 
     if (!cardCode) return;
 
-    // playCards({ cardCode, tableCardsCodes })
+    playCards(cardCode, tableCardsCodes);
 
     setSelectedCard(undefined);
     setSelectedTableCards([]);
@@ -43,7 +48,7 @@ export function useGamePlay(data: GetRoomResponseDto) {
   };
 
   const handleSelectOwnCard = (card: Card) => {
-    setSelectedCard(selectedCard === card ? undefined : card);
+    setSelectedCard(selectedCard?.code === card.code ? undefined : card);
   };
 
   return {

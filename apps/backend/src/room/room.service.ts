@@ -2,17 +2,27 @@ import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectEntityManager, InjectRepository } from "@nestjs/typeorm";
 
 import * as crypto from "crypto";
-import { GameState, Player as PlayerInterface } from "shared-types";
+import {
+  GameState,
+  Player as PlayerInterface,
+  PlayerReport,
+} from "shared-types";
 import { EntityManager, Repository } from "typeorm";
 
-import { dbRoomToRoom, drawCards, nextTurnIndex, roomToDbRoom } from "../utils";
-import { willSumToFifteen } from "../utils/will-sum-to-fifteen";
 import { Card, Player, Room } from "./entities";
 import {
   Room as RoomInterface,
   BasicRoomMapper,
   RequestedRoomMapper,
 } from "./room.interface";
+import {
+  dbRoomToRoom,
+  drawCards,
+  evaluateCardCode,
+  nextTurnIndex,
+  roomToDbRoom,
+  willSumToFifteen,
+} from "./utils";
 
 @Injectable()
 export class RoomService {
@@ -210,7 +220,9 @@ export class RoomService {
         HttpStatus.BAD_REQUEST
       );
 
-    if (room.players[room.currentTurn].id !== playerId)
+    if (
+      room.players.find((p) => p.nickname === room.currentTurn).id !== playerId
+    )
       throw new HttpException("It's not your turn", HttpStatus.UNAUTHORIZED);
 
     const player = room.players.find((p) => p.id === playerId);
@@ -273,6 +285,8 @@ export class RoomService {
               ...p,
               cards: updatedPlayerCards,
               collectedCards: updatedPlayerCollectedCards,
+              currentBrushCount:
+                p.currentBrushCount + updatedTable.length === 0 ? 1 : 0,
             }
           : p
       );
@@ -292,23 +306,28 @@ export class RoomService {
   private async handleTurnEnd(room: RoomInterface, playerId: string) {
     const player = room.players.find((p) => p.id === playerId);
 
+    let finalRoom: RoomInterface;
     await this.roomRepository.manager.transaction(async (manager) => {
-      const updatedRoom = await manager.findOne(Room, {
-        where: { id: room.id },
-      });
-      const roomAfterDraw = this.drawCardsIfPossible(
-        dbRoomToRoom(updatedRoom),
-        player
-      );
+      // const updatedRoom = await manager.findOne(Room, {
+      //   where: { id: room.id },
+      //   relations: ["players"],
+      // });
+
+      const roomAfterDraw = this.drawCardsIfPossible(room, player);
+
       const roomAfterTurnUpdate = this.updateTurn(roomAfterDraw);
+
       const isRoundOver = this.checkIfRoundIsOver(roomAfterTurnUpdate);
-      const finalRoom = isRoundOver
+
+      finalRoom = isRoundOver
         ? { ...roomAfterTurnUpdate, gameState: GameState.RoundOver }
         : roomAfterTurnUpdate;
 
       await manager.save(Room, roomToDbRoom(finalRoom));
-      // Additional logic or notifications can be added here.
     });
+
+    return RequestedRoomMapper.map(finalRoom, playerId);
+
     // Enviar notificação para todos os jogadores (Socket IO ou SSE)
   }
 
@@ -331,6 +350,7 @@ export class RoomService {
         players: updatedPlayers,
       };
     }
+
     return room;
   }
 
@@ -348,5 +368,79 @@ export class RoomService {
       room.players.length
     );
     return { ...room, currentTurn: room.players[nextPlayerIndex].nickname };
+  }
+
+  async getReport(id: string, playerId: string) {
+    const room = await this.findById(id, playerId);
+
+    //CHECK IF GAME HAS ENDED OR ROUND IS OVER
+
+    const playerWithBeauty = room.players.find((p) =>
+      p.collectedCards.some((card) => card.code === "7D")
+    );
+
+    const playerWithMoreCards = room.players.reduce(
+      (acc, p) => {
+        const playerCards = p.collectedCards.length;
+        if (playerCards > acc.highest)
+          return {
+            highest: playerCards,
+            hasRepeated: false,
+            id: p.id,
+          };
+        if (playerCards === acc.highest)
+          return { ...acc, hasRepeated: true, id: null };
+        return acc;
+      },
+      { highest: -1, hasRepeated: false, id: null }
+    );
+
+    const playerWithMoreDiamonds = room.players.reduce(
+      (acc, p) => {
+        const playerDiamonds = p.collectedCards.filter(
+          (card) => card.suit === "DIAMONDS"
+        ).length;
+        if (playerDiamonds > acc.highest)
+          return {
+            highest: playerDiamonds,
+            hasRepeated: false,
+            id: p.id,
+          };
+        if (playerDiamonds === acc.highest)
+          return { ...acc, hasRepeated: true, id: null };
+        return acc;
+      },
+      { highest: -1, hasRepeated: false, id: null }
+    );
+
+    const playersCardSum = room.players
+      .map((p) => ({
+        id: p.id,
+        sum: p.collectedCards.reduce(
+          (acc, c) => acc + evaluateCardCode(c.code),
+          0
+        ),
+      }))
+      .sort((a, b) => b.sum - a.sum);
+
+    const playerWithHighestSumId =
+      playersCardSum[0].sum === playersCardSum[1].sum
+        ? null
+        : playersCardSum[0].id;
+
+    const report: PlayerReport[] = room.players.map((p) => ({
+      nickname: p.nickname,
+      previousPoints: p.previousPoints,
+      brushes: p.currentBrushCount,
+      hasBeauty: p.id === playerWithBeauty.id,
+      hasMoreCards: p.id === playerWithMoreCards.id,
+      totalCards: 0,
+      hasMoreDiamonds: p.id === playerWithMoreDiamonds.id,
+      totalDiamonds: 0,
+      hasHighestSum: p.id === playerWithHighestSumId,
+      sum: 0,
+    }));
+
+    return report;
   }
 }

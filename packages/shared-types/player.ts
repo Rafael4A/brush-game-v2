@@ -11,11 +11,15 @@ export interface Player {
 }
 
 export interface PlayerReport {
-  cardCount: number;
-  diamondCount: number;
-  brushCount: number;
-  cardSum: number;
+  nickname: string;
+  brushes: number;
   hasBeauty: boolean;
+  hasMoreCards: boolean;
+  totalCards: number;
+  hasMoreDiamonds: boolean;
+  totalDiamonds: number;
+  hasHighestSum: boolean;
+  sum: number;
   previousPoints: number;
 }
 
