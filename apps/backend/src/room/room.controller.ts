@@ -50,6 +50,12 @@ export class RoomController {
     return this.roomService.startGame(id, playerId);
   }
 
+  @Post("/room/:id/next-round")
+  @HttpCode(HttpStatus.OK)
+  async nextRound(@Param("id") id: string, @Body() { playerId }: StartGameDto) {
+    return this.roomService.nextRound(id, playerId);
+  }
+
   @Post("/room/:id/play-card")
   @HttpCode(HttpStatus.OK)
   async playCard(

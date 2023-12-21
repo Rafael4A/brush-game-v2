@@ -26,6 +26,7 @@
 - Add titles
 - Change room id placeholder and add tooltip with phrase
 - Check query keys on hooks
+- Check if all request hooks follow the same pattern as useNextROund
 
 ### Game flow
 

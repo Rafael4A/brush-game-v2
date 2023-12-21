@@ -21,6 +21,7 @@ export interface PlayerReport {
   hasHighestSum: boolean;
   sum: number;
   previousPoints: number;
+  currentPoints: number;
 }
 
 export interface Opponent {

@@ -1,4 +1,4 @@
-export function evaluateCardCode(cardCode: string) {
+export function evaluateCardCode(cardCode: string): number {
   const firstChar = cardCode.charAt(0);
   const firstCharAsNumber = parseInt(firstChar);
   if (Number.isNaN(firstCharAsNumber)) {

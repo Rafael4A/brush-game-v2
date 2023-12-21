@@ -8,7 +8,7 @@ import { MainContainer } from "../../components";
 import { usePlayerId } from "../../context";
 import { delay } from "../../utils";
 import { useGetRoom } from "./hooks";
-import { GamePlay, WaitingForPlayers } from "./sections";
+import { GamePlay, RoundOver, WaitingForPlayers } from "./sections";
 
 export function RoomScreen() {
   const { id } = useParams();
@@ -40,9 +40,8 @@ export function RoomScreen() {
       case GameState.Playing:
         return <GamePlay />;
       case GameState.RoundOver:
-        return <></>;
       case GameState.GameOver:
-        return <></>;
+        return <RoundOver />;
     }
   };
 

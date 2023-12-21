@@ -9,18 +9,22 @@ import {
 } from "shared-types";
 import { EntityManager, Repository } from "typeorm";
 
+import { CARDS, CARDS_CODES } from "../resources";
 import { Card, Player, Room } from "./entities";
 import {
   Room as RoomInterface,
   BasicRoomMapper,
   RequestedRoomMapper,
+  IndependentReport,
 } from "./room.interface";
 import {
+  calculateNumberCardsSum,
   dbRoomToRoom,
   drawCards,
-  evaluateCardCode,
   nextTurnIndex,
+  playerWIthHigherProperty,
   roomToDbRoom,
+  shuffleCards,
   willSumToFifteen,
 } from "./utils";
 
@@ -91,6 +95,7 @@ export class RoomService {
       const room = this.roomRepository.create({
         id,
         players: [{ nickname, isOwner: true, id: crypto.randomUUID() }],
+        cards: shuffleCards(CARDS_CODES),
       });
 
       const savedRoom = await this.roomRepository.save(room);
@@ -373,74 +378,145 @@ export class RoomService {
   async getReport(id: string, playerId: string) {
     const room = await this.findById(id, playerId);
 
-    //CHECK IF GAME HAS ENDED OR ROUND IS OVER
+    const independentReport = this.generateIndependentReport(room);
 
-    const playerWithBeauty = room.players.find((p) =>
-      p.collectedCards.some((card) => card.code === "7D")
+    const playerWithMostCards = playerWIthHigherProperty(
+      independentReport,
+      "totalCards"
     );
 
-    const playerWithMoreCards = room.players.reduce(
-      (acc, p) => {
-        const playerCards = p.collectedCards.length;
-        if (playerCards > acc.highest)
-          return {
-            highest: playerCards,
-            hasRepeated: false,
-            id: p.id,
-          };
-        if (playerCards === acc.highest)
-          return { ...acc, hasRepeated: true, id: null };
-        return acc;
-      },
-      { highest: -1, hasRepeated: false, id: null }
+    const playerWithMostDiamonds = playerWIthHigherProperty(
+      independentReport,
+      "totalDiamonds"
     );
 
-    const playerWithMoreDiamonds = room.players.reduce(
-      (acc, p) => {
-        const playerDiamonds = p.collectedCards.filter(
-          (card) => card.suit === "DIAMONDS"
-        ).length;
-        if (playerDiamonds > acc.highest)
-          return {
-            highest: playerDiamonds,
-            hasRepeated: false,
-            id: p.id,
-          };
-        if (playerDiamonds === acc.highest)
-          return { ...acc, hasRepeated: true, id: null };
-        return acc;
-      },
-      { highest: -1, hasRepeated: false, id: null }
+    const playerWithHighestSum = playerWIthHigherProperty(
+      independentReport,
+      "sum"
     );
 
-    const playersCardSum = room.players
-      .map((p) => ({
-        id: p.id,
-        sum: p.collectedCards.reduce(
-          (acc, c) => acc + evaluateCardCode(c.code),
-          0
-        ),
-      }))
-      .sort((a, b) => b.sum - a.sum);
+    const report = independentReport.map<PlayerReport>((pr) => {
+      const hasMoreCards = pr.nickname === playerWithMostCards;
 
-    const playerWithHighestSumId =
-      playersCardSum[0].sum === playersCardSum[1].sum
-        ? null
-        : playersCardSum[0].id;
+      const hasMoreDiamonds = pr.nickname === playerWithMostDiamonds;
 
-    const report: PlayerReport[] = room.players.map((p) => ({
-      nickname: p.nickname,
-      previousPoints: p.previousPoints,
-      brushes: p.currentBrushCount,
-      hasBeauty: p.id === playerWithBeauty.id,
-      hasMoreCards: p.id === playerWithMoreCards.id,
-      totalCards: 0,
-      hasMoreDiamonds: p.id === playerWithMoreDiamonds.id,
-      totalDiamonds: 0,
-      hasHighestSum: p.id === playerWithHighestSumId,
-      sum: 0,
-    }));
+      const hasHighestSum = pr.nickname === playerWithHighestSum;
+
+      return {
+        ...pr,
+        hasMoreCards,
+        hasMoreDiamonds,
+        hasHighestSum,
+        currentPoints:
+          pr.previousPoints +
+          pr.brushes +
+          (pr.hasBeauty ? 1 : 0) +
+          (hasMoreCards ? 1 : 0) +
+          (hasMoreDiamonds ? 1 : 0) +
+          (hasHighestSum ? 1 : 0),
+      };
+    });
+
+    if (report.some((r) => r.currentPoints >= 15)) {
+      await this.roomRepository.manager.transaction(async (manager) => {
+        // TODO try to change the following two lines to be: const updatedRoom = await manager.findOne(Room, { where: { id } });
+        const roomRepository = manager.getRepository(Room);
+        const updatedRoom = await roomRepository.findOne({
+          where: { id },
+          relations: ["players"],
+        });
+        updatedRoom.gameState = GameState.GameOver;
+        await manager.save(Room, updatedRoom);
+      });
+
+      // Send notification to all players
+    }
 
     return report;
+  }
+
+  private generateIndependentReport(room: RoomInterface): IndependentReport[] {
+    return room.players.map((p) => {
+      return {
+        brushes: p.currentBrushCount,
+        hasBeauty: p.collectedCards.some((card) => card.code === "7D"),
+        nickname: p.nickname,
+        previousPoints: p.previousPoints,
+        sum: calculateNumberCardsSum(p.collectedCards.map((c) => c.code)),
+        totalCards: p.collectedCards.length,
+        totalDiamonds: p.collectedCards.filter((c) => c.suit === "DIAMONDS")
+          .length,
+      };
+    });
+  }
+
+  public async nextRound(id: string, playerId: string) {
+    const room = await this.findById(id, playerId);
+    const player = room.players.find((p) => p.id === playerId);
+
+    if (player.isOwner === false) {
+      throw new HttpException(
+        "Only the room owner can start the game",
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    if (room.gameState !== GameState.RoundOver)
+      throw new HttpException(
+        "Cannot start a new round now",
+        HttpStatus.BAD_REQUEST
+      );
+
+    const nextPlayerIndex = nextTurnIndex(
+      room.players.findIndex(
+        (player) => player.nickname === room.firstPlayerIndex
+      ),
+      room.players.length
+    );
+    room.cards = shuffleCards(CARDS);
+    room.table = [];
+
+    const report = await this.getReport(id, playerId);
+    room.players = room.players.map((p) => {
+      return {
+        ...p,
+        cards: [],
+        collectedCards: [],
+        currentBrushCount: 0,
+        previousPoints: report.find((r) => r.nickname === p.nickname)
+          .currentPoints,
+      };
+    });
+
+    const {
+      drawn: roomTableCards,
+      remainingCards: remainingCardsAfterTableIsDealt,
+    } = drawCards(room.cards, 4);
+
+    // Each player draws 3 cards
+    const { players: updatedPlayers, remainingCards } = room.players.reduce(
+      ({ players, remainingCards }, player) => {
+        const { drawn, remainingCards: remainingCardsAfterPlayerIsDealt } =
+          drawCards(remainingCards, 3);
+
+        return {
+          players: [...players, { ...player, cards: drawn }],
+          remainingCards: remainingCardsAfterPlayerIsDealt,
+        };
+      },
+      { players: [], remainingCards: remainingCardsAfterTableIsDealt }
+    );
+
+    const updatedRoom = {
+      ...room,
+      gameState: GameState.Playing,
+      currentTurn: room.players[nextPlayerIndex].nickname,
+      firstPlayerIndex: room.players[nextPlayerIndex].nickname,
+      table: roomTableCards,
+      cards: remainingCards,
+      players: updatedPlayers,
+    };
+
+    await this.roomRepository.save(roomToDbRoom(updatedRoom));
   }
 }

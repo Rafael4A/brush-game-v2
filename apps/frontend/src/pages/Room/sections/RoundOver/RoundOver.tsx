@@ -1,15 +1,32 @@
-import { GameState } from "shared-types";
-import styled from "styled-components";
+import { Link } from "react-router-dom";
+import { GameState, PlayerReport } from "shared-types";
+import { useTheme } from "styled-components";
 
-import { Column, Row } from "../../../../components";
+import { Button, Column, LineLoader } from "../../../../components";
 import { useRoom } from "../../../../context";
-import { useGetReport } from "./hooks";
+import { useGetReport, useNextRound } from "./hooks";
+import {
+  ButtonsContainer,
+  Divider,
+  FullReportContainer,
+  LoaderContainer,
+} from "./styles";
 
 export function RoundOver() {
   const [roomData] = useRoom();
   const { data } = useGetReport();
-  // TODO FIX THIS FILE, IT IS CURRENTLY JUST A COPY OF THE OLDER VERSION
+  const { colors } = useTheme();
+  const { nextRound } = useNextRound();
+
   if (!roomData) return null;
+
+  const playerGotPoints = (report: PlayerReport) =>
+    report.hasBeauty ||
+    report.hasMoreCards ||
+    report.hasMoreDiamonds ||
+    report.hasHighestSum ||
+    report.brushes > 0 ||
+    report.previousPoints > 0;
 
   return (
     <FullReportContainer>
@@ -18,36 +35,50 @@ export function RoundOver() {
       </h1>
       <h2>Final scores:</h2>
 
-      <ScoresContainer>
+      <Column gap="16px" alignItems="flex-end">
         {data?.map((r) => (
-          <ScoreContainer key={r.nickname}>
+          <Column key={r.nickname} width="min(550px, 90vw)">
             <span>{r.nickname}:</span>
             <Column style={{ alignItems: "flex-start" }}>
-              <span>Total cards</span>
-              <span>Total diamonds: {report.diamondCount}</span>
-              <span>Total brushes: {report.brushCount}</span>
-              <span>Total beauties: {report.beautyCount}</span>
-              {report.previousPoints ? (
-                <span>Previous points: {report.previousPoints}</span>
-              ) : null}
+              <span>Total cards: {r.totalCards}</span>
+              <span>Total diamonds: {r.totalDiamonds}</span>
+              <span>Total brushes: {r.brushes}</span>
+              {playerGotPoints(r) && (
+                <>
+                  <span>Points:</span>
+                  {r.hasBeauty && <span>Beauty: +1</span>}
+                  {r.hasMoreCards && <span>Most cards: +1</span>}
+                  {r.hasMoreDiamonds && <span>Most diamonds: +1</span>}
+                  {r.hasHighestSum && <span>Highest sum: +1</span>}
+                  {!!r.brushes && <span>Brushes: +{r.brushes}</span>}
+                  {!!r.previousPoints && (
+                    <span>Previous points: +{r.previousPoints}</span>
+                  )}
+                </>
+              )}
               <Divider />
-              <span>Total points: {report.totalPoints}</span>
+              <span>Total points: {r.currentPoints}</span>
             </Column>
-          </ScoreContainer>
+          </Column>
         ))}
-      </ScoresContainer>
+      </Column>
 
       <ButtonsContainer>
-        <Button color={COLORS.dark_red} onClick={handleEndGame}>
-          End game
-        </Button>
-        {!gameCompletelyOver && isRoomMaster ? (
-          <Button color={COLORS.palette_blue} onClick={mutate}>
+        {roomData.gameState === GameState.GameOver && (
+          <Button color={colors.dark_red}>
+            <Link to="/" style={{ textDecoration: "none" }}>
+              End game
+            </Link>
+          </Button>
+        )}
+        {roomData.gameState !== GameState.GameOver &&
+        roomData.player.isOwner ? (
+          <Button color={colors.palette_blue} onClick={nextRound}>
             Next Round
           </Button>
         ) : null}
       </ButtonsContainer>
-      {!gameCompletelyOver && !isRoomMaster ? (
+      {roomData.gameState !== GameState.GameOver && !roomData.player.isOwner ? (
         <LoaderContainer>
           <span>Waiting for next round</span>
           <LineLoader style={{ marginTop: "16px" }} />
@@ -56,33 +87,3 @@ export function RoundOver() {
     </FullReportContainer>
   );
 }
-const ButtonsContainer = styled(Row)`
-  margin-top: 16px;
-  gap: 16px;
-`;
-
-const Divider = styled.span`
-  margin: 4px 0;
-  height: 2px;
-  width: 100%;
-  background-color: #fff;
-`;
-
-const FullReportContainer = styled(Column)`
-  gap: 16px;
-  margin-bottom: 40px;
-`;
-
-const ScoresContainer = styled(Column)`
-  gap: 16px;
-  align-items: flex-end;
-`;
-
-const ScoreContainer = styled(Row)`
-  gap: 16px;
-`;
-
-const LoaderContainer = styled(Column)`
-  width: 350px;
-  max-width: 90vw;
-`;

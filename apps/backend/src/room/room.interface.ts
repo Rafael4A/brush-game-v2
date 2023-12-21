@@ -18,6 +18,16 @@ export interface Room {
   gameState: GameState;
 }
 
+export interface IndependentReport {
+  nickname: string;
+  previousPoints: number;
+  brushes: number;
+  hasBeauty: boolean;
+  totalCards: number;
+  totalDiamonds: number;
+  sum: number;
+}
+
 export class BasicRoomMapper {
   static map(room: Room, playerId: string): BasicRoomResponseDto {
     return {

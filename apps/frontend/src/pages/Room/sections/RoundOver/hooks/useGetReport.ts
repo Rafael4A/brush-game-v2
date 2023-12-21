@@ -1,7 +1,7 @@
 import { AxiosError, isAxiosError } from "axios";
 import { useQuery } from "react-query";
 import { toast } from "react-toastify";
-import { GetRoomResponseDto, PlayerReport } from "shared-types";
+import { PlayerReport } from "shared-types";
 
 import { usePlayerId, useRoom } from "../../../../../context";
 import {
