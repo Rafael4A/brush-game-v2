@@ -10,22 +10,15 @@ import {
   getRequestErrorMessage,
 } from "../../../../../resources/api";
 
-interface GetRoomProps {
-  id: string;
-  playerId: string;
-}
-
 export function useGetReport() {
   const [room] = useRoom();
   const [playerId] = usePlayerId();
 
-  if (!room || !playerId) {
-    throw new Error("Room or player id is missing");
-  }
-
-  async function get({ id, playerId }: GetRoomProps): Promise<PlayerReport[]> {
+  async function get(): Promise<PlayerReport[]> {
     try {
-      const response = await axiosInstance.get(`/room/${id}/report`, {
+      if (!room || !playerId) throw new Error("Room or player id is missing");
+
+      const response = await axiosInstance.get(`/room/${room.id}/report`, {
         params: { playerId },
       });
 
@@ -42,7 +35,5 @@ export function useGetReport() {
     }
   }
 
-  return useQuery(["report", room.id, playerId], () =>
-    get({ id: room.id, playerId })
-  );
+  return useQuery(["report", room?.id, playerId], () => get());
 }

@@ -11,6 +11,7 @@ interface GameHeaderProps {
 export function GameHeader({ data }: Readonly<GameHeaderProps>) {
   function getCurrentState() {
     if (data.gameState === GameState.GameOver) return "Game has ended";
+    if (data.gameState === GameState.RoundOver) return "Round has ended";
     if (data?.player?.nickname === data.currentTurn) return "It's your turn!";
     return `Waiting for ${data.currentTurn}`;
   }

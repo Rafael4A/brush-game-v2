@@ -4,28 +4,23 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { GetRoomResponseDto } from "shared-types";
 
-import { useRoom } from "../../../context";
+import { usePlayerId, useRoom } from "../../../context";
 import {
   RequestError,
   axiosInstance,
   getRequestErrorMessage,
 } from "../../../resources/api";
 
-interface GetRoomProps {
-  id: string;
-  playerId: string;
-}
-
-export function useGetRoom(id: string, playerId: string) {
+export function useGetRoom(roomId: string) {
   const navigate = useNavigate();
   const [, setRoom] = useRoom();
+  const [playerId] = usePlayerId();
 
-  async function get({
-    id,
-    playerId,
-  }: GetRoomProps): Promise<GetRoomResponseDto> {
+  async function get(): Promise<GetRoomResponseDto> {
     try {
-      const response = await axiosInstance.get(`/room/${id}`, {
+      if (!roomId || !playerId) throw new Error("Room or player id is missing");
+
+      const response = await axiosInstance.get(`/room/${roomId}`, {
         params: { playerId },
       });
 
@@ -47,5 +42,5 @@ export function useGetRoom(id: string, playerId: string) {
     }
   }
 
-  return useQuery(["room", id, playerId], () => get({ id, playerId }));
+  return useQuery(["room", roomId, playerId], () => get());
 }

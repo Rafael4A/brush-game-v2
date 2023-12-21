@@ -15,7 +15,6 @@
 - Delete mongoDB files
 - Delete Card entity
 - Move PostgreSQL connection parameters to env
-- Shuffle deck when creating room
 - Room creator may kick anyone
 - Leader Board
 
@@ -25,8 +24,6 @@
 - Add G-TAG and add cookie banner
 - Add titles
 - Change room id placeholder and add tooltip with phrase
-- Check query keys on hooks
-- Check if all request hooks follow the same pattern as useNextROund
 
 ### Game flow
 

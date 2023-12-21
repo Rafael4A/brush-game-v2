@@ -5,16 +5,14 @@ import { useParams } from "react-router-dom";
 import { GameState } from "shared-types";
 
 import { MainContainer } from "../../components";
-import { usePlayerId } from "../../context";
 import { delay } from "../../utils";
 import { useGetRoom } from "./hooks";
 import { GamePlay, RoundOver, WaitingForPlayers } from "./sections";
 
 export function RoomScreen() {
   const { id } = useParams();
-  const [playerId] = usePlayerId();
 
-  const { data } = useGetRoom(id ?? "", playerId);
+  const { data } = useGetRoom(id ?? "");
 
   const [delayedGameState, setDelayedGameState] = useState<GameState>();
 

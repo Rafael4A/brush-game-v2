@@ -24,8 +24,6 @@ export function WaitingForPlayers() {
 
   const { startRoom } = useStartRoom();
 
-  const handleStartRoom = () => startRoom(data.id);
-
   return (
     <Column gap="16px" style={{ paddingTop: "16px" }}>
       <UnstyledButton onClick={handleShare}>
@@ -62,7 +60,7 @@ export function WaitingForPlayers() {
         {data.player.isOwner ? (
           <Button
             color={colors.palette_blue}
-            onClick={handleStartRoom}
+            onClick={startRoom}
             disabled={data.opponents?.length === 0}
           >
             Start game

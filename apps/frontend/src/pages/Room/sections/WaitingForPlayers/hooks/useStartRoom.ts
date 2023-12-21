@@ -3,36 +3,32 @@ import { useMutation } from "react-query";
 import { toast } from "react-toastify";
 import { BasicRoomResponseDto, StartGameDto } from "shared-types";
 
-import { usePlayerId } from "../../../../../context";
+import { usePlayerId, useRoom } from "../../../../../context";
 import {
   RequestError,
   axiosInstance,
   getRequestErrorMessage,
 } from "../../../../../resources/api";
 
-interface StartRoomProps extends StartGameDto {
-  id: string;
-}
-
 export function useStartRoom() {
+  const [room] = useRoom();
   const [playerId] = usePlayerId();
 
-  async function post({
-    id,
-    playerId,
-  }: StartRoomProps): Promise<BasicRoomResponseDto> {
-    const response = await axiosInstance.post(`/room/${id}/start-game`, {
+  async function post(): Promise<BasicRoomResponseDto> {
+    if (!room || !playerId) throw new Error("Room or player id is missing");
+
+    const response = await axiosInstance.post(`/room/${room.id}/start-game`, {
       playerId,
-    });
+    } satisfies StartGameDto);
 
     return response.data;
   }
 
   const { mutateAsync, ...rest } = useMutation("startRoom", post);
 
-  const startRoom = async (id: string) => {
+  const startRoom = async () => {
     try {
-      await mutateAsync({ id, playerId });
+      await mutateAsync();
     } catch (error) {
       if (isAxiosError(error)) {
         const { response } = error as AxiosError<RequestError>;

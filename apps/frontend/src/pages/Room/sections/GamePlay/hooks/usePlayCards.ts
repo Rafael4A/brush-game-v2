@@ -10,21 +10,18 @@ import {
   getRequestErrorMessage,
 } from "../../../../../resources/api";
 
-interface PlayCardProps extends PlayCardDtoType {
-  id: string;
-}
-
 export function usePlayCards() {
   const [playerId] = usePlayerId();
   const [room, setRoom] = useRoom();
 
   async function post({
-    id,
     playerId,
     cardCode,
     tableCardCodes,
-  }: PlayCardProps): Promise<GetRoomResponseDto> {
-    const response = await axiosInstance.post(`/room/${id}/play-card`, {
+  }: PlayCardDtoType): Promise<GetRoomResponseDto> {
+    if (!room || !playerId) throw new Error("Room or player id is missing");
+
+    const response = await axiosInstance.post(`/room/${room.id}/play-card`, {
       playerId,
       cardCode,
       tableCardCodes,
@@ -39,7 +36,6 @@ export function usePlayCards() {
     try {
       if (!room) throw new Error("Room data not found");
       const updatedRoom = await mutateAsync({
-        id: room.id,
         playerId,
         cardCode,
         tableCardCodes,
