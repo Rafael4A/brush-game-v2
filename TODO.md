@@ -12,8 +12,6 @@
 - Create docker compose that runs everything (including PostgreSQL) check if env is working
 - Add github actions for auto-deploy
 - Fix file naming (casing)
-- Delete mongoDB files
-- Delete Card entity
 - Move PostgreSQL connection parameters to env
 - Room creator may kick anyone
 - Leader Board

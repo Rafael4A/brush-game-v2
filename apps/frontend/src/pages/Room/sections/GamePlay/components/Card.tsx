@@ -1,13 +1,15 @@
 import { useState } from "react";
 
-import { Card as CardInterface } from "shared-types";
+import { CardCode } from "shared-types";
 import styled from "styled-components";
+
+import { generateAltForCardCode } from "../../../../../utils";
 
 type Rotation = "left" | "right" | "middle";
 
 interface CardProps {
-  card: CardInterface;
-  onSelect: (card: CardInterface) => void;
+  cardCode: CardCode;
+  onSelect: (cardCode: CardCode) => void;
   isSelected?: boolean;
   isPersonalCard?: boolean;
   rotation?: Rotation;
@@ -15,7 +17,7 @@ interface CardProps {
 }
 
 export function Card({
-  card,
+  cardCode,
   onSelect,
   isSelected = false,
   isPersonalCard = false,
@@ -26,12 +28,12 @@ export function Card({
   const [useDefault, setUseDefault] = useState(true);
   return (
     <CardContainer
-      onClick={() => onSelect(card)}
+      onClick={() => onSelect(cardCode)}
       isSelected={isSelected}
       isPersonalCard={isPersonalCard}
       rotation={rotation}
-      {...props}
       aria-hidden={hidden}
+      {...props}
     >
       <img
         width={226}
@@ -39,10 +41,10 @@ export function Card({
         src={
           useDefault
             ? "/resources/cards/default_webp/card-back.webp"
-            : card.image
+            : `/resources/cards/default_webp/${cardCode}.webp`
         }
         onLoad={() => setUseDefault(false)}
-        alt={`${card.value} of ${card.suit}`}
+        alt={generateAltForCardCode(cardCode)}
         draggable={false}
         aria-hidden={hidden}
       />

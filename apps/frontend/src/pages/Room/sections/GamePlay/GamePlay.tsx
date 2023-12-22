@@ -35,9 +35,9 @@ export function GamePlay() {
         <TableCardsContainer>
           <TransitionGroup component={null}>
             {data?.table?.map((card) => (
-              <CSSTransition key={card.code} timeout={1500} classNames="card">
+              <CSSTransition key={card} timeout={1500} classNames="card">
                 <Card
-                  card={card}
+                  cardCode={card}
                   onSelect={handleSelectTableCard}
                   isSelected={selectedTableCards.includes(card)}
                 />
@@ -58,7 +58,7 @@ export function GamePlay() {
         <Button
           color={colors.blue}
           style={{ fontSize: "1.5rem" }}
-          disabled={!selectedCard?.code || !isOnTurn()}
+          disabled={!selectedCard || !isOnTurn()}
           onClick={handlePlayCards}
         >
           {selectedTableCards.length ? "Play Cards" : "Play Card"}
@@ -67,10 +67,10 @@ export function GamePlay() {
         <PlayerCardsContainer>
           {data.player.cards?.map((card, index) => (
             <Card
-              key={card.code}
-              card={card}
+              key={card}
+              cardCode={card}
               onSelect={handleSelectOwnCard}
-              isSelected={card.code === selectedCard?.code}
+              isSelected={card === selectedCard}
               isPersonalCard
               rotation={getRotation(index)}
             />

@@ -1,25 +1,20 @@
-import { Player as PlayerInterface } from "shared-types";
+import { CardCode, Player as PlayerInterface } from "shared-types";
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from "typeorm";
 
 import { Room } from "./room.entity";
 
-export type DBPlayer = Omit<PlayerInterface, "cards" | "collectedCards"> & {
-  cards: string[];
-  collectedCards: string[];
-};
-
 @Entity()
-export class Player implements DBPlayer {
+export class Player implements PlayerInterface {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
   @Column("text", { array: true, default: [] })
-  cards: string[];
+  cards: CardCode[];
   @Column()
   nickname: string;
 
   @Column("text", { array: true, default: [] })
-  collectedCards: string[];
+  collectedCards: CardCode[];
 
   @Column({ default: 0 })
   currentBrushCount: number;

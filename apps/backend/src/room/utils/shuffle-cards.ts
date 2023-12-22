@@ -1,4 +1,6 @@
-export function shuffleCards(unshuffled: any[]) {
+import { CardCode } from "shared-types";
+
+export function shuffleCards(unshuffled: CardCode[]) {
   const cards = [...unshuffled];
   let currentIndex = cards.length;
   let randomIndex: number;

@@ -1,18 +1,12 @@
-import { GameState } from "shared-types";
+import { CardCode, GameState } from "shared-types";
 import { Entity, Column, PrimaryColumn, OneToMany } from "typeorm";
 
 import { CARDS_CODES } from "../../resources";
 import { Room as RoomInterface } from "../room.interface";
-import { DBPlayer, Player } from "./player.entity";
-
-export type DBRoom = Omit<RoomInterface, "cards" | "table" | "players"> & {
-  cards: string[];
-  table: string[];
-  players: DBPlayer[];
-};
+import { Player } from "./player.entity";
 
 @Entity()
-export class Room implements DBRoom {
+export class Room implements RoomInterface {
   @PrimaryColumn({ length: 6 })
   id: string;
 
@@ -20,10 +14,10 @@ export class Room implements DBRoom {
   creationDate: Date;
 
   @Column("text", { array: true, default: CARDS_CODES })
-  cards: string[];
+  cards: CardCode[];
 
   @Column("text", { array: true, default: [] })
-  table: string[];
+  table: CardCode[];
 
   @OneToMany(() => Player, (player) => player.room, {
     cascade: true,

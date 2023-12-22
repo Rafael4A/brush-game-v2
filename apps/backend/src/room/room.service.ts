@@ -3,14 +3,15 @@ import { InjectEntityManager, InjectRepository } from "@nestjs/typeorm";
 
 import * as crypto from "crypto";
 import {
+  CardCode,
   GameState,
   Player as PlayerInterface,
   PlayerReport,
 } from "shared-types";
 import { EntityManager, Repository } from "typeorm";
 
-import { CARDS, CARDS_CODES } from "../resources";
-import { Card, Player, Room } from "./entities";
+import { CARDS_CODES } from "../resources";
+import { Player, Room } from "./entities";
 import {
   Room as RoomInterface,
   BasicRoomMapper,
@@ -19,11 +20,10 @@ import {
 } from "./room.interface";
 import {
   calculateNumberCardsSum,
-  dbRoomToRoom,
   drawCards,
+  getCardCodeSuit,
   nextTurnIndex,
   playerWIthHigherProperty,
-  roomToDbRoom,
   shuffleCards,
   willSumToFifteen,
 } from "./utils";
@@ -33,7 +33,6 @@ export class RoomService {
   constructor(
     @InjectRepository(Room) private roomRepository: Repository<Room>,
     @InjectRepository(Player) private playerRepository: Repository<Player>,
-    @InjectRepository(Card) private cardRepository: Repository<Card>,
     @InjectEntityManager() private entityManager: EntityManager
   ) {}
 
@@ -42,15 +41,14 @@ export class RoomService {
   }
 
   private async findById(id: string, playerId?: string) {
-    const dbRoom = await this.roomRepository.findOne({
+    const room = await this.roomRepository.findOne({
       where: { id },
       relations: ["players"],
     });
 
-    if (!dbRoom) {
+    if (!room) {
       throw new HttpException("Room not found", HttpStatus.NOT_FOUND);
     }
-    const room = dbRoomToRoom(dbRoom);
 
     if (!playerId) {
       return room;
@@ -70,11 +68,9 @@ export class RoomService {
 
   // TODO APAGAR ANTES DE CHEGAR EM PRODUÇÃO
   async getAll() {
-    return (
-      await this.roomRepository.find({
-        relations: ["players"],
-      })
-    ).map((room) => dbRoomToRoom(room));
+    return await this.roomRepository.find({
+      relations: ["players"],
+    });
   }
 
   // TODO APAGAR ANTES DE CHEGAR EM PRODUÇÃO
@@ -100,10 +96,7 @@ export class RoomService {
 
       const savedRoom = await this.roomRepository.save(room);
 
-      return BasicRoomMapper.map(
-        dbRoomToRoom(savedRoom),
-        savedRoom.players[0].id
-      );
+      return BasicRoomMapper.map(savedRoom, savedRoom.players[0].id);
     } catch (error) {
       throw new HttpException(
         "Error creating room",
@@ -208,14 +201,14 @@ export class RoomService {
       players: updatedPlayers,
     };
 
-    await this.roomRepository.save(roomToDbRoom(updatedRoom));
+    await this.roomRepository.save(updatedRoom);
   }
 
   async playCard(
     id: string,
     playerId: string,
-    cardCode: string,
-    usedTableCardsCodes: string[]
+    cardCode: CardCode,
+    usedTableCardsCodes: CardCode[]
   ) {
     const room = await this.findById(id, playerId);
 
@@ -232,7 +225,7 @@ export class RoomService {
 
     const player = room.players.find((p) => p.id === playerId);
 
-    const card = player.cards.find((c) => c.code === cardCode);
+    const card = player.cards.find((c) => c === cardCode);
 
     if (!card)
       throw new HttpException(
@@ -240,7 +233,7 @@ export class RoomService {
         HttpStatus.BAD_REQUEST
       );
 
-    const roomTableCardsCodes = room.table.map((c) => c.code);
+    const roomTableCardsCodes = room.table.map((c) => c);
     const tableCardsAreValid = usedTableCardsCodes.every((c) =>
       roomTableCardsCodes.includes(c)
     );
@@ -253,9 +246,7 @@ export class RoomService {
     if (usedTableCardsCodes.length === 0) {
       // Simply moves card from player to table
       const updatedTable = [...room.table, card];
-      const updatedPlayerCards = player.cards.filter(
-        (c) => c.code !== cardCode
-      );
+      const updatedPlayerCards = player.cards.filter((c) => c !== cardCode);
       const updatedPlayers = room.players.map((p) =>
         p.id === playerId ? { ...p, cards: updatedPlayerCards } : p
       );
@@ -267,8 +258,9 @@ export class RoomService {
 
       return this.handleTurnEnd(updatedRoom, playerId);
     } else if (willSumToFifteen(allCardsCodes)) {
+      // When the sum of the cards is 15, the player collects the cards
       const usedTableCards = room.table.filter((c) =>
-        usedTableCardsCodes.includes(c.code)
+        usedTableCardsCodes.includes(c)
       );
 
       const updatedPlayerCollectedCards = [
@@ -278,11 +270,9 @@ export class RoomService {
       ];
 
       const updatedTable = room.table.filter(
-        (c) => !usedTableCardsCodes.includes(c.code)
+        (c) => !usedTableCardsCodes.includes(c)
       );
-      const updatedPlayerCards = player.cards.filter(
-        (c) => c.code !== cardCode
-      );
+      const updatedPlayerCards = player.cards.filter((c) => c !== cardCode);
 
       const updatedPlayers = room.players.map((p) =>
         p.id === playerId
@@ -291,7 +281,7 @@ export class RoomService {
               cards: updatedPlayerCards,
               collectedCards: updatedPlayerCollectedCards,
               currentBrushCount:
-                p.currentBrushCount + updatedTable.length === 0 ? 1 : 0,
+                p.currentBrushCount + (updatedTable.length === 0 ? 1 : 0),
             }
           : p
       );
@@ -322,13 +312,12 @@ export class RoomService {
 
       const roomAfterTurnUpdate = this.updateTurn(roomAfterDraw);
 
-      const isRoundOver = this.checkIfRoundIsOver(roomAfterTurnUpdate);
+      finalRoom = {
+        ...roomAfterTurnUpdate,
+        gameState: this.nextGameState(roomAfterTurnUpdate),
+      };
 
-      finalRoom = isRoundOver
-        ? { ...roomAfterTurnUpdate, gameState: GameState.RoundOver }
-        : roomAfterTurnUpdate;
-
-      await manager.save(Room, roomToDbRoom(finalRoom));
+      await manager.save(Room, finalRoom);
     });
 
     return RequestedRoomMapper.map(finalRoom, playerId);
@@ -359,12 +348,20 @@ export class RoomService {
     return room;
   }
 
-  private checkIfRoundIsOver(room: RoomInterface) {
-    return (
+  private nextGameState(room: RoomInterface) {
+    const totalRemainingCards =
       room.cards.length +
-        room.players.reduce((acc, p) => acc + p.cards.length, 0) ===
-      0
-    );
+      room.players.reduce((acc, p) => acc + p.cards.length, 0);
+
+    if (totalRemainingCards === 0) {
+      const report = this.generateReport(room);
+
+      return report.some((r) => r.currentPoints >= 15)
+        ? GameState.GameOver
+        : GameState.RoundOver;
+    } else {
+      return room.gameState;
+    }
   }
 
   private updateTurn(room: RoomInterface) {
@@ -377,7 +374,10 @@ export class RoomService {
 
   async getReport(id: string, playerId: string) {
     const room = await this.findById(id, playerId);
+    return this.generateReport(room);
+  }
 
+  private generateReport(room: RoomInterface) {
     const independentReport = this.generateIndependentReport(room);
 
     const playerWithMostCards = playerWIthHigherProperty(
@@ -417,20 +417,21 @@ export class RoomService {
       };
     });
 
-    if (report.some((r) => r.currentPoints >= 15)) {
-      await this.roomRepository.manager.transaction(async (manager) => {
-        // TODO try to change the following two lines to be: const updatedRoom = await manager.findOne(Room, { where: { id } });
-        const roomRepository = manager.getRepository(Room);
-        const updatedRoom = await roomRepository.findOne({
-          where: { id },
-          relations: ["players"],
-        });
-        updatedRoom.gameState = GameState.GameOver;
-        await manager.save(Room, updatedRoom);
-      });
+    // TODO Testar se o jogo acaba quando alguém chega a 15 pontos
+    // if (report.some((r) => r.currentPoints >= 15)) {
+    //   await this.roomRepository.manager.transaction(async (manager) => {
+    //     // TODO try to change the following two lines to be: const updatedRoom = await manager.findOne(Room, { where: { id } });
+    //     const roomRepository = manager.getRepository(Room);
+    //     const updatedRoom = await roomRepository.findOne({
+    //       where: { id: room.id },
+    //       relations: ["players"],
+    //     });
+    //     updatedRoom.gameState = GameState.GameOver;
+    //     await manager.save(Room, updatedRoom);
+    //   });
 
-      // Send notification to all players
-    }
+    //   // Send notification to all players
+    // }
 
     return report;
   }
@@ -439,13 +440,14 @@ export class RoomService {
     return room.players.map((p) => {
       return {
         brushes: p.currentBrushCount,
-        hasBeauty: p.collectedCards.some((card) => card.code === "7D"),
+        hasBeauty: p.collectedCards.some((c) => c === "7D"),
         nickname: p.nickname,
         previousPoints: p.previousPoints,
-        sum: calculateNumberCardsSum(p.collectedCards.map((c) => c.code)),
+        sum: calculateNumberCardsSum(p.collectedCards.map((c) => c)),
         totalCards: p.collectedCards.length,
-        totalDiamonds: p.collectedCards.filter((c) => c.suit === "DIAMONDS")
-          .length,
+        totalDiamonds: p.collectedCards.filter(
+          (c) => getCardCodeSuit(c) === "DIAMONDS"
+        ).length,
       };
     });
   }
@@ -473,7 +475,7 @@ export class RoomService {
       ),
       room.players.length
     );
-    room.cards = shuffleCards(CARDS);
+    room.cards = shuffleCards(CARDS_CODES);
     room.table = [];
 
     const report = await this.getReport(id, playerId);
@@ -517,6 +519,6 @@ export class RoomService {
       players: updatedPlayers,
     };
 
-    await this.roomRepository.save(roomToDbRoom(updatedRoom));
+    await this.roomRepository.save(updatedRoom);
   }
 }

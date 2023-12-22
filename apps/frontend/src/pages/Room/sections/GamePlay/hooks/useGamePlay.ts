@@ -1,21 +1,19 @@
 import { useState } from "react";
 
-import { Card, GetRoomResponseDto } from "shared-types";
+import { CardCode, GetRoomResponseDto } from "shared-types";
 
 import { usePlayCards } from "./usePlayCards";
 
 export function useGamePlay(data: GetRoomResponseDto) {
-  const [selectedCard, setSelectedCard] = useState<Card>();
-  const [selectedTableCards, setSelectedTableCards] = useState<Card[]>([]);
+  const [selectedCard, setSelectedCard] = useState<CardCode>();
+  const [selectedTableCards, setSelectedTableCards] = useState<CardCode[]>([]);
   const { playCards } = usePlayCards();
 
-  const handleSelectTableCard = (card: Card) => {
+  const handleSelectTableCard = (card: CardCode) => {
     if (!isOnTurn()) return;
 
-    if (selectedTableCards.some((c) => c.code === card.code)) {
-      setSelectedTableCards(
-        selectedTableCards.filter((c) => c.code !== card.code)
-      );
+    if (selectedTableCards.includes(card)) {
+      setSelectedTableCards(selectedTableCards.filter((c) => c !== card));
     } else {
       setSelectedTableCards([...selectedTableCards, card]);
     }
@@ -24,12 +22,11 @@ export function useGamePlay(data: GetRoomResponseDto) {
   const isOnTurn = () => data.player.nickname === data.currentTurn;
 
   const handlePlayCards = () => {
-    const cardCode = selectedCard?.code;
-    const tableCardsCodes = selectedTableCards.map((card) => card.code);
+    const cardCode = selectedCard;
 
     if (!cardCode) return;
 
-    playCards(cardCode, tableCardsCodes);
+    playCards(cardCode, selectedTableCards);
 
     setSelectedCard(undefined);
     setSelectedTableCards([]);
@@ -47,8 +44,8 @@ export function useGamePlay(data: GetRoomResponseDto) {
     }
   };
 
-  const handleSelectOwnCard = (card: Card) => {
-    setSelectedCard(selectedCard?.code === card.code ? undefined : card);
+  const handleSelectOwnCard = (card: CardCode) => {
+    setSelectedCard(selectedCard === card ? undefined : card);
   };
 
   return {

@@ -6,7 +6,7 @@ import {
   Length,
 } from "class-validator";
 
-import type { Card } from "./card";
+import type { CardCode } from "./card";
 import type { Opponent, Player } from "./player";
 
 export class NewRoomDto {
@@ -27,7 +27,7 @@ export interface BasicRoomResponseDto {
 
 export class GetRoomResponseDto {
   id: string;
-  table: Card[];
+  table: CardCode[];
   player: Player;
   remainingCards: number;
   currentTurn: string;
@@ -57,7 +57,7 @@ export class PlayCardDto {
 
   @IsNotEmpty({ message: "Card code is required" })
   @IsString({ message: "Card code must be a string" })
-  cardCode: string;
+  cardCode: CardCode;
 
   @IsArray({ message: "Table card codes must be an array" })
   @ArrayUnique({ message: "Table card codes must be unique" })
@@ -65,7 +65,7 @@ export class PlayCardDto {
     each: true,
     message: "Each table card code in the array must be a string",
   })
-  tableCardCodes: string[];
+  tableCardCodes: CardCode[];
 }
 
 export type PlayCardDtoType = typeof PlayCardDto.prototype;

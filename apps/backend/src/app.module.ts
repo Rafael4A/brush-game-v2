@@ -4,7 +4,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
-import { Card, Player, Room } from "./room/entities";
+import { Player, Room } from "./room/entities";
 import { RoomModule } from "./room/room.module";
 
 @Module({
@@ -19,7 +19,7 @@ import { RoomModule } from "./room/room.module";
       password: "admin",
       database: "postgres",
       synchronize: true, // TODO Set to false in production
-      entities: [Room, Player, Card],
+      entities: [Room, Player],
     }),
     RoomModule,
   ],

@@ -1,11 +1,11 @@
-import type { Card } from "./card";
+import type { CardCode } from "./card";
 
 export interface Player {
   nickname: string;
   id: string;
-  cards: Card[];
+  cards: CardCode[];
   previousPoints: number;
-  collectedCards: Card[];
+  collectedCards: CardCode[];
   currentBrushCount: number;
   isOwner: boolean;
 }
