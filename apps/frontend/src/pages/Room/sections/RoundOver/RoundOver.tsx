@@ -31,7 +31,7 @@ export function RoundOver() {
   return (
     <FullReportContainer>
       <h1>
-        {roomData.gameState === GameState.GameOver ? "Game Over" : "Round Over"}{" "}
+        {roomData.gameState === GameState.GameOver ? "Game Over" : "Round Over"}
       </h1>
       <h2>Final scores:</h2>
 
