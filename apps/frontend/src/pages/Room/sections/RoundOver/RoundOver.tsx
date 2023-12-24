@@ -20,7 +20,7 @@ export function RoundOver() {
 
   if (!roomData) return null;
 
-  const playerGotPoints = (report: PlayerReport) =>
+  const playerHasPoints = (report: PlayerReport) =>
     report.hasBeauty ||
     report.hasMoreCards ||
     report.hasMoreDiamonds ||
@@ -43,7 +43,7 @@ export function RoundOver() {
               <span>Total cards: {r.totalCards}</span>
               <span>Total diamonds: {r.totalDiamonds}</span>
               <span>Total brushes: {r.brushes}</span>
-              {playerGotPoints(r) && (
+              {playerHasPoints(r) && (
                 <>
                   <span>Points:</span>
                   {r.hasBeauty && <span>Beauty: +1</span>}

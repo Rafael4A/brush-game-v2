@@ -6,7 +6,7 @@ interface SwitchProps {
   id: string;
 }
 
-export function Switch({ onToggle, isChecked, id }: SwitchProps) {
+export function Switch({ onToggle, isChecked, id }: Readonly<SwitchProps>) {
   return (
     <SwitchContainer className="switch">
       <StyledInput

@@ -1,4 +1,2 @@
-export * from "./TableCardsContainer";
-export * from "./Card";
-export * from "./PlayerCardsContainer";
-export * from "./MainGameContainer";
+export * from "./Card/Card";
+export * from "./GameHeader/GameHeader";

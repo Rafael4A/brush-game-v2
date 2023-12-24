@@ -1,6 +1,6 @@
 import { useTheme } from "styled-components";
 
-import { ShareIcon } from "../../../../assets/icons/share";
+import { ShareIcon } from "../../../../assets/icons";
 import {
   Button,
   Column,
@@ -9,9 +9,9 @@ import {
   UnstyledButton,
 } from "../../../../components";
 import { useRoom } from "../../../../context";
+import { shareRoom } from "../../../../utils/shareRoom";
 import { PlayerNicknameLabel } from "./components";
 import { useStartRoom } from "./hooks";
-import { shareRoom } from "./utils";
 
 const OPPONENT_INDEX_OFFSET = 2;
 

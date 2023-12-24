@@ -1,8 +1,8 @@
 import { GameState, GetRoomResponseDto } from "shared-types";
-import styled from "styled-components";
 
-import { HelpCircleOutlineIcon } from "../../../../../assets/icons/help-circle-outline";
-import { Column, HoverTooltip, Row } from "../../../../../components";
+import { HelpCircleOutlineIcon } from "../../../../../../assets/icons";
+import { HoverTooltip, Row } from "../../../../../../components";
+import { HeaderContainer, RoomTitleContainer } from "./styles";
 
 interface GameHeaderProps {
   data: GetRoomResponseDto;
@@ -39,12 +39,3 @@ export function GameHeader({ data }: Readonly<GameHeaderProps>) {
     </HeaderContainer>
   );
 }
-
-const HeaderContainer = styled(Row)({ marginTop: "16px" });
-
-const RoomTitleContainer = styled(Column)({
-  flexWrap: "wrap",
-  alignItems: "center",
-  justifyContent: "center",
-  gap: "6px",
-});

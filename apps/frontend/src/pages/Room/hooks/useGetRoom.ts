@@ -18,7 +18,10 @@ export function useGetRoom(roomId: string) {
 
   async function get(): Promise<GetRoomResponseDto> {
     try {
-      if (!roomId || !playerId) throw new Error("Room or player id is missing");
+      if (!roomId || !playerId) {
+        navigate(`/`);
+        throw new Error("Room or player id is missing");
+      }
 
       const response = await axiosInstance.get(`/room/${roomId}`, {
         params: { playerId },

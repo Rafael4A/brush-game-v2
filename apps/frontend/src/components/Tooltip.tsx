@@ -86,7 +86,7 @@ interface TooltipProps extends StyledTooltipProps {
   text: string;
 }
 
-export function Tooltip({ text, ...props }: TooltipProps) {
+export function Tooltip({ text, ...props }: Readonly<TooltipProps>) {
   return (
     <StyledTooltip {...props}>
       <span>{text}</span>

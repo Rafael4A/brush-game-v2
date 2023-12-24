@@ -2,6 +2,7 @@ import { useCallback, useEffect } from "react";
 
 import { useQueryClient } from "react-query";
 import { useLocation } from "react-router-dom";
+import { toast } from "react-toastify";
 import {
   CardCode,
   GetRoomResponseDto,
@@ -58,11 +59,10 @@ export function useWebsocket() {
       }
 
       socket.on(SocketEvents.PLAYER_DISCONNECTED, (msg) => {
-        console.log(JSON.stringify(msg));
+        toast.error(msg);
       });
 
       socket.on(SocketEvents.MOVE_BROADCAST, (move: MoveBroadcast) => {
-        console.log("move", move);
         addCardToTable(move.playedCard, setRoom);
         updateRoom();
       });

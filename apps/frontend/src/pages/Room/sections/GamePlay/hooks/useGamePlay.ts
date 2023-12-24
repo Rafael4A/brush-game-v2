@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import { CardCode, GetRoomResponseDto } from "shared-types";
 
+import { Rotation } from "../components/Card/types";
 import { usePlayCards } from "./usePlayCards";
 
 export function useGamePlay(data: GetRoomResponseDto) {
@@ -35,12 +36,12 @@ export function useGamePlay(data: GetRoomResponseDto) {
   const getRotation = (index: number) => {
     switch (data.player.cards.length) {
       case 3:
-        if (index === 1) return "middle";
-        return index === 0 ? "left" : "right";
+        if (index === 1) return Rotation.Middle;
+        return index === 0 ? Rotation.Left : Rotation.Right; //TODO COMENTAR LINHA E VER SE FUNCIONA
       case 2:
-        return index === 0 ? "left" : "right";
+        return index === 0 ? Rotation.Left : Rotation.Right;
       default:
-        return "middle";
+        return Rotation.Middle;
     }
   };
 

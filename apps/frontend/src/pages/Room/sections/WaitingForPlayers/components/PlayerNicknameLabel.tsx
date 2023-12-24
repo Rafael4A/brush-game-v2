@@ -1,6 +1,6 @@
 import { useTheme } from "styled-components";
 
-import { CrownIcon } from "../../../../../assets/icons/crown";
+import { CrownIcon } from "../../../../../assets/icons";
 import { Row } from "../../../../../components";
 
 interface PlayerNicknameLabelProps {

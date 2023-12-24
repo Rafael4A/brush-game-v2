@@ -3,6 +3,7 @@ import { useId, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useTheme } from "styled-components";
 
+import { CardsPlayingIcon } from "../../assets/icons";
 import {
   Button,
   Column,
@@ -12,7 +13,6 @@ import {
   Tooltip,
 } from "../../components";
 import { useQueryParams } from "../../hooks";
-import { CardsPlayingIcon } from "../../resources/icons";
 import { useEditNickname, useJoinRoom, useCreateRoom } from "./hooks";
 import { Title } from "./styles";
 

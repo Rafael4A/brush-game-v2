@@ -17,6 +17,8 @@
 - Criar migrations
 - Separar componentes no mesmo arquivo
 - Impedir mais de um jogo ao mesmo tempo
+- Criar toast handler
+- Arrumar enum socket events
 
 #### Frontend
 

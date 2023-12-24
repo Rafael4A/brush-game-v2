@@ -5,15 +5,14 @@ import { useTheme } from "styled-components";
 
 import { Button } from "../../../../components";
 import { useRoom } from "../../../../context";
+import { Card, GameHeader } from "./components";
+import { useGamePlay } from "./hooks";
 import {
-  Card,
+  BrushBanner,
   MainGameContainer,
   PlayerCardsContainer,
   TableCardsContainer,
-} from "./components";
-import { BrushBanner } from "./components/BrushBanner";
-import { GameHeader } from "./components/GameHeader";
-import { useGamePlay } from "./hooks";
+} from "./styles";
 
 export function GamePlay() {
   const { colors } = useTheme();
