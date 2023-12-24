@@ -3,7 +3,6 @@
 - Organize files and folder structure
 - Check if types and mappers are where they should be
 - Check if mappers should really be a class
-- Server side events or Sockets
 - Delete getAll deleteAll
 - Free up old and completed games id
 - Allow players to send reactions when playing (Like rocket league, but emojis)
@@ -12,10 +11,12 @@
 - Create docker compose that runs everything (including PostgreSQL) check if env is working
 - Add github actions for auto-deploy
 - Fix file naming (casing)
-- Move PostgreSQL connection parameters to env
 - Room creator may kick anyone
 - Leader Board
 - Tentar servir react buildado com back
+- Criar migrations
+- Separar componentes no mesmo arquivo
+- Impedir mais de um jogo ao mesmo tempo
 
 #### Frontend
 

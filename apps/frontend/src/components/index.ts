@@ -6,3 +6,4 @@ export * from "./MainContainer";
 export * from "./Switch";
 export * from "./Tooltip";
 export * from "./LineLoader";
+export * from "./Loader";

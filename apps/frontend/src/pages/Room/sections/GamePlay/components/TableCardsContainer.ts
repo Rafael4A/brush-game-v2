@@ -7,4 +7,5 @@ export const TableCardsContainer = styled(Row)({
   flexWrap: "wrap",
   position: "relative",
   minHeight: "10rem",
+  width: "100%",
 });

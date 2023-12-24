@@ -1,23 +1,26 @@
-import styled from "styled-components";
+import styled, { StyledObject } from "styled-components";
 
-const LoaderSpinner = styled.div(({ theme }) => ({
-  borderColor: theme.colors.light_gray,
-  borderStyle: "solid",
-  borderLeftColor: theme.colors.light_blue,
-  borderRadius: "50%",
-  margin: "0 auto",
-  transform: "rotate(45deg)",
-  animation: "rotation 0.75s infinite",
-
-  "@keyframes rotation": {
-    from: {
+const LoaderSpinner = styled.div(
+  ({ theme }) =>
+    ({
+      borderColor: theme.colors.light_gray,
+      borderStyle: "solid",
+      borderLeftColor: theme.colors.light_blue,
+      borderRadius: "50%",
+      margin: "0 auto",
       transform: "rotate(45deg)",
-    },
-    to: {
-      transform: "rotate(405deg)",
-    },
-  },
-}));
+      animation: "rotation 0.75s infinite",
+
+      "@keyframes rotation": {
+        from: {
+          transform: "rotate(45deg)",
+        },
+        to: {
+          transform: "rotate(405deg)",
+        },
+      },
+    }) as StyledObject
+);
 
 interface ILoaderContainerProps {
   absolute?: boolean;
@@ -45,7 +48,7 @@ export function Loader({
   absolute = false,
   containerProps,
   loaderProps,
-}: ILoaderProps) {
+}: Readonly<ILoaderProps>) {
   return (
     <LoaderContainer absolute={absolute} {...containerProps}>
       <LoaderSpinner
@@ -57,5 +60,28 @@ export function Loader({
         {...loaderProps}
       />
     </LoaderContainer>
+  );
+}
+
+const FullscreenContainer = styled.div({
+  width: "100%",
+  minHeight: "100vh",
+  height: "100%",
+  position: "fixed",
+  top: 0,
+  left: 0,
+  zIndex: 1,
+  backgroundColor: "rgba(0, 0, 0, 0.8)",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  color: "white",
+});
+
+export function FullscreenLoader() {
+  return (
+    <FullscreenContainer>
+      <Loader size={100} />
+    </FullscreenContainer>
   );
 }

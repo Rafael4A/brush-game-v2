@@ -14,8 +14,8 @@ export function useEditNickname() {
       toast.error("Nickname must be at least 2 characters long");
       return;
     }
-
-    setNickname(editableNickname);
+    setNickname(editableNickname.trim());
+    setEditableNickname((prev) => prev.trim());
     setIsEditingNick(false);
   };
 

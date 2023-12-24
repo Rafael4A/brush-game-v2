@@ -6,7 +6,6 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { join } from "path";
 
 import { AppController } from "./app.controller";
-import { AppGateway } from "./app.gateway";
 import { AppService } from "./app.service";
 import { GatewayModule } from "./gateway.module";
 import { Player, Room } from "./room/entities";

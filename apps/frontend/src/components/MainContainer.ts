@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Column } from "./FlexBoxes";
 
 export const MainContainer = styled(Column)(({ theme }) => ({
-  minHeight: "100vh",
+  minHeight: "100dvh",
   width: "100%",
   maxWidth: "100%",
   justifyContent: "flex-start",

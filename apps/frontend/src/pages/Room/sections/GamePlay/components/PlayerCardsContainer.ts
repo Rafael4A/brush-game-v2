@@ -7,4 +7,5 @@ export const PlayerCardsContainer = styled(Row)({
   width: "100%",
   justifyContent: "center",
   paddingBottom: "16px",
+  maxWidth: "100%",
 });

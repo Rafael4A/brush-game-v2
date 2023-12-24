@@ -1,3 +1,5 @@
+import { createRef, useRef } from "react";
+
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { useTheme } from "styled-components";
 
@@ -5,7 +7,7 @@ import { Button } from "../../../../components";
 import { useRoom } from "../../../../context";
 import {
   Card,
-  MainContainer,
+  MainGameContainer,
   PlayerCardsContainer,
   TableCardsContainer,
 } from "./components";
@@ -27,29 +29,43 @@ export function GamePlay() {
     selectedCard,
     selectedTableCards,
   } = useGamePlay(data);
+  const brushBannerRef = useRef<HTMLDivElement>(null);
 
   return (
     <>
       <GameHeader data={data} />
-      <MainContainer>
+      <MainGameContainer>
         <TableCardsContainer>
           <TransitionGroup component={null}>
-            {data?.table?.map((card) => (
-              <CSSTransition key={card} timeout={1500} classNames="card">
-                <Card
-                  cardCode={card}
-                  onSelect={handleSelectTableCard}
-                  isSelected={selectedTableCards.includes(card)}
-                />
-              </CSSTransition>
-            ))}
+            {data?.table?.map((card) => {
+              const ref = createRef<HTMLButtonElement>();
+              return (
+                <CSSTransition
+                  key={card}
+                  timeout={1500}
+                  classNames="card"
+                  nodeRef={ref}
+                >
+                  <Card
+                    ref={ref}
+                    cardCode={card}
+                    onSelect={handleSelectTableCard}
+                    isSelected={selectedTableCards.includes(card)}
+                  />
+                </CSSTransition>
+              );
+            })}
+
             {data?.table?.length <= 0 && (
               <CSSTransition
                 timeout={0}
                 classNames="brush-banner"
                 unmountOnExit
+                nodeRef={brushBannerRef}
               >
-                <BrushBanner>Brush! The table is empty!</BrushBanner>
+                <BrushBanner ref={brushBannerRef}>
+                  Brush! The table is empty!
+                </BrushBanner>
               </CSSTransition>
             )}
           </TransitionGroup>
@@ -76,7 +92,7 @@ export function GamePlay() {
             />
           ))}
         </PlayerCardsContainer>
-      </MainContainer>
+      </MainGameContainer>
     </>
   );
 }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { forwardRef, useState } from "react";
 
 import { CardCode } from "shared-types";
 import styled from "styled-components";
@@ -16,18 +16,22 @@ interface CardProps {
   hidden?: boolean;
 }
 
-export function Card({
-  cardCode,
-  onSelect,
-  isSelected = false,
-  isPersonalCard = false,
-  rotation = "middle",
-  hidden = false,
-  ...props
-}: Readonly<CardProps>) {
+export const Card = forwardRef<HTMLButtonElement, CardProps>(function Card(
+  {
+    cardCode,
+    onSelect,
+    isSelected = false,
+    isPersonalCard = false,
+    rotation = "middle",
+    hidden = false,
+    ...props
+  },
+  ref
+) {
   const [useDefault, setUseDefault] = useState(true);
   return (
     <CardContainer
+      ref={ref}
       onClick={() => onSelect(cardCode)}
       isSelected={isSelected}
       isPersonalCard={isPersonalCard}
@@ -50,7 +54,7 @@ export function Card({
       />
     </CardContainer>
   );
-}
+});
 
 interface CardContainerProps {
   isSelected: boolean;
@@ -61,9 +65,8 @@ interface CardContainerProps {
 const CardContainer = styled.button<CardContainerProps>(
   ({ theme, isSelected, isPersonalCard, rotation }) => ({
     background: "none",
-    //border: 'none',
     position: "relative",
-    maxWidth: "45vw",
+    maxWidth: "calc(50% - 4px) ",
     display: "flex",
     flexShrink: 1,
     transition: "transform 0.1s",

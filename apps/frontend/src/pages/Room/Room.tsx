@@ -4,7 +4,7 @@ import { Helmet } from "react-helmet-async";
 import { useParams } from "react-router-dom";
 import { GameState } from "shared-types";
 
-import { MainContainer } from "../../components";
+import { FullscreenLoader, MainContainer } from "../../components";
 import { delay } from "../../utils";
 import { useGetRoom, useWebsocket } from "./hooks";
 import { GamePlay, RoundOver, WaitingForPlayers } from "./sections";
@@ -33,7 +33,7 @@ export function RoomScreen() {
   }, [data?.gameState, delayedGameState]);
 
   const section = () => {
-    if (!data) return null;
+    if (!data) return <FullscreenLoader />;
 
     switch (delayedGameState) {
       case GameState.WaitingForPlayers:
