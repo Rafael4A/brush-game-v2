@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectEntityManager, InjectRepository } from "@nestjs/typeorm";
 
 import * as crypto from "crypto";
@@ -10,7 +10,6 @@ import {
   PlayerReport,
   SocketEvents,
 } from "shared-types";
-import { Server } from "socket.io";
 import { EntityManager, Repository } from "typeorm";
 
 import { AppGateway } from "../app.gateway";
@@ -22,6 +21,7 @@ import {
   RequestedRoomMapper,
   IndependentReport,
 } from "./room.interface";
+import { RoomValidations } from "./room.validations";
 import {
   calculateNumberCardsSum,
   drawCards,
@@ -38,7 +38,8 @@ export class RoomService {
     @InjectRepository(Room) private roomRepository: Repository<Room>,
     @InjectRepository(Player) private playerRepository: Repository<Player>,
     @InjectEntityManager() private entityManager: EntityManager,
-    private appGateway: AppGateway
+    private appGateway: AppGateway,
+    private validations: RoomValidations
   ) {}
 
   private generateId() {
@@ -119,18 +120,7 @@ export class RoomService {
   async join(id: string, nickname: string) {
     const room = await this.findById(id);
 
-    if (room.gameState !== GameState.WaitingForPlayers)
-      throw new HttpException(
-        "The game has already started",
-        HttpStatus.BAD_REQUEST
-      );
-
-    const player = room.players.some((p) => p.nickname === nickname);
-    if (player)
-      throw new HttpException(
-        "A player with the same name is already in the room",
-        HttpStatus.BAD_REQUEST
-      );
+    this.validations.joinValidations(room, nickname);
 
     const newPlayer = this.playerRepository.create({
       nickname,
@@ -138,7 +128,6 @@ export class RoomService {
     });
 
     await this.roomRepository.manager.transaction(async (manager) => {
-      // TODO try to change the following two lines to be: const updatedRoom = await manager.findOne(Room, { where: { id } });
       const roomRepository = manager.getRepository(Room);
       const updatedRoom = await roomRepository.findOne({
         where: { id },
@@ -156,24 +145,7 @@ export class RoomService {
     const room = await this.findById(id, playerId);
     const player = room.players.find((p) => p.id === playerId);
 
-    if (player.isOwner === false) {
-      throw new HttpException(
-        "Only the room owner can start the game",
-        HttpStatus.BAD_REQUEST
-      );
-    }
-
-    if (room.gameState !== GameState.WaitingForPlayers)
-      throw new HttpException(
-        "The game has already started",
-        HttpStatus.BAD_REQUEST
-      );
-
-    if (room.players.length <= 1)
-      throw new HttpException(
-        "The game needs at least 2 players",
-        HttpStatus.BAD_REQUEST
-      );
+    this.validations.startGameValidations(room, player);
 
     const startingPlayer =
       room.players[crypto.randomInt(0, room.players.length)].nickname;
@@ -220,40 +192,20 @@ export class RoomService {
   ) {
     const room = await this.findById(id, playerId);
 
-    if (room.gameState !== GameState.Playing)
-      throw new HttpException(
-        "The game is not in progress",
-        HttpStatus.BAD_REQUEST
-      );
-
-    if (
-      room.players.find((p) => p.nickname === room.currentTurn).id !== playerId
-    )
-      throw new HttpException("It's not your turn", HttpStatus.UNAUTHORIZED);
-
     const player = room.players.find((p) => p.id === playerId);
 
-    const card = player.cards.find((c) => c === cardCode);
-
-    if (!card)
-      throw new HttpException(
-        "You don't have this card",
-        HttpStatus.BAD_REQUEST
-      );
-
-    const roomTableCardsCodes = room.table.map((c) => c);
-    const tableCardsAreValid = usedTableCardsCodes.every((c) =>
-      roomTableCardsCodes.includes(c)
+    this.validations.playCardValidations(
+      room,
+      player,
+      cardCode,
+      usedTableCardsCodes
     );
-
-    if (!tableCardsAreValid)
-      throw new HttpException("Invalid table cards", HttpStatus.BAD_REQUEST);
 
     const allCardsCodes = [cardCode, ...usedTableCardsCodes];
 
     if (usedTableCardsCodes.length === 0) {
       // Simply moves card from player to table
-      const updatedTable = [card, ...room.table];
+      const updatedTable = [cardCode, ...room.table];
       const updatedPlayerCards = player.cards.filter((c) => c !== cardCode);
       const updatedPlayers = room.players.map((p) =>
         p.id === playerId ? { ...p, cards: updatedPlayerCards } : p
@@ -274,7 +226,7 @@ export class RoomService {
       const updatedPlayerCollectedCards = [
         ...player.collectedCards,
         ...usedTableCards,
-        card,
+        cardCode,
       ];
 
       const updatedTable = room.table.filter(
@@ -449,18 +401,7 @@ export class RoomService {
     const room = await this.findById(id, playerId);
     const player = room.players.find((p) => p.id === playerId);
 
-    if (player.isOwner === false) {
-      throw new HttpException(
-        "Only the room owner can start the game",
-        HttpStatus.BAD_REQUEST
-      );
-    }
-
-    if (room.gameState !== GameState.RoundOver)
-      throw new HttpException(
-        "Cannot start a new round now",
-        HttpStatus.BAD_REQUEST
-      );
+    this.validations.nextRoundValidations(room, player);
 
     const nextPlayerIndex = nextTurnIndex(
       room.players.findIndex(

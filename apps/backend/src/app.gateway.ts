@@ -18,24 +18,17 @@ export class AppGateway
   @WebSocketServer() server: Server;
   private logger: Logger = new Logger("AppGateway");
 
-  @SubscribeMessage("msgToServer")
-  handleMessage(client: Socket, text: string): void {
-    console.log("message received", text);
-    this.server.emit("msgToClient", text);
-  }
-
-  @SubscribeMessage("pong")
-  handlePong(client: Socket, text: string): void {
-    console.log("onpong", text);
+  @SubscribeMessage("reaction")
+  handlePong(_client: Socket, text: string): void {
+    console.log("onreaction", text);
     this.logger.log("Received pong from client");
   }
 
-  afterInit(server: Server) {
+  afterInit(_server: Server) {
     this.logger.log("Initialized!");
   }
 
   handleConnection(client: Socket) {
-    console.log("conectou", client.id, client.handshake.query);
     const { roomId, playerId } = client.handshake.query;
 
     // TODO check if room exists and if playerId is valid and get Nickname
