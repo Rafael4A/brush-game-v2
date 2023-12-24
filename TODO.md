@@ -15,6 +15,7 @@
 - Move PostgreSQL connection parameters to env
 - Room creator may kick anyone
 - Leader Board
+- Tentar servir react buildado com back
 
 #### Frontend
 

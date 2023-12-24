@@ -6,7 +6,7 @@ import { GameState } from "shared-types";
 
 import { MainContainer } from "../../components";
 import { delay } from "../../utils";
-import { useGetRoom } from "./hooks";
+import { useGetRoom, useWebsocket } from "./hooks";
 import { GamePlay, RoundOver, WaitingForPlayers } from "./sections";
 
 export function RoomScreen() {
@@ -16,8 +16,11 @@ export function RoomScreen() {
 
   const [delayedGameState, setDelayedGameState] = useState<GameState>();
 
+  useWebsocket();
+
   useEffect(() => {
-    if (data?.gameState !== delayedGameState)
+    if (!delayedGameState) setDelayedGameState(data?.gameState);
+    else if (data?.gameState !== delayedGameState)
       (async () => {
         if (
           data?.gameState === GameState.RoundOver ||

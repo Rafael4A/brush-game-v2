@@ -1,15 +1,19 @@
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
 import { InjectEntityManager, InjectRepository } from "@nestjs/typeorm";
 
 import * as crypto from "crypto";
 import {
   CardCode,
   GameState,
+  MoveBroadcast,
   Player as PlayerInterface,
   PlayerReport,
+  SocketEvents,
 } from "shared-types";
+import { Server } from "socket.io";
 import { EntityManager, Repository } from "typeorm";
 
+import { AppGateway } from "../app.gateway";
 import { CARDS_CODES } from "../resources";
 import { Player, Room } from "./entities";
 import {
@@ -33,7 +37,8 @@ export class RoomService {
   constructor(
     @InjectRepository(Room) private roomRepository: Repository<Room>,
     @InjectRepository(Player) private playerRepository: Repository<Player>,
-    @InjectEntityManager() private entityManager: EntityManager
+    @InjectEntityManager() private entityManager: EntityManager,
+    private appGateway: AppGateway
   ) {}
 
   private generateId() {
@@ -143,6 +148,7 @@ export class RoomService {
       await manager.save(Room, updatedRoom);
     });
 
+    this.appGateway.server.to(room.id).emit(SocketEvents.JOINED_ROOM);
     return BasicRoomMapper.map(room, newPlayer.id);
   }
 
@@ -202,6 +208,8 @@ export class RoomService {
     };
 
     await this.roomRepository.save(updatedRoom);
+
+    this.appGateway.server.to(room.id).emit(SocketEvents.GAME_STARTED);
   }
 
   async playCard(
@@ -245,7 +253,7 @@ export class RoomService {
 
     if (usedTableCardsCodes.length === 0) {
       // Simply moves card from player to table
-      const updatedTable = [...room.table, card];
+      const updatedTable = [card, ...room.table];
       const updatedPlayerCards = player.cards.filter((c) => c !== cardCode);
       const updatedPlayers = room.players.map((p) =>
         p.id === playerId ? { ...p, cards: updatedPlayerCards } : p
@@ -256,7 +264,7 @@ export class RoomService {
         players: updatedPlayers,
       };
 
-      return this.handleTurnEnd(updatedRoom, playerId);
+      return this.handleTurnEnd(updatedRoom, playerId, cardCode);
     } else if (willSumToFifteen(allCardsCodes)) {
       // When the sum of the cards is 15, the player collects the cards
       const usedTableCards = room.table.filter((c) =>
@@ -292,22 +300,21 @@ export class RoomService {
         players: updatedPlayers,
       };
 
-      return this.handleTurnEnd(updatedRoom, playerId);
+      return this.handleTurnEnd(updatedRoom, playerId, cardCode);
     } else {
       throw new HttpException("Cards sum is not 15", HttpStatus.BAD_REQUEST);
     }
   }
 
-  private async handleTurnEnd(room: RoomInterface, playerId: string) {
+  private async handleTurnEnd(
+    room: RoomInterface,
+    playerId: string,
+    playedCard: CardCode
+  ) {
     const player = room.players.find((p) => p.id === playerId);
 
     let finalRoom: RoomInterface;
     await this.roomRepository.manager.transaction(async (manager) => {
-      // const updatedRoom = await manager.findOne(Room, {
-      //   where: { id: room.id },
-      //   relations: ["players"],
-      // });
-
       const roomAfterDraw = this.drawCardsIfPossible(room, player);
 
       const roomAfterTurnUpdate = this.updateTurn(roomAfterDraw);
@@ -320,9 +327,11 @@ export class RoomService {
       await manager.save(Room, finalRoom);
     });
 
-    return RequestedRoomMapper.map(finalRoom, playerId);
+    this.appGateway.server.to(room.id).emit(SocketEvents.MOVE_BROADCAST, {
+      playedCard,
+    } satisfies MoveBroadcast);
 
-    // Enviar notificação para todos os jogadores (Socket IO ou SSE)
+    return RequestedRoomMapper.map(finalRoom, playerId);
   }
 
   private drawCardsIfPossible(room: RoomInterface, player: PlayerInterface) {
@@ -417,22 +426,6 @@ export class RoomService {
       };
     });
 
-    // TODO Testar se o jogo acaba quando alguém chega a 15 pontos
-    // if (report.some((r) => r.currentPoints >= 15)) {
-    //   await this.roomRepository.manager.transaction(async (manager) => {
-    //     // TODO try to change the following two lines to be: const updatedRoom = await manager.findOne(Room, { where: { id } });
-    //     const roomRepository = manager.getRepository(Room);
-    //     const updatedRoom = await roomRepository.findOne({
-    //       where: { id: room.id },
-    //       relations: ["players"],
-    //     });
-    //     updatedRoom.gameState = GameState.GameOver;
-    //     await manager.save(Room, updatedRoom);
-    //   });
-
-    //   // Send notification to all players
-    // }
-
     return report;
   }
 
@@ -520,5 +513,6 @@ export class RoomService {
     };
 
     await this.roomRepository.save(updatedRoom);
+    this.appGateway.server.to(room.id).emit(SocketEvents.GAME_STARTED);
   }
 }
