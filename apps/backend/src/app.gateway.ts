@@ -6,17 +6,22 @@ import {
   WebSocketServer,
   OnGatewayConnection,
   OnGatewayDisconnect,
+  WsException,
 } from "@nestjs/websockets";
 
 import { SocketEvents } from "shared-types";
 import { Socket, Server } from "socket.io";
 
+import { ValidationService } from "./sockets/validation.service";
+
 @WebSocketGateway({ path: "/api/socket.io" })
 export class AppGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
+  constructor(private validationService: ValidationService) {}
   @WebSocketServer() server: Server;
   private logger: Logger = new Logger("AppGateway");
+  private disconnectTimeouts = new Map<string, NodeJS.Timeout>();
 
   @SubscribeMessage("reaction")
   handlePong(_client: Socket, text: string): void {
@@ -28,25 +33,41 @@ export class AppGateway
     this.logger.log("Initialized!");
   }
 
-  handleConnection(client: Socket) {
+  async handleConnection(client: Socket) {
     const { roomId, playerId } = client.handshake.query;
 
-    // TODO check if room exists and if playerId is valid and get Nickname
+    if (typeof roomId !== "string" || typeof playerId !== "string")
+      throw new WsException("Invalid credentials.");
 
-    const nickname = "placeholder_nickname";
+    const room = await this.validationService.getRoomForPlayer(
+      roomId,
+      playerId
+    );
 
-    if (!roomId || !playerId) client.disconnect();
+    if (!room) throw new WsException("Invalid credentials.");
+
+    if (this.disconnectTimeouts.has(playerId)) {
+      clearTimeout(this.disconnectTimeouts.get(playerId));
+      this.disconnectTimeouts.delete(playerId);
+    }
+
+    const { nickname } = room.players.find((p) => p.id === playerId);
 
     client.join(roomId);
 
     client.on(SocketEvents.DISCONNECT, () => {
-      this.server
-        .to(roomId)
-        .emit(SocketEvents.PLAYER_DISCONNECTED, `${nickname} disconnected`);
+      this.disconnectTimeouts.set(
+        playerId,
+        setTimeout(() => {
+          this.server
+            .to(roomId)
+            .emit(SocketEvents.PLAYER_DISCONNECTED, `${nickname} disconnected`);
+          this.disconnectTimeouts.delete(playerId);
+        }, 3000)
+      );
     });
 
     this.logger.log(`Client connected: ${client.id}`);
-    client.emit("ping", "ping");
   }
 
   handleDisconnect(client: Socket) {

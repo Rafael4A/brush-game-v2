@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { useQueryClient } from "react-query";
 import { useLocation } from "react-router-dom";
@@ -22,6 +22,8 @@ export function useWebsocket() {
     () => queryClient.invalidateQueries("room"),
     [queryClient]
   );
+
+  const [hasLostConnection, setHasLostConnection] = useState(false);
 
   const socket = io(window.location.origin, {
     query: {
@@ -68,12 +70,30 @@ export function useWebsocket() {
       });
     })();
 
+    socket.on(SocketEvents.DISCONNECT, () => {
+      setHasLostConnection(true);
+      toast.error("Lost connection to server");
+    });
+
+    socket.on(SocketEvents.CONNECT, () => {
+      if (hasLostConnection) {
+        toast.success("Reconnected to server");
+      }
+    });
     return () => {
       for (const prop in Object.values(SocketEvents)) {
         socket?.off(prop);
       }
     };
-  }, [playerId, room?.id, location.pathname, socket, updateRoom, setRoom]);
+  }, [
+    playerId,
+    room?.id,
+    location.pathname,
+    socket,
+    updateRoom,
+    setRoom,
+    hasLostConnection,
+  ]);
 }
 
 function addCardToTable(
