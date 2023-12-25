@@ -137,7 +137,7 @@ export class RoomService {
       await manager.save(Room, updatedRoom);
     });
 
-    this.appGateway.server.to(room.id).emit(SocketEvents.JOINED_ROOM);
+    this.appGateway.server.to(room.id).emit(SocketEvents.JoinedRoom);
     return BasicRoomMapper.map(room, newPlayer.id);
   }
 
@@ -181,7 +181,7 @@ export class RoomService {
 
     await this.roomRepository.save(updatedRoom);
 
-    this.appGateway.server.to(room.id).emit(SocketEvents.GAME_STARTED);
+    this.appGateway.server.to(room.id).emit(SocketEvents.GameStarted);
   }
 
   async playCard(
@@ -279,7 +279,15 @@ export class RoomService {
       await manager.save(Room, finalRoom);
     });
 
-    this.appGateway.server.to(room.id).emit(SocketEvents.MOVE_BROADCAST, {
+    console.log(
+      "emited to room",
+      room.id,
+      " with played card",
+      playedCard,
+      "to event",
+      SocketEvents.MoveBroadcast
+    );
+    this.appGateway.server.to(room.id).emit(SocketEvents.MoveBroadcast, {
       playedCard,
     } satisfies MoveBroadcast);
 
@@ -454,6 +462,6 @@ export class RoomService {
     };
 
     await this.roomRepository.save(updatedRoom);
-    this.appGateway.server.to(room.id).emit(SocketEvents.GAME_STARTED);
+    this.appGateway.server.to(room.id).emit(SocketEvents.GameStarted);
   }
 }

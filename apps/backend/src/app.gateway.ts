@@ -80,13 +80,13 @@ export class AppGateway
 
     client.join(roomId);
 
-    client.on(SocketEvents.DISCONNECT, () => {
+    client.on(SocketEvents.Disconnect, () => {
       this.disconnectTimeouts.set(
         playerId,
         setTimeout(() => {
           this.server
             .to(roomId)
-            .emit(SocketEvents.PLAYER_DISCONNECTED, `${nickname} disconnected`);
+            .emit(SocketEvents.PlayerDisconnected, `${nickname} disconnected`);
           this.disconnectTimeouts.delete(playerId);
         }, 3000)
       );

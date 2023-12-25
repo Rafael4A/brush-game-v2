@@ -40,30 +40,30 @@ export function useWebsocket() {
     }
 
     for (const event of [
-      SocketEvents.GAME_STARTED,
-      SocketEvents.JOINED_ROOM,
-      SocketEvents.LEFT_ROOM,
+      SocketEvents.GameStarted,
+      SocketEvents.JoinedRoom,
+      SocketEvents.LeftRoom,
     ]) {
       socket.current?.on(event, () => {
         updateRoom();
       });
     }
 
-    socket.current?.on(SocketEvents.PLAYER_DISCONNECTED, (msg) => {
+    socket.current?.on(SocketEvents.PlayerDisconnected, (msg) => {
       toast.error(msg);
     });
 
-    socket.current?.on(SocketEvents.MOVE_BROADCAST, (move: MoveBroadcast) => {
+    socket.current?.on(SocketEvents.MoveBroadcast, (move: MoveBroadcast) => {
       addCardToTable(move.playedCard, setRoom);
       updateRoom();
     });
 
-    socket.current?.on(SocketEvents.DISCONNECT, () => {
+    socket.current?.on(SocketEvents.Disconnect, () => {
       toast.error("Lost connection to server");
       hasLostConnection.current = true;
     });
 
-    socket.current?.on(SocketEvents.CONNECT, () => {
+    socket.current?.on(SocketEvents.Connect, () => {
       if (hasLostConnection.current) {
         toast.success("Reconnected to server");
         hasLostConnection.current = false;
@@ -92,7 +92,7 @@ export function useWebsocket() {
 
   const sendReaction = useCallback(
     (reaction: string) => {
-      socket?.current?.emit(SocketEvents.ReceiveReaction, reaction);
+      socket?.current?.emit(SocketEvents.SendReaction, reaction);
     },
     [socket]
   );
