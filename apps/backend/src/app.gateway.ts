@@ -6,10 +6,9 @@ import {
   WebSocketServer,
   OnGatewayConnection,
   OnGatewayDisconnect,
-  WsException,
 } from "@nestjs/websockets";
 
-import { SocketEvents } from "shared-types";
+import { SocketEvents, SocketQuery } from "shared-types";
 import { Socket, Server } from "socket.io";
 
 import { ValidationService } from "./sockets/validation.service";
@@ -22,11 +21,30 @@ export class AppGateway
   @WebSocketServer() server: Server;
   private logger: Logger = new Logger("AppGateway");
   private disconnectTimeouts = new Map<string, NodeJS.Timeout>();
+  private reactionTimeouts = new Map<string, NodeJS.Timeout>();
 
-  @SubscribeMessage("reaction")
-  handlePong(_client: Socket, text: string): void {
-    console.log("onreaction", text);
-    this.logger.log("Received pong from client");
+  @SubscribeMessage(SocketEvents.SendReaction)
+  handleReaction(client: Socket, text: string): void {
+    const { roomId, playerId, nickname } = client.handshake
+      .query as unknown as SocketQuery;
+
+    if (!this.reactionTimeouts.has(playerId)) {
+      client
+        .to(roomId)
+        .emit(
+          SocketEvents.ReceiveReaction,
+          `${nickname}: ${text.substring(0, 1)}`
+        );
+
+      this.reactionTimeouts.set(
+        playerId,
+        setTimeout(() => {
+          this.reactionTimeouts.delete(playerId);
+        }, 3000)
+      );
+    }
+
+    this.logger.log("Received react from client");
   }
 
   afterInit(_server: Server) {
@@ -34,24 +52,31 @@ export class AppGateway
   }
 
   async handleConnection(client: Socket) {
-    const { roomId, playerId } = client.handshake.query;
+    const { roomId, playerId, nickname } = client.handshake.query;
 
-    if (typeof roomId !== "string" || typeof playerId !== "string")
-      throw new WsException("Invalid credentials.");
+    if (
+      typeof roomId !== "string" ||
+      typeof playerId !== "string" ||
+      typeof nickname !== "string"
+    )
+      return client.disconnect();
 
     const room = await this.validationService.getRoomForPlayer(
       roomId,
       playerId
     );
 
-    if (!room) throw new WsException("Invalid credentials.");
+    if (!room) return client.disconnect();
 
     if (this.disconnectTimeouts.has(playerId)) {
       clearTimeout(this.disconnectTimeouts.get(playerId));
       this.disconnectTimeouts.delete(playerId);
     }
 
-    const { nickname } = room.players.find((p) => p.id === playerId);
+    const { nickname: dbNickname } = room.players.find(
+      (p) => p.id === playerId
+    );
+    if (dbNickname !== nickname) return client.disconnect();
 
     client.join(roomId);
 

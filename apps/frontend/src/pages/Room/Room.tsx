@@ -16,7 +16,7 @@ export function RoomScreen() {
 
   const [delayedGameState, setDelayedGameState] = useState<GameState>();
 
-  useWebsocket();
+  const { sendReaction } = useWebsocket();
 
   useEffect(() => {
     if (!delayedGameState) setDelayedGameState(data?.gameState);
@@ -39,7 +39,7 @@ export function RoomScreen() {
       case GameState.WaitingForPlayers:
         return <WaitingForPlayers />;
       case GameState.Playing:
-        return <GamePlay />;
+        return <GamePlay sendReaction={sendReaction} />;
       case GameState.RoundOver:
       case GameState.GameOver:
         return <RoundOver />;
@@ -52,6 +52,7 @@ export function RoomScreen() {
         <title>Home - Brush Game</title>
         <meta name="description" content="Brush card game" />
       </Helmet>
+
       <MainContainer>{section()}</MainContainer>
     </>
   );

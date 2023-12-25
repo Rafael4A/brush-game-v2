@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { ServeStaticModule } from "@nestjs/serve-static";
-import { TypeOrmModule } from "@nestjs/typeorm";
+import { TypeOrmModule, TypeOrmModuleOptions } from "@nestjs/typeorm";
 
 import { join } from "path";
 
@@ -16,15 +16,15 @@ import { RoomModule } from "./room/room.module";
     ConfigModule.forRoot(),
 
     TypeOrmModule.forRoot({
-      type: "postgres",
-      host: "localhost",
-      port: 5432,
-      username: "postgres",
-      password: "admin",
-      database: "postgres",
+      type: process.env.DB_TYPE,
+      host: process.env.DB_HOST,
+      port: Number(process.env.DB_PORT),
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_DATABASE,
       synchronize: true, // TODO Set to false in production
       entities: [Room, Player],
-    }),
+    } as TypeOrmModuleOptions),
 
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, "..", "client"), // adjust this path to point to your React app's build directory

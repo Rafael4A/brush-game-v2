@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@mdi/js": "^7.3.67",
+    "@mdi/react": "^1.6.1",
     "@types/react-transition-group": "^4.4.9",
     "@types/styled-components": "^5.1.29",
     "axios": "^1.5.1",

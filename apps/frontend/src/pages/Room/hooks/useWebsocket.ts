@@ -1,7 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 import { useQueryClient } from "react-query";
-import { useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import {
   CardCode,
@@ -9,7 +8,7 @@ import {
   MoveBroadcast,
   SocketEvents,
 } from "shared-types";
-import io from "socket.io-client";
+import io, { Socket } from "socket.io-client";
 
 import { usePlayerId, useRoom } from "../../../context";
 
@@ -17,83 +16,88 @@ export function useWebsocket() {
   const [room, setRoom] = useRoom();
   const [playerId] = usePlayerId();
   const queryClient = useQueryClient();
-  const location = useLocation();
   const updateRoom = useCallback(
     () => queryClient.invalidateQueries("room"),
     [queryClient]
   );
 
-  const [hasLostConnection, setHasLostConnection] = useState(false);
+  const hasLostConnection = useRef(false);
 
-  const socket = io(window.location.origin, {
-    query: {
-      roomId: room?.id,
-      playerId,
-    },
-    path: "/api/socket.io",
-    autoConnect: false,
-  });
+  const socket = useRef<Socket>();
 
   useEffect(() => {
-    (() => {
-      if (!room?.id || !playerId) return;
-
-      socket.connect();
-    })();
-
-    return () => {
-      socket.disconnect();
-    };
-    // Disable as per instructed on the docs https://socket.io/pt-br/how-to/use-with-react#remarks-about-the-useeffect-hook
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [playerId, room?.id, location.pathname]);
-
-  useEffect(() => {
-    (async () => {
-      for (const event of [
-        SocketEvents.GAME_STARTED,
-        SocketEvents.JOINED_ROOM,
-        SocketEvents.LEFT_ROOM,
-      ]) {
-        socket.on(event, () => {
-          updateRoom();
-        });
-      }
-
-      socket.on(SocketEvents.PLAYER_DISCONNECTED, (msg) => {
-        toast.error(msg);
+    if (!room?.id || !room?.player?.nickname || !playerId) {
+      socket.current?.disconnect();
+    } else {
+      socket.current = io(window.location.origin, {
+        query: {
+          roomId: room?.id,
+          playerId,
+          nickname: room?.player.nickname,
+        },
+        path: "/api/socket.io",
       });
+    }
 
-      socket.on(SocketEvents.MOVE_BROADCAST, (move: MoveBroadcast) => {
-        addCardToTable(move.playedCard, setRoom);
+    for (const event of [
+      SocketEvents.GAME_STARTED,
+      SocketEvents.JOINED_ROOM,
+      SocketEvents.LEFT_ROOM,
+    ]) {
+      socket.current?.on(event, () => {
         updateRoom();
       });
-    })();
+    }
 
-    socket.on(SocketEvents.DISCONNECT, () => {
-      setHasLostConnection(true);
-      toast.error("Lost connection to server");
+    socket.current?.on(SocketEvents.PLAYER_DISCONNECTED, (msg) => {
+      toast.error(msg);
     });
 
-    socket.on(SocketEvents.CONNECT, () => {
-      if (hasLostConnection) {
+    socket.current?.on(SocketEvents.MOVE_BROADCAST, (move: MoveBroadcast) => {
+      addCardToTable(move.playedCard, setRoom);
+      updateRoom();
+    });
+
+    socket.current?.on(SocketEvents.DISCONNECT, () => {
+      toast.error("Lost connection to server");
+      hasLostConnection.current = true;
+    });
+
+    socket.current?.on(SocketEvents.CONNECT, () => {
+      if (hasLostConnection.current) {
         toast.success("Reconnected to server");
+        hasLostConnection.current = false;
       }
     });
+
+    socket.current?.on(SocketEvents.ReceiveReaction, (reaction: string) => {
+      toast.info(reaction);
+    });
+
     return () => {
       for (const prop in Object.values(SocketEvents)) {
-        socket?.off(prop);
+        socket.current?.off(prop);
       }
+      socket.current?.disconnect();
     };
   }, [
-    playerId,
     room?.id,
-    location.pathname,
+    playerId,
+    room?.player.nickname,
     socket,
     updateRoom,
     setRoom,
     hasLostConnection,
   ]);
+
+  const sendReaction = useCallback(
+    (reaction: string) => {
+      socket?.current?.emit(SocketEvents.ReceiveReaction, reaction);
+    },
+    [socket]
+  );
+
+  return { sendReaction };
 }
 
 function addCardToTable(

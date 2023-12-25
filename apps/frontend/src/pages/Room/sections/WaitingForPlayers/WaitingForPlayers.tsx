@@ -17,8 +17,8 @@ const OPPONENT_INDEX_OFFSET = 2;
 
 export function WaitingForPlayers() {
   const [roomData] = useRoom();
-  const data = roomData!;
-  const handleShare = () => shareRoom(data.id);
+  const room = roomData!;
+  const handleShare = () => shareRoom(room.id);
 
   const { colors } = useTheme();
 
@@ -28,7 +28,7 @@ export function WaitingForPlayers() {
     <Column gap="16px" style={{ paddingTop: "16px" }}>
       <UnstyledButton onClick={handleShare}>
         <Row gap="8px">
-          <h1>Room {data.id}</h1>
+          <h1>Room {room.id}</h1>
           <ShareIcon />
         </Row>
       </UnstyledButton>
@@ -36,12 +36,12 @@ export function WaitingForPlayers() {
       <Column>
         <h2>Players:</h2>
         <PlayerNicknameLabel
-          isOwner={data.player.isOwner}
-          nickname={data.player.nickname}
+          isOwner={room.player.isOwner}
+          nickname={room.player.nickname}
           position={1}
           isClient
         />
-        {data.opponents.map((opponent, index) => (
+        {room.opponents.map((opponent, index) => (
           <PlayerNicknameLabel
             key={opponent.nickname}
             isOwner={opponent.isOwner}
@@ -53,15 +53,15 @@ export function WaitingForPlayers() {
 
       <Column gap="16px">
         <h2>
-          {data.opponents.length >= 3
+          {room.opponents.length >= 3
             ? "Waiting for game to start..."
             : "Waiting for players to join..."}
         </h2>
-        {data.player.isOwner ? (
+        {room.player.isOwner ? (
           <Button
             color={colors.palette_blue}
             onClick={startRoom}
-            disabled={data.opponents?.length === 0}
+            disabled={room.opponents?.length === 0}
           >
             Start game
           </Button>

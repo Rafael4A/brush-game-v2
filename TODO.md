@@ -19,6 +19,8 @@
 - Impedir mais de um jogo ao mesmo tempo
 - Criar toast handler
 - Arrumar enum socket events
+- Tratar 404 (front)
+- Tratar 404 (back)
 
 #### Frontend
 

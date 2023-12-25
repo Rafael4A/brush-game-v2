@@ -14,11 +14,14 @@ import {
   TableCardsContainer,
 } from "./styles";
 
-export function GamePlay() {
+interface GamePlayProps {
+  sendReaction: (reaction: string) => void;
+}
+
+export function GamePlay({ sendReaction }: Readonly<GamePlayProps>) {
   const { colors } = useTheme();
   const [roomData] = useRoom();
-  const data = roomData!;
-
+  const room = roomData!;
   const {
     getRotation,
     handlePlayCards,
@@ -27,16 +30,16 @@ export function GamePlay() {
     isOnTurn,
     selectedCard,
     selectedTableCards,
-  } = useGamePlay(data);
+  } = useGamePlay();
   const brushBannerRef = useRef<HTMLDivElement>(null);
 
   return (
     <>
-      <GameHeader data={data} />
+      <GameHeader sendReaction={sendReaction} />
       <MainGameContainer>
         <TableCardsContainer>
           <TransitionGroup component={null}>
-            {data?.table?.map((card) => {
+            {room.table.map((card) => {
               const ref = createRef<HTMLButtonElement>();
               return (
                 <CSSTransition
@@ -55,7 +58,7 @@ export function GamePlay() {
               );
             })}
 
-            {data?.table?.length <= 0 && (
+            {room.table.length <= 0 && (
               <CSSTransition
                 timeout={0}
                 classNames="brush-banner"
@@ -80,7 +83,7 @@ export function GamePlay() {
         </Button>
 
         <PlayerCardsContainer>
-          {data.player.cards?.map((card, index) => (
+          {room.player.cards.map((card, index) => (
             <Card
               key={card}
               cardCode={card}
