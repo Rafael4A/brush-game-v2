@@ -9,7 +9,7 @@ import {
   UnstyledButton,
 } from "../../../../components";
 import { useRoom } from "../../../../context";
-import { shareRoom } from "../../../../utils/shareRoom";
+import { shareRoom } from "../../../../utils";
 import { PlayerNicknameLabel } from "./components";
 import { useStartRoom } from "./hooks";
 

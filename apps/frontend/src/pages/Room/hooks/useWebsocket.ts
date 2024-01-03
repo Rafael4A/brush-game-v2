@@ -6,11 +6,14 @@ import {
   CardCode,
   GetRoomResponseDto,
   MoveBroadcast,
+  Reaction,
+  ServerReactionEvent,
   SocketEvents,
 } from "shared-types";
 import io, { Socket } from "socket.io-client";
 
 import { usePlayerId, useRoom } from "../../../context";
+import { reactionMapper } from "../../../utils";
 
 export function useWebsocket() {
   const [room, setRoom] = useRoom();
@@ -70,15 +73,19 @@ export function useWebsocket() {
       }
     });
 
-    socket.current?.on(SocketEvents.ReceiveReaction, (reaction: string) => {
-      toast.info(reaction);
-    });
+    socket.current?.on(
+      SocketEvents.ReceiveReaction,
+      ({ nickname, reaction }: ServerReactionEvent) => {
+        toast.info(`${nickname}: ${reactionMapper(reaction)}`);
+      }
+    );
 
     return () => {
       for (const prop in Object.values(SocketEvents)) {
         socket.current?.off(prop);
       }
       socket.current?.disconnect();
+      hasLostConnection.current = false;
     };
   }, [
     room?.id,
@@ -91,7 +98,7 @@ export function useWebsocket() {
   ]);
 
   const sendReaction = useCallback(
-    (reaction: string) => {
+    (reaction: Reaction) => {
       socket?.current?.emit(SocketEvents.SendReaction, reaction);
     },
     [socket]

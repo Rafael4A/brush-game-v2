@@ -8,7 +8,12 @@ import {
   OnGatewayDisconnect,
 } from "@nestjs/websockets";
 
-import { SocketEvents, SocketQuery } from "shared-types";
+import {
+  Reaction,
+  ServerReactionEvent,
+  SocketEvents,
+  SocketQuery,
+} from "shared-types";
 import { Socket, Server } from "socket.io";
 
 import { ValidationService } from "./sockets/validation.service";
@@ -24,23 +29,21 @@ export class AppGateway
   private reactionTimeouts = new Map<string, NodeJS.Timeout>();
 
   @SubscribeMessage(SocketEvents.SendReaction)
-  handleReaction(client: Socket, text: string): void {
+  handleReaction(client: Socket, reaction: Reaction): void {
     const { roomId, playerId, nickname } = client.handshake
       .query as unknown as SocketQuery;
 
     if (!this.reactionTimeouts.has(playerId)) {
-      client
-        .to(roomId)
-        .emit(
-          SocketEvents.ReceiveReaction,
-          `${nickname}: ${text.substring(0, 1)}`
-        );
+      client.to(roomId).emit(SocketEvents.ReceiveReaction, {
+        nickname,
+        reaction,
+      } satisfies ServerReactionEvent);
 
       this.reactionTimeouts.set(
         playerId,
         setTimeout(() => {
           this.reactionTimeouts.delete(playerId);
-        }, 3000)
+        }, 1000)
       );
     }
 

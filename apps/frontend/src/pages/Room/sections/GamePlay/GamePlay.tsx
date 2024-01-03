@@ -13,9 +13,10 @@ import {
   PlayerCardsContainer,
   TableCardsContainer,
 } from "./styles";
+import { Reaction } from "shared-types";
 
 interface GamePlayProps {
-  sendReaction: (reaction: string) => void;
+  sendReaction: (reaction: Reaction) => void;
 }
 
 export function GamePlay({ sendReaction }: Readonly<GamePlayProps>) {
