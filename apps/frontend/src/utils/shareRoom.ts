@@ -8,7 +8,7 @@ export const shareRoom = async (id: string) => {
   };
 
   try {
-    if (navigator?.canShare(shareData)) {
+    if (navigator?.canShare?.(shareData)) {
       await navigator.share(shareData);
     } else {
       navigator.clipboard.writeText(`${window.location.origin}?roomId=${id}`);
