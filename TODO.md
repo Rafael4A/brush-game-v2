@@ -5,9 +5,7 @@
 - Check if mappers should really be a class
 - Delete getAll deleteAll
 - Free up old and completed games id
-- Allow players to send reactions when playing (Like rocket league, but emojis)
 - Fix eslint and tsconfig packages, decide wether the should be a package or just in the root
-- Delete the UI package
 - Create docker compose that runs everything (including PostgreSQL) check if env is working
 - Add github actions for auto-deploy
 - Fix file naming (casing)

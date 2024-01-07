@@ -75,7 +75,7 @@ export function GameHeader({ sendReaction }: Readonly<GameHeaderProps>) {
                 <ReactionButton
                   key={name}
                   onClick={() => handleReaction(name)}
-                  disabled={true || !areReactionsEnabled}
+                  disabled={!areReactionsEnabled}
                 >
                   {icon}
                 </ReactionButton>
