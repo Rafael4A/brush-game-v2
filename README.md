@@ -4,28 +4,32 @@
 - Please read the RULES.md and TODO.md files
 - This projects uses turbo monorepo and npm as a package manager
 - Backend uses NestJS
-- Fronted will use react, I'm still deciding between Vite and Next.js, but it'll probably use Vite
-- Shared eslint config and tsconfig need to be fixed and evaluated if it's worth being in packages instead of in the root
-- UI packaged will probably be deleted since there will be only one frontend project
-- Currently only the backend is being developed and the frontend is the default turbo sample
-- This projects uses mongodb please run it locally for development and set the connection string in a .env file on the backend root
+- Fronted uses React with Vite
+- This projects uses postgresql please run it locally for development and set the connection parameters in a .env file on the backend root
 - Run the development version using npm run dev
 
-### Mongodb compose for development
+### Example of postgresql and pgadmin compose for local development
 
 ```
-version: '3.3'
+version: '3.8'
 services:
-    mongo:
-        ports:
-            - '27017:27017'
-        container_name: mongo
-        restart: always
-        logging:
-            options:
-                max-size: 1g
-        environment:
-            - MONGO_INITDB_ROOT_USERNAME=YOURUSER
-            - MONGO_INITDB_ROOT_PASSWORD=YOURPASS
-        image: mongo
+  db:
+    container_name: pg_container
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: test_db
+    ports:
+      - "5432:5432"
+  pgadmin:
+    container_name: pgadmin4_container
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "5050:80"
 ```
