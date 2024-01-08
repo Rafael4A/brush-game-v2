@@ -20,6 +20,7 @@ export interface PlayerReport {
   totalDiamonds: number;
   hasHighestSum: boolean;
   sum: number;
+  sumCards: CardCode[];
   previousPoints: number;
   currentPoints: number;
 }

@@ -15,7 +15,6 @@
 - Tratar 404 (front)
 - Tratar 404 (back)
 - Disable auto complete for room id field
-- Mostrar cartas da soma no report
 
 #### Frontend
 

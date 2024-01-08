@@ -26,6 +26,7 @@ export interface IndependentReport {
   totalCards: number;
   totalDiamonds: number;
   sum: number;
+  sumCards: CardCode[];
 }
 
 export class BasicRoomMapper {

@@ -23,9 +23,10 @@ import {
 } from "./room.interface";
 import { RoomValidations } from "./room.validations";
 import {
-  calculateNumberCardsSum,
+  calculateCardsSum,
   drawCards,
   getCardCodeSuit,
+  getSummableCards,
   nextTurnIndex,
   playerWIthHigherProperty,
   shuffleCards,
@@ -383,12 +384,14 @@ export class RoomService {
 
   private generateIndependentReport(room: RoomInterface): IndependentReport[] {
     return room.players.map((p) => {
+      const summableCards = getSummableCards(p.collectedCards);
       return {
         brushes: p.currentBrushCount,
         hasBeauty: p.collectedCards.some((c) => c === "7D"),
         nickname: p.nickname,
         previousPoints: p.previousPoints,
-        sum: calculateNumberCardsSum(p.collectedCards.map((c) => c)),
+        sum: calculateCardsSum(summableCards),
+        sumCards: summableCards,
         totalCards: p.collectedCards.length,
         totalDiamonds: p.collectedCards.filter(
           (c) => getCardCodeSuit(c) === "DIAMONDS"

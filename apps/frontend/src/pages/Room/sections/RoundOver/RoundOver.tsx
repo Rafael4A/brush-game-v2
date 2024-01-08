@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { GameState, PlayerReport } from "shared-types";
 import { useTheme } from "styled-components";
 
-import { Button, Column, LineLoader } from "../../../../components";
+import { Button, Column, LineLoader, Row } from "../../../../components";
 import { useRoom } from "../../../../context";
 import { useGetReport, useNextRound } from "./hooks";
 import {
@@ -11,6 +11,7 @@ import {
   FullReportContainer,
   LoaderContainer,
 } from "./styles";
+import { CardMiniature } from "./components";
 
 export function RoundOver() {
   const [roomData] = useRoom();
@@ -43,6 +44,14 @@ export function RoundOver() {
               <span>Total cards: {r.totalCards}</span>
               <span>Total diamonds: {r.totalDiamonds}</span>
               <span>Total brushes: {r.brushes}</span>
+              <span>
+                Sum cards:{" "}
+                <Row gap="4px">
+                  {r.sumCards.map((card) => (
+                    <CardMiniature key={card} cardCode={card} />
+                  ))}
+                </Row>
+              </span>
               {playerHasPoints(r) && (
                 <>
                   <span>Points:</span>

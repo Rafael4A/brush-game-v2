@@ -1,4 +1,6 @@
-export function evaluateCardCode(cardCode: string): number {
+import { CardCode } from "shared-types";
+
+export function evaluateCardCode(cardCode: CardCode): number {
   const firstChar = cardCode.charAt(0);
   const firstCharAsNumber = parseInt(firstChar);
   if (Number.isNaN(firstCharAsNumber)) {
