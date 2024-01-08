@@ -12,7 +12,7 @@ import {
 } from "shared-types";
 import { EntityManager, Repository } from "typeorm";
 
-import { AppGateway } from "../app.gateway";
+import { AppGateway } from "../gateway/app.gateway";
 import { CARDS_CODES } from "../resources";
 import { Player, Room } from "./entities";
 import {
@@ -279,14 +279,6 @@ export class RoomService {
       await manager.save(Room, finalRoom);
     });
 
-    console.log(
-      "emited to room",
-      room.id,
-      " with played card",
-      playedCard,
-      "to event",
-      SocketEvents.MoveBroadcast
-    );
     this.appGateway.server.to(room.id).emit(SocketEvents.MoveBroadcast, {
       playedCard,
     } satisfies MoveBroadcast);

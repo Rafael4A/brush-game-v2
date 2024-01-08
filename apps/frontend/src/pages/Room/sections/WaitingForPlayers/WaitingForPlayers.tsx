@@ -1,6 +1,7 @@
+import { mdiShareVariant } from "@mdi/js";
+import Icon from "@mdi/react";
 import { useTheme } from "styled-components";
 
-import { ShareIcon } from "../../../../assets/icons";
 import {
   Button,
   Column,
@@ -29,7 +30,7 @@ export function WaitingForPlayers() {
       <UnstyledButton onClick={handleShare}>
         <Row gap="8px">
           <h1>Room {room.id}</h1>
-          <ShareIcon />
+          <Icon path={mdiShareVariant} size={1} />
         </Row>
       </UnstyledButton>
 

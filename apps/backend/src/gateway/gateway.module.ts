@@ -1,8 +1,8 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 
+import { Player, Room } from "../room/entities";
 import { AppGateway } from "./app.gateway";
-import { Player, Room } from "./room/entities";
 import { ValidationService } from "./sockets/validation.service";
 
 @Module({

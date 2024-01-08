@@ -1,4 +1,4 @@
-import { evaluateCardCode } from "./evaluate-card-code";
+import { evaluateCardCode } from "./evaluateCardCode";
 
 export function willSumToFifteen(cardsCodes: string[]) {
   const cardValues = cardsCodes.map((cardCode) => evaluateCardCode(cardCode));

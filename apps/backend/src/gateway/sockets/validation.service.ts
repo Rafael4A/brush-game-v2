@@ -3,7 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 
 import { Repository } from "typeorm";
 
-import { Room, Player } from "../room/entities";
+import { Room, Player } from "../../room/entities";
 
 @Injectable()
 export class ValidationService {

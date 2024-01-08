@@ -1,6 +1,7 @@
+import { mdiCrown } from "@mdi/js";
+import Icon from "@mdi/react";
 import { useTheme } from "styled-components";
 
-import { CrownIcon } from "../../../../../assets/icons";
 import { Row } from "../../../../../components";
 
 interface PlayerNicknameLabelProps {
@@ -30,7 +31,7 @@ export function PlayerNicknameLabel({
       >
         {nickname}
       </span>
-      {isOwner && <CrownIcon />}
+      {isOwner && <Icon path={mdiCrown} size={1} />}
     </Row>
   );
 }

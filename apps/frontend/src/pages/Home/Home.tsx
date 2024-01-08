@@ -3,7 +3,6 @@ import { useId, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useTheme } from "styled-components";
 
-import { CardsPlayingIcon } from "../../assets/icons";
 import {
   Button,
   Column,
@@ -15,6 +14,8 @@ import {
 import { useQueryParams } from "../../hooks";
 import { useEditNickname, useJoinRoom, useCreateRoom } from "./hooks";
 import { Title } from "./styles";
+import Icon from "@mdi/react";
+import { mdiCardsPlaying } from "@mdi/js";
 
 export function HomeScreen() {
   const componentId = useId();
@@ -50,7 +51,7 @@ export function HomeScreen() {
       <MainContainer>
         <Title>
           Brush
-          <CardsPlayingIcon width="48px" height="48px" />
+          <Icon path={mdiCardsPlaying} size={2} />
         </Title>
 
         <Column gap="8px" alignItems="flex-start" width="min(550px, 90vw)">

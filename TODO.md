@@ -1,14 +1,11 @@
 ## Todo
 
-- Organize files and folder structure
 - Check if types and mappers are where they should be
 - Check if mappers should really be a class
 - Delete getAll deleteAll
 - Free up old and completed games id
-- Fix eslint and tsconfig packages, decide wether the should be a package or just in the root
 - Create docker compose that runs everything (including PostgreSQL) check if env is working
 - Add github actions for auto-deploy
-- Fix file naming (casing)
 - Room creator may kick anyone
 - Leader Board
 - Tentar servir react buildado com back
@@ -16,9 +13,10 @@
 - Separar componentes no mesmo arquivo
 - Impedir mais de um jogo ao mesmo tempo
 - Criar toast handler
-- Arrumar enum socket events
 - Tratar 404 (front)
 - Tratar 404 (back)
+- Disable auto complete for room id field
+- Mostrar cartas da soma no report
 
 #### Frontend
 

@@ -1,8 +1,7 @@
-import { mdiEmoticonOutline } from "@mdi/js";
+import { mdiEmoticonOutline, mdiHelpCircleOutline } from "@mdi/js";
 import Icon from "@mdi/react";
 import { GameState, Reaction } from "shared-types";
 
-import { HelpCircleOutlineIcon } from "../../../../../../assets/icons";
 import {
   Column,
   HoverTooltip,
@@ -53,7 +52,7 @@ export function GameHeader({ sendReaction }: Readonly<GameHeaderProps>) {
         </RoomTitleContainer>
         <Row>
           <HoverTooltip>
-            <HelpCircleOutlineIcon />
+            <Icon path={mdiHelpCircleOutline} size={1} />
             <span>
               Card values:
               <br /> A = 1

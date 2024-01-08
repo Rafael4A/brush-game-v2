@@ -7,7 +7,7 @@ import { join } from "path";
 
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
-import { GatewayModule } from "./gateway.module";
+import { GatewayModule } from "./gateway/gateway.module";
 import { Player, Room } from "./room/entities";
 import { RoomModule } from "./room/room.module";
 
