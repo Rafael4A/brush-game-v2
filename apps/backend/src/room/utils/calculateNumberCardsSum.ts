@@ -1,4 +1,4 @@
-import { evaluateCardCode } from "./evaluate-card-code";
+import { evaluateCardCode } from "./evaluateCardCode";
 
 export function calculateNumberCardsSum(cards: string[]) {
   if (cards.length === 0) return 0;

@@ -10,7 +10,6 @@
 - Leader Board
 - Tentar servir react buildado com back
 - Criar migrations
-- Separar componentes no mesmo arquivo
 - Impedir mais de um jogo ao mesmo tempo
 - Criar toast handler
 - Tratar 404 (front)
