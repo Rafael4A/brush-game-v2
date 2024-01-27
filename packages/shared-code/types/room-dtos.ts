@@ -8,6 +8,7 @@ import {
 
 import type { CardCode } from "./card";
 import type { Opponent, Player } from "./player";
+import { GameState } from "./room";
 
 export class NewRoomDto {
   @IsNotEmpty({ message: "Player nickname is required" })
@@ -33,13 +34,6 @@ export class GetRoomResponseDto {
   currentTurn: string;
   gameState: GameState;
   opponents: Opponent[];
-}
-
-export enum GameState {
-  WaitingForPlayers = "WaitingForPlayers",
-  Playing = "Playing",
-  RoundOver = "RoundOver",
-  GameOver = "GameOver",
 }
 
 export class StartGameDto {

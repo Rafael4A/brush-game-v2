@@ -1,22 +1,11 @@
 import {
   BasicRoomResponseDto,
-  GameState,
   GetRoomResponseDto,
   Opponent,
   Player,
   CardCode,
+  Room,
 } from "shared-code";
-
-export interface Room {
-  id: string;
-  creationDate: Date;
-  cards: CardCode[];
-  table: CardCode[];
-  players: Player[];
-  firstPlayerIndex?: string;
-  currentTurn?: string;
-  gameState: GameState;
-}
 
 export interface IndependentReport {
   nickname: string;

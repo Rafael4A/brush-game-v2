@@ -9,6 +9,7 @@ import {
   Player as PlayerInterface,
   PlayerReport,
   SocketEvents,
+  Room as RoomInterface,
 } from "shared-code";
 import { EntityManager, Repository } from "typeorm";
 
@@ -16,7 +17,6 @@ import { AppGateway } from "../gateway/app.gateway";
 import { CARDS_CODES } from "../resources";
 import { Player, Room } from "./entities";
 import {
-  Room as RoomInterface,
   BasicRoomMapper,
   RequestedRoomMapper,
   IndependentReport,

@@ -15,6 +15,7 @@
 - Tratar 404 (front)
 - Tratar 404 (back)
 - Disable auto complete for room id field
+- Fix import order (set shared-code package to be the last of the dependencies group)
 
 #### Frontend
 
