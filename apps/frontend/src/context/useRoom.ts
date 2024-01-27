@@ -1,4 +1,4 @@
-import { GetRoomResponseDto } from "shared-types";
+import { GetRoomResponseDto } from "shared-code";
 
 import { createGlobalState } from "./base/createGlobalState";
 

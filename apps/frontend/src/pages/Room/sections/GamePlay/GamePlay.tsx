@@ -13,7 +13,7 @@ import {
   PlayerCardsContainer,
   TableCardsContainer,
 } from "./styles";
-import { Reaction } from "shared-types";
+import { Reaction } from "shared-code";
 
 interface GamePlayProps {
   sendReaction: (reaction: Reaction) => void;

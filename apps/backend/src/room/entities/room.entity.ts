@@ -1,4 +1,4 @@
-import { CardCode, GameState } from "shared-types";
+import { CardCode, GameState } from "shared-code";
 import { Entity, Column, PrimaryColumn, OneToMany } from "typeorm";
 
 import { CARDS_CODES } from "../../resources";

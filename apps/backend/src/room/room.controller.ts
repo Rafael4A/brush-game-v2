@@ -10,7 +10,7 @@ import {
   HttpStatus,
 } from "@nestjs/common";
 
-import { NewRoomDto, PlayCardDto, StartGameDto } from "shared-types";
+import { NewRoomDto, PlayCardDto, StartGameDto } from "shared-code";
 
 import { RoomService } from "./room.service";
 

@@ -1,7 +1,7 @@
 import { AxiosError, isAxiosError } from "axios";
 import { useQuery } from "react-query";
 import { toast } from "react-toastify";
-import { PlayerReport } from "shared-types";
+import { PlayerReport } from "shared-code";
 
 import { usePlayerId, useRoom } from "../../../../../context";
 import {

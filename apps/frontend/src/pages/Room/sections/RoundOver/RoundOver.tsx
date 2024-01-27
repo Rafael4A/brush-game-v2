@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { GameState, PlayerReport } from "shared-types";
+import { GameState, PlayerReport } from "shared-code";
 import { useTheme } from "styled-components";
 
 import { Button, Column, LineLoader, Row } from "../../../../components";

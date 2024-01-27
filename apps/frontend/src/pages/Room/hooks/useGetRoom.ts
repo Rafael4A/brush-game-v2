@@ -2,7 +2,7 @@ import { AxiosError, isAxiosError } from "axios";
 import { useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { GetRoomResponseDto } from "shared-types";
+import { GetRoomResponseDto } from "shared-code";
 
 import { usePlayerId, useRoom } from "../../../context";
 import {

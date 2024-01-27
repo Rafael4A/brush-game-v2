@@ -4,11 +4,11 @@ import { defineConfig } from "vite";
 // https://vitejs.dev/config/
 export default defineConfig({
   optimizeDeps: {
-    include: ["shared-types"],
+    include: ["shared-code"],
   },
   build: {
     commonjsOptions: {
-      include: [/shared-types/],
+      include: [/shared-code/],
     },
   },
   plugins: [react()],

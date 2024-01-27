@@ -5,7 +5,7 @@ import {
   Opponent,
   Player,
   CardCode,
-} from "shared-types";
+} from "shared-code";
 
 export interface Room {
   id: string;

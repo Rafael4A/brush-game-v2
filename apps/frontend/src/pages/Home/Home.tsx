@@ -69,6 +69,9 @@ export function HomeScreen() {
               <label htmlFor={nicknameId}>Nickname:</label>
               {isEditingNick ? (
                 <TextInput
+                  autoComplete="false"
+                  data-lpignore="true"
+                  data-form-type="other"
                   id={nicknameId}
                   placeholder="Your Nickname"
                   value={editableNickname}
@@ -89,6 +92,9 @@ export function HomeScreen() {
                 Room ID:
               </label>
               <TextInput
+                autoComplete="false"
+                data-lpignore="true"
+                data-form-type="other"
                 id={nicknameId}
                 placeholder="Ask your friend or create a room"
                 value={roomId}

@@ -1,7 +1,7 @@
 import { AxiosError, isAxiosError } from "axios";
 import { useMutation } from "react-query";
 import { toast } from "react-toastify";
-import { BasicRoomResponseDto, StartGameDto } from "shared-types";
+import { BasicRoomResponseDto, StartGameDto } from "shared-code";
 
 import { usePlayerId, useRoom } from "../../../../../context";
 import {

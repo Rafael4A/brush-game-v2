@@ -1,4 +1,4 @@
-import { CardCode } from "shared-types";
+import { CardCode } from "shared-code";
 
 export function shuffleCards(unshuffled: CardCode[]) {
   const cards = [...unshuffled];

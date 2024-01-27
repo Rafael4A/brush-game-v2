@@ -1,6 +1,6 @@
 import { forwardRef, useState } from "react";
 
-import { CardCode } from "shared-types";
+import { CardCode } from "shared-code";
 
 import { generateAltForCardCode } from "../../../../../../utils";
 import { CardContainer } from "./styles";

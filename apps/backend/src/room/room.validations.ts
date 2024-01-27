@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 
-import { CardCode, GameState } from "shared-types";
+import { CardCode, GameState } from "shared-code";
 
 import { Player, Room } from "./entities";
 @Injectable()

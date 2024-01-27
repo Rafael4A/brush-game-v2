@@ -1,6 +1,6 @@
 import { mdiEmoticonOutline, mdiHelpCircleOutline } from "@mdi/js";
 import Icon from "@mdi/react";
-import { GameState, Reaction } from "shared-types";
+import { GameState, Reaction } from "shared-code";
 
 import {
   Column,

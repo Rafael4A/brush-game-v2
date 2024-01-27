@@ -1,4 +1,4 @@
-import { CardCode } from "shared-types";
+import { CardCode } from "shared-code";
 
 export function getCardCodeSuit(cardCode: CardCode) {
   switch (cardCode[1]) {

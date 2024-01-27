@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 
 import { Helmet } from "react-helmet-async";
 import { useParams } from "react-router-dom";
-import { GameState } from "shared-types";
+import { GameState } from "shared-code";
 
 import { FullscreenLoader, MainContainer } from "../../components";
 import { delay } from "../../utils";

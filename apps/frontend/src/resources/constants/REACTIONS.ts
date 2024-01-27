@@ -1,4 +1,4 @@
-import { Reaction } from "shared-types";
+import { Reaction } from "shared-code";
 
 interface ReactionObject {
   name: Reaction;

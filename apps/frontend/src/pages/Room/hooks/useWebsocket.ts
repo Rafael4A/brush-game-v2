@@ -9,7 +9,7 @@ import {
   Reaction,
   ServerReactionEvent,
   SocketEvents,
-} from "shared-types";
+} from "shared-code";
 import io, { Socket } from "socket.io-client";
 
 import { usePlayerId, useRoom } from "../../../context";

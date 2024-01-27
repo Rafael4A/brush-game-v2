@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { CardCode } from "shared-types";
+import { CardCode } from "shared-code";
 
 import { useRoom } from "../../../../../context";
 import { Rotation } from "../components/Card/types";

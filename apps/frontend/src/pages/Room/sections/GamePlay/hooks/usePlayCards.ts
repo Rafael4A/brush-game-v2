@@ -1,7 +1,7 @@
 import { AxiosError, isAxiosError } from "axios";
 import { useMutation } from "react-query";
 import { toast } from "react-toastify";
-import { GetRoomResponseDto, PlayCardDtoType } from "shared-types";
+import { GetRoomResponseDto, PlayCardDtoType } from "shared-code";
 
 import { usePlayerId, useRoom } from "../../../../../context";
 import {

@@ -13,7 +13,7 @@ import {
   ServerReactionEvent,
   SocketEvents,
   SocketQuery,
-} from "shared-types";
+} from "shared-code";
 import { Socket, Server } from "socket.io";
 
 import { ValidationService } from "./sockets/validation.service";

@@ -9,7 +9,7 @@ import {
   Player as PlayerInterface,
   PlayerReport,
   SocketEvents,
-} from "shared-types";
+} from "shared-code";
 import { EntityManager, Repository } from "typeorm";
 
 import { AppGateway } from "../gateway/app.gateway";
