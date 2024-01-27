@@ -16,6 +16,7 @@
 - Tratar 404 (back)
 - Disable auto complete for room id field
 - Fix import order (set shared-code package to be the last of the dependencies group)
+- Review functions that avoid too much mutability (look for reduces)
 
 #### Frontend
 

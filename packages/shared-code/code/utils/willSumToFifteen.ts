@@ -1,4 +1,4 @@
-import { CardCode } from "shared-code";
+import { CardCode } from "../../types";
 
 import { evaluateCardCode } from "./evaluateCardCode";
 

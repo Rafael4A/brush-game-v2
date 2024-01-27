@@ -10,21 +10,6 @@ export interface Player {
   isOwner: boolean;
 }
 
-export interface PlayerReport {
-  nickname: string;
-  brushes: number;
-  hasBeauty: boolean;
-  hasMoreCards: boolean;
-  totalCards: number;
-  hasMoreDiamonds: boolean;
-  totalDiamonds: number;
-  hasHighestSum: boolean;
-  sum: number;
-  sumCards: CardCode[];
-  previousPoints: number;
-  currentPoints: number;
-}
-
 export interface Opponent {
   nickname: string;
   isOwner: boolean;

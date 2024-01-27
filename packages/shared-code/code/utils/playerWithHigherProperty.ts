@@ -1,6 +1,6 @@
-import { IndependentReport } from "../room.interface";
+import { IndependentReport } from "../../types";
 
-export function playerWIthHigherProperty(
+export function playerWithHigherProperty(
   independentReport: IndependentReport[],
   propertyName: keyof IndependentReport
 ): string | null {

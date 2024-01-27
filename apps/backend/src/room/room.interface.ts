@@ -3,20 +3,8 @@ import {
   GetRoomResponseDto,
   Opponent,
   Player,
-  CardCode,
   Room,
 } from "shared-code";
-
-export interface IndependentReport {
-  nickname: string;
-  previousPoints: number;
-  brushes: number;
-  hasBeauty: boolean;
-  totalCards: number;
-  totalDiamonds: number;
-  sum: number;
-  sumCards: CardCode[];
-}
 
 export class BasicRoomMapper {
   static map(room: Room, playerId: string): BasicRoomResponseDto {

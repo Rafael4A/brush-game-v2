@@ -10,29 +10,23 @@ import {
   PlayerReport,
   SocketEvents,
   Room as RoomInterface,
+  IndependentReport,
+  calculateCardsSum,
+  drawCards,
+  getCardCodeSuit,
+  getSummableCards,
+  nextTurnIndex,
+  playerWithHigherProperty,
+  shuffleCards,
+  willSumToFifteen,
 } from "shared-code";
 import { EntityManager, Repository } from "typeorm";
 
 import { AppGateway } from "../gateway/app.gateway";
 import { CARDS_CODES } from "../resources";
 import { Player, Room } from "./entities";
-import {
-  BasicRoomMapper,
-  RequestedRoomMapper,
-  IndependentReport,
-} from "./room.interface";
+import { BasicRoomMapper, RequestedRoomMapper } from "./room.interface";
 import { RoomValidations } from "./room.validations";
-import {
-  calculateCardsSum,
-  drawCards,
-  getCardCodeSuit,
-  getSummableCards,
-  nextTurnIndex,
-  playerWIthHigherProperty,
-  shuffleCards,
-  willSumToFifteen,
-} from "./utils";
-
 @Injectable()
 export class RoomService {
   constructor(
@@ -342,17 +336,17 @@ export class RoomService {
   private generateReport(room: RoomInterface) {
     const independentReport = this.generateIndependentReport(room);
 
-    const playerWithMostCards = playerWIthHigherProperty(
+    const playerWithMostCards = playerWithHigherProperty(
       independentReport,
       "totalCards"
     );
 
-    const playerWithMostDiamonds = playerWIthHigherProperty(
+    const playerWithMostDiamonds = playerWithHigherProperty(
       independentReport,
       "totalDiamonds"
     );
 
-    const playerWithHighestSum = playerWIthHigherProperty(
+    const playerWithHighestSum = playerWithHigherProperty(
       independentReport,
       "sum"
     );

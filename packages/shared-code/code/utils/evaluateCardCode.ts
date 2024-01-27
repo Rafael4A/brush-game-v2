@@ -1,4 +1,4 @@
-import { CardCode } from "shared-code";
+import { CardCode } from "../../types";
 
 export function evaluateCardCode(cardCode: CardCode): number {
   const firstChar = cardCode.charAt(0);
