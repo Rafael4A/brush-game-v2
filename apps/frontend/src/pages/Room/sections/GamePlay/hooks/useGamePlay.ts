@@ -39,7 +39,7 @@ export function useGamePlay() {
     switch (room?.player.cards.length) {
       case 3:
         if (index === 1) return Rotation.Middle;
-        return index === 0 ? Rotation.Left : Rotation.Right; //TODO COMENTAR LINHA E VER SE FUNCIONA
+      // Fall through
       case 2:
         return index === 0 ? Rotation.Left : Rotation.Right;
       default:

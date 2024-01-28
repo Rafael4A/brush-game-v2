@@ -37,7 +37,7 @@ export function LoadingButton({
     <Button
       {...props}
       disabled={isLoading || disabled}
-      style={{ ...props.style, fontSize: "1.5rem" }}
+      style={{ ...props.style, fontSize: largeFont ? "1.5rem" : "inherit" }}
     >
       {isLoading ? (
         <Loader size={largeFont ? "40px" : "30px"} />

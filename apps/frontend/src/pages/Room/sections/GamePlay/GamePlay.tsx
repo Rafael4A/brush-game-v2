@@ -81,7 +81,7 @@ export function GamePlay({ sendReaction }: Readonly<GamePlayProps>) {
           largeFont
           disabled={!selectedCard || !isOnTurn()}
           onClick={handlePlayCards}
-          style={{ width: "8rem" }}
+          style={{ minWidth: "9rem" }}
         >
           {selectedTableCards.length ? "Play Cards" : "Play Card"}
         </LoadingButton>
