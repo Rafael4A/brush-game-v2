@@ -19,6 +19,7 @@
 - Review functions that avoid too much mutability (look for reduces)
 - Review SonarLint issues
 - BUSCAR POR THIS.ALGO nas funções extraídas para SHARED CODE
+- Fix bug that when a user clicks on leave game they receive a message saying that the connection was lost
 
 #### Frontend
 

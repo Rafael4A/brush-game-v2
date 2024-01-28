@@ -37,14 +37,14 @@ const LoaderContainer = styled.div<ILoaderContainerProps>(
 );
 
 interface ILoaderProps {
-  size?: number;
+  size?: string;
   absolute?: boolean;
-  containerProps?: React.HTMLAttributes<HTMLDivElement>;
-  loaderProps?: React.HTMLAttributes<HTMLDivElement>;
+  containerProps?: React.HTMLProps<HTMLDivElement>;
+  loaderProps?: React.HTMLProps<HTMLDivElement>;
 }
 
 export function Loader({
-  size = 60,
+  size = "60px",
   absolute = false,
   containerProps,
   loaderProps,
@@ -53,9 +53,9 @@ export function Loader({
     <LoaderContainer absolute={absolute} {...containerProps}>
       <LoaderSpinner
         style={{
-          height: `${size}px`,
-          width: `${size}px`,
-          borderWidth: `${size / 10}px`,
+          height: size,
+          width: size,
+          // borderWidth: `calc(${size} / 10)`,
         }}
         {...loaderProps}
       />
@@ -81,7 +81,7 @@ const FullscreenContainer = styled.div({
 export function FullscreenLoader() {
   return (
     <FullscreenContainer>
-      <Loader size={100} />
+      <Loader size="100px" />
     </FullscreenContainer>
   );
 }

@@ -9,7 +9,7 @@ import { usePlayCards } from "./usePlayCards";
 export function useGamePlay() {
   const [selectedCard, setSelectedCard] = useState<CardCode>();
   const [selectedTableCards, setSelectedTableCards] = useState<CardCode[]>([]);
-  const { playCards } = usePlayCards();
+  const { playCards, isLoading } = usePlayCards();
   const [room] = useRoom();
 
   const handleSelectTableCard = (card: CardCode) => {
@@ -59,5 +59,6 @@ export function useGamePlay() {
     handleSelectOwnCard,
     selectedCard,
     selectedTableCards,
+    isLoading,
   };
 }

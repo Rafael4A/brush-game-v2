@@ -3,9 +3,9 @@ import Icon from "@mdi/react";
 import { useTheme } from "styled-components";
 
 import {
-  Button,
   Column,
   LineLoader,
+  LoadingButton,
   Row,
   UnstyledButton,
 } from "../../../../components";
@@ -13,6 +13,7 @@ import { useRoom } from "../../../../context";
 import { shareRoom } from "../../../../utils";
 import { PlayerNicknameLabel } from "./components";
 import { useStartRoom } from "./hooks";
+import { WaitingForPlayersContainer } from "./styles";
 
 const OPPONENT_INDEX_OFFSET = 2;
 
@@ -23,10 +24,10 @@ export function WaitingForPlayers() {
 
   const { colors } = useTheme();
 
-  const { startRoom } = useStartRoom();
+  const { startRoom, isLoading } = useStartRoom();
 
   return (
-    <Column gap="16px" style={{ paddingTop: "16px" }}>
+    <WaitingForPlayersContainer>
       <UnstyledButton onClick={handleShare}>
         <Row gap="8px">
           <h1>Room {room.id}</h1>
@@ -59,19 +60,20 @@ export function WaitingForPlayers() {
             : "Waiting for players to join..."}
         </h2>
         {room.player.isOwner ? (
-          <Button
+          <LoadingButton
+            isLoading={isLoading}
             color={colors.palette_blue}
             onClick={startRoom}
             disabled={room.opponents?.length === 0}
           >
             Start game
-          </Button>
+          </LoadingButton>
         ) : (
           <Row width="min(90vw, 400px)">
             <LineLoader />
           </Row>
         )}
       </Column>
-    </Column>
+    </WaitingForPlayersContainer>
   );
 }

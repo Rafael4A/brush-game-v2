@@ -6,6 +6,7 @@ import { useTheme } from "styled-components";
 import {
   Button,
   Column,
+  LoadingButton,
   MainContainer,
   Row,
   TextInput,
@@ -13,7 +14,7 @@ import {
 } from "../../components";
 import { useQueryParams } from "../../hooks";
 import { useEditNickname, useJoinRoom, useCreateRoom } from "./hooks";
-import { Title } from "./styles";
+import { NicknameLabel, RoomIdLabel, Title } from "./styles";
 import Icon from "@mdi/react";
 import { mdiCardsPlaying } from "@mdi/js";
 
@@ -34,8 +35,8 @@ export function HomeScreen() {
 
   const { roomId: routeRoomId } = useQueryParams();
   const [roomId, setRoomId] = useState(routeRoomId ?? "");
-  const { joinRoom } = useJoinRoom();
-  const { createRoom } = useCreateRoom();
+  const { joinRoom, isLoading: isLoadingJoin } = useJoinRoom();
+  const { createRoom, isLoading: isLoadingCreate } = useCreateRoom();
 
   const handleJoinRoom = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -78,7 +79,7 @@ export function HomeScreen() {
                   onChange={onNicknameChange}
                 />
               ) : (
-                <span style={{ padding: "4px 0" }}>{nickname}</span>
+                <NicknameLabel>{nickname}</NicknameLabel>
               )}
             </Row>
             <Button fullWidth color={theme.colors.palette_violet} type="submit">
@@ -88,9 +89,7 @@ export function HomeScreen() {
 
           <Column gap="8px" fullWidth as="form" onSubmit={handleJoinRoom}>
             <Row gap="8px" fullWidth>
-              <label style={{ whiteSpace: "nowrap" }} htmlFor={nicknameId}>
-                Room ID:
-              </label>
+              <RoomIdLabel htmlFor={nicknameId}>Room ID:</RoomIdLabel>
               <TextInput
                 autoComplete="false"
                 data-lpignore="true"
@@ -101,17 +100,19 @@ export function HomeScreen() {
                 onChange={({ target }) => setRoomId(target.value)}
               />
             </Row>
-            <Button
+            <LoadingButton
+              isLoading={isLoadingJoin}
               fullWidth
               color={theme.colors.palette_light_cyan}
               disabled={!hasValidNickname || !roomId}
               type="submit"
             >
               Join room
-            </Button>
+            </LoadingButton>
           </Column>
 
-          <Button
+          <LoadingButton
+            isLoading={isLoadingCreate}
             fullWidth
             color={theme.colors.palette_blue}
             style={{ marginTop: "12px" }}
@@ -119,7 +120,7 @@ export function HomeScreen() {
             onClick={() => createRoom(nickname)}
           >
             Create new room
-          </Button>
+          </LoadingButton>
         </Column>
       </MainContainer>
     </>

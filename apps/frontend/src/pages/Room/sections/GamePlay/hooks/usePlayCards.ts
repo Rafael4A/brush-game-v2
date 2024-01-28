@@ -1,7 +1,7 @@
 import { AxiosError, isAxiosError } from "axios";
 import { useMutation } from "react-query";
 import { toast } from "react-toastify";
-import { GetRoomResponseDto, PlayCardDtoType } from "shared-code";
+import { CardCode, GetRoomResponseDto, PlayCardDtoType } from "shared-code";
 
 import { usePlayerId, useRoom } from "../../../../../context";
 import {
@@ -32,7 +32,7 @@ export function usePlayCards() {
 
   const { mutateAsync, ...rest } = useMutation("playCards", post);
 
-  const playCards = async (cardCode: string, tableCardCodes: string[]) => {
+  const playCards = async (cardCode: CardCode, tableCardCodes: CardCode[]) => {
     try {
       if (!room) throw new Error("Room data not found");
       const updatedRoom = await mutateAsync({

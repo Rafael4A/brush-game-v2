@@ -3,7 +3,6 @@ import Icon from "@mdi/react";
 import { GameState, Reaction } from "shared-code";
 
 import {
-  Column,
   HoverTooltip,
   Row,
   UnstyledButton,
@@ -13,6 +12,7 @@ import {
   HeaderContainer,
   ReactionButton,
   ReactionsContainer,
+  ReactionsMenuWrapper,
   RoomTitleContainer,
 } from "./styles";
 import { useState } from "react";
@@ -62,7 +62,7 @@ export function GameHeader({ sendReaction }: Readonly<GameHeaderProps>) {
             </span>
           </HoverTooltip>
         </Row>
-        <Column style={{ position: "relative" }}>
+        <ReactionsMenuWrapper>
           <UnstyledButton
             onClick={() => setShouldShowReactionsMenu((prev) => !prev)}
           >
@@ -81,7 +81,7 @@ export function GameHeader({ sendReaction }: Readonly<GameHeaderProps>) {
               ))}
             </ReactionsContainer>
           )}
-        </Column>
+        </ReactionsMenuWrapper>
       </Row>
     </HeaderContainer>
   );

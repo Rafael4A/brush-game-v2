@@ -3,7 +3,7 @@ import { createRef, useRef } from "react";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { useTheme } from "styled-components";
 
-import { Button } from "../../../../components";
+import { LoadingButton } from "../../../../components";
 import { useRoom } from "../../../../context";
 import { Card, GameHeader } from "./components";
 import { useGamePlay } from "./hooks";
@@ -31,6 +31,7 @@ export function GamePlay({ sendReaction }: Readonly<GamePlayProps>) {
     isOnTurn,
     selectedCard,
     selectedTableCards,
+    isLoading,
   } = useGamePlay();
   const brushBannerRef = useRef<HTMLDivElement>(null);
 
@@ -74,14 +75,16 @@ export function GamePlay({ sendReaction }: Readonly<GamePlayProps>) {
           </TransitionGroup>
         </TableCardsContainer>
 
-        <Button
+        <LoadingButton
+          isLoading={isLoading}
           color={colors.blue}
-          style={{ fontSize: "1.5rem" }}
+          largeFont
           disabled={!selectedCard || !isOnTurn()}
           onClick={handlePlayCards}
+          style={{ width: "8rem" }}
         >
           {selectedTableCards.length ? "Play Cards" : "Play Card"}
-        </Button>
+        </LoadingButton>
 
         <PlayerCardsContainer>
           {room.player.cards.map((card, index) => (

@@ -8,3 +8,7 @@ export const Title = styled.h1({
   alignItems: "center",
   gap: "10px",
 });
+
+export const NicknameLabel = styled.span({ padding: "4px 0" });
+
+export const RoomIdLabel = styled.label({ whiteSpace: "nowrap" });

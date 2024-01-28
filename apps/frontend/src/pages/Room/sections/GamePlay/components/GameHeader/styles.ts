@@ -14,6 +14,8 @@ export const RoomTitleContainer = styled(Column)({
   gap: "6px",
 });
 
+export const ReactionsMenuWrapper = styled(Column)({ position: "relative" });
+
 export const ReactionsContainer = styled(Column)({
   position: "absolute",
   top: "27px",
