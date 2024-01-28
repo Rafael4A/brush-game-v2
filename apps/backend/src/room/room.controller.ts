@@ -47,13 +47,13 @@ export class RoomController {
   @Post("/room/:id/start-game")
   @HttpCode(HttpStatus.OK)
   async start(@Param("id") id: string, @Body() { playerId }: StartGameDto) {
-    return this.roomService.startGame(id, playerId);
+    return this.roomService.startRoomGame(id, playerId);
   }
 
   @Post("/room/:id/next-round")
   @HttpCode(HttpStatus.OK)
   async nextRound(@Param("id") id: string, @Body() { playerId }: StartGameDto) {
-    return this.roomService.nextRound(id, playerId);
+    return this.roomService.nextRoomRound(id, playerId);
   }
 
   @Post("/room/:id/play-card")
@@ -62,7 +62,12 @@ export class RoomController {
     @Param("id") id: string,
     @Body() { playerId, cardCode, tableCardCodes }: PlayCardDto
   ) {
-    return this.roomService.playCard(id, playerId, cardCode, tableCardCodes);
+    return this.roomService.playRoomCard(
+      id,
+      playerId,
+      cardCode,
+      tableCardCodes
+    );
   }
 
   @Get("/room/:id/report")

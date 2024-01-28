@@ -1,7 +1,11 @@
-import { CardCode, GameState, Room as RoomInterface } from "shared-code";
+import {
+  CARDS_CODES,
+  CardCode,
+  GameState,
+  Room as RoomInterface,
+} from "shared-code";
 import { Entity, Column, PrimaryColumn, OneToMany } from "typeorm";
 
-import { CARDS_CODES } from "../../resources";
 import { Player } from "./player.entity";
 
 @Entity()

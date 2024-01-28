@@ -1,4 +1,4 @@
-import { CardCode } from "shared-code";
+import { CardCode } from "../types";
 
 export const CARDS_CODES: CardCode[] = [
   "AS",
