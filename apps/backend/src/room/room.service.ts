@@ -12,12 +12,13 @@ import {
   generateReport,
   nextRound,
   CARDS_CODES,
+  RequestedRoomMapper,
 } from "shared-code";
 import { EntityManager, Repository } from "typeorm";
 
 import { AppGateway } from "../gateway/app.gateway";
 import { Player, Room } from "./entities";
-import { BasicRoomMapper, RequestedRoomMapper } from "./room.interface";
+import { BasicRoomMapper } from "./room.mapper";
 import { RoomValidations } from "./room.validations";
 @Injectable()
 export class RoomService {

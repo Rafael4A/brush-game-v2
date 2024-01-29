@@ -13,7 +13,7 @@ import {
 import io, { Socket } from "socket.io-client";
 
 import { usePlayerId, useRoom } from "../../../context";
-import { reactionMapper } from "../../../utils";
+import { isRoomLocal, reactionMapper } from "../../../utils";
 
 export function useWebsocket() {
   const [room, setRoom] = useRoom();
@@ -31,6 +31,8 @@ export function useWebsocket() {
   useEffect(() => {
     if (!room?.id || !room?.player?.nickname || !playerId) {
       socket.current?.disconnect();
+    } else if (isRoomLocal(room)) {
+      return;
     } else {
       socket.current = io(window.location.origin, {
         query: {

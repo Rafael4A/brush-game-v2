@@ -32,7 +32,7 @@ export function startGame(room: Room, playerId: string) {
     ...room,
     gameState: GameState.Playing,
     currentTurn: startingPlayer,
-    firstPlayerIndex: startingPlayer,
+    firstPlayerNick: startingPlayer,
     table: roomTableCards,
     cards: remainingCards,
     players: updatedPlayers,

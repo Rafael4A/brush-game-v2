@@ -17,6 +17,7 @@ import {
 } from "./styles";
 import { useState } from "react";
 import { REACTIONS } from "../../../../../../resources/constants";
+import { isRoomLocal } from "../../../../../../utils";
 interface GameHeaderProps {
   sendReaction: (reaction: Reaction) => void;
 }
@@ -62,26 +63,28 @@ export function GameHeader({ sendReaction }: Readonly<GameHeaderProps>) {
             </span>
           </HoverTooltip>
         </Row>
-        <ReactionsMenuWrapper>
-          <UnstyledButton
-            onClick={() => setShouldShowReactionsMenu((prev) => !prev)}
-          >
-            <Icon path={mdiEmoticonOutline} size={1} />
-          </UnstyledButton>
-          {shouldShowReactionsMenu && (
-            <ReactionsContainer>
-              {REACTIONS.map(({ icon, name }) => (
-                <ReactionButton
-                  key={name}
-                  onClick={() => handleReaction(name)}
-                  disabled={!areReactionsEnabled}
-                >
-                  {icon}
-                </ReactionButton>
-              ))}
-            </ReactionsContainer>
-          )}
-        </ReactionsMenuWrapper>
+        {!isRoomLocal(room) && (
+          <ReactionsMenuWrapper>
+            <UnstyledButton
+              onClick={() => setShouldShowReactionsMenu((prev) => !prev)}
+            >
+              <Icon path={mdiEmoticonOutline} size={1} />
+            </UnstyledButton>
+            {shouldShowReactionsMenu && (
+              <ReactionsContainer>
+                {REACTIONS.map(({ icon, name }) => (
+                  <ReactionButton
+                    key={name}
+                    onClick={() => handleReaction(name)}
+                    disabled={!areReactionsEnabled}
+                  >
+                    {icon}
+                  </ReactionButton>
+                ))}
+              </ReactionsContainer>
+            )}
+          </ReactionsMenuWrapper>
+        )}
       </Row>
     </HeaderContainer>
   );

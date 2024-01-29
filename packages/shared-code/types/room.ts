@@ -14,7 +14,7 @@ export interface Room {
   cards: CardCode[];
   table: CardCode[];
   players: Player[];
-  firstPlayerIndex?: string;
+  firstPlayerNick?: string;
   currentTurn?: string;
   gameState: GameState;
 }

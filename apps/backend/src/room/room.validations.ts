@@ -87,3 +87,5 @@ export class RoomValidations {
       );
   }
 }
+
+//TODO VERIFICAR QUAIS PODEM SAIR DAQUI

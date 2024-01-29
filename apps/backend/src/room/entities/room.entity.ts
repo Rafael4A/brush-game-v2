@@ -29,7 +29,7 @@ export class Room implements RoomInterface {
   players: Player[];
 
   @Column({ default: "" })
-  firstPlayerIndex: string;
+  firstPlayerNick: string;
 
   @Column({ default: "" })
   currentTurn: string;

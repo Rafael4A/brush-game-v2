@@ -11,7 +11,7 @@ export function nextRound(room: Room, playerId: string): Room {
 
   const nextPlayerIndex = nextTurnIndex(
     newRoom.players.findIndex(
-      (player) => player.nickname === newRoom.firstPlayerIndex
+      (player) => player.nickname === newRoom.firstPlayerNick
     ),
     newRoom.players.length
   );
@@ -53,7 +53,7 @@ export function nextRound(room: Room, playerId: string): Room {
     ...newRoom,
     gameState: GameState.Playing,
     currentTurn: newRoom.players[nextPlayerIndex].nickname,
-    firstPlayerIndex: newRoom.players[nextPlayerIndex].nickname,
+    firstPlayerNick: newRoom.players[nextPlayerIndex].nickname,
     table: roomTableCards,
     cards: remainingCards,
     players: updatedPlayers,

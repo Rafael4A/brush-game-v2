@@ -9,10 +9,14 @@ import { delay } from "../../utils";
 import { useGetRoom, useWebsocket } from "./hooks";
 import { GamePlay, RoundOver, WaitingForPlayers } from "./sections";
 
-export function RoomScreen() {
+interface RoomScreenProps {
+  isLocalGame?: boolean;
+}
+
+export function RoomScreen({ isLocalGame }: Readonly<RoomScreenProps>) {
   const { id } = useParams();
 
-  const { data } = useGetRoom(id ?? "");
+  const { data } = useGetRoom(id, isLocalGame);
 
   const [delayedGameState, setDelayedGameState] = useState<GameState>();
 

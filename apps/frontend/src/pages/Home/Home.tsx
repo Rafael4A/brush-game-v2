@@ -17,6 +17,22 @@ import { useEditNickname, useJoinRoom, useCreateRoom } from "./hooks";
 import { NicknameLabel, RoomIdLabel, Title } from "./styles";
 import Icon from "@mdi/react";
 import { mdiCardsPlaying } from "@mdi/js";
+import { useLocalRoom, usePlayerId, useRoom } from "../../context";
+import {
+  CARDS_CODES,
+  GameState,
+  Room,
+  randomInt,
+  shuffleCards,
+  startGame,
+} from "shared-code";
+import {
+  LOCAL_COMPUTER_ID,
+  LOCAL_PLAYER_ID,
+  LOCAL_ROOM_ID,
+  ROUTES,
+} from "../../resources/constants";
+import { useNavigate } from "react-router-dom";
 
 export function HomeScreen() {
   const componentId = useId();
@@ -37,10 +53,57 @@ export function HomeScreen() {
   const [roomId, setRoomId] = useState(routeRoomId ?? "");
   const { joinRoom, isLoading: isLoadingJoin } = useJoinRoom();
   const { createRoom, isLoading: isLoadingCreate } = useCreateRoom();
+  const [, setLocalRoom] = useLocalRoom();
+  const [, setPlayerId] = usePlayerId();
+  const navigate = useNavigate();
 
   const handleJoinRoom = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     joinRoom(nickname, roomId);
+  };
+
+  const handlePlayOffline = () => {
+    const players = [
+      {
+        cards: [],
+        nickname: nickname,
+        collectedCards: [],
+        currentBrushCount: 0,
+        id: LOCAL_PLAYER_ID,
+        isOwner: true,
+        previousPoints: 0,
+      },
+      {
+        cards: [],
+        nickname: "Computer 1",
+        collectedCards: [],
+        currentBrushCount: 0,
+        id: LOCAL_COMPUTER_ID,
+        isOwner: false,
+        previousPoints: 0,
+      },
+    ];
+
+    const startingPlayerNick = players[randomInt(0, players.length)].nickname;
+
+    const newRoom: Room = {
+      cards: shuffleCards(CARDS_CODES),
+      players: players,
+      table: [],
+      creationDate: new Date(),
+      gameState: GameState.WaitingForPlayers,
+      id: LOCAL_ROOM_ID,
+      currentTurn: startingPlayerNick,
+      firstPlayerNick: startingPlayerNick,
+    };
+
+    const startedRoom = startGame(newRoom, LOCAL_PLAYER_ID);
+
+    console.log(startedRoom);
+
+    setPlayerId(LOCAL_PLAYER_ID);
+    setLocalRoom(startedRoom);
+    navigate(ROUTES.LOCAL_GAME);
   };
 
   return (
@@ -111,16 +174,29 @@ export function HomeScreen() {
             </LoadingButton>
           </Column>
 
-          <LoadingButton
-            isLoading={isLoadingCreate}
-            fullWidth
-            color={theme.colors.palette_blue}
-            style={{ marginTop: "12px" }}
-            disabled={!hasValidNickname}
-            onClick={() => createRoom(nickname)}
-          >
-            Create new room
-          </LoadingButton>
+          <Column fullWidth gap="12px" style={{ marginTop: "12px" }}>
+            <LoadingButton
+              isLoading={isLoadingCreate}
+              fullWidth
+              color={theme.colors.palette_blue}
+              disabled={!hasValidNickname}
+              onClick={() => createRoom(nickname)}
+            >
+              Create new room
+            </LoadingButton>
+
+            <Button
+              fullWidth
+              color={theme.colors.palette_dark_blue}
+              onClick={handlePlayOffline}
+            >
+              Play Offline
+            </Button>
+
+            <Button fullWidth color={theme.colors.palette_dark_blue}>
+              Tutorial
+            </Button>
+          </Column>
         </Column>
       </MainContainer>
     </>

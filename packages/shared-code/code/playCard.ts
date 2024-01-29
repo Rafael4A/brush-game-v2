@@ -21,6 +21,7 @@ export function playCard(
     const updatedPlayers = room.players.map((p) =>
       p.id === playerId ? { ...p, cards: updatedPlayerCards } : p
     );
+
     const updatedRoom = {
       ...room,
       table: updatedTable,
@@ -75,6 +76,7 @@ function playCardValidations(
   cardCode: CardCode,
   usedTableCardsCodes: CardCode[]
 ) {
+  console.log(room, player, cardCode, usedTableCardsCodes);
   if (room.gameState !== GameState.Playing)
     throw new Error("The game is not in progress");
 

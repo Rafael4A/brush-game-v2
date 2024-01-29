@@ -5,3 +5,4 @@ export * from "./socket";
 export * from "./reactions";
 export * from "./room";
 export * from "./reports";
+export * from "./mappers";
