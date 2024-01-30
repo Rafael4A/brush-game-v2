@@ -44,8 +44,6 @@ export function usePlayCards() {
     cardCode: CardCode,
     tableCardCodes: CardCode[]
   ) => {
-    console.log("remote");
-
     try {
       if (!room) throw new Error("Room data not found");
       const updatedRoom = await mutateAsync({
@@ -67,20 +65,16 @@ export function usePlayCards() {
   };
 
   const playLocalCards = (cardCode: CardCode, tableCardCodes: CardCode[]) => {
-    console.log("local");
     try {
       if (!room || !localRoom) throw new Error("Room data not found");
-      const updatedRoom = playCard(
+      const roomAfterPlayerMove = playCard(
         localRoom,
         playerId,
         cardCode,
         tableCardCodes
       );
-      console.log("local2");
 
-      // TODO COMPUTER MOVE
-      setLocalRoom(updatedRoom);
-      //setRoom(RequestedRoomMapper.map(updatedRoom, LOCAL_PLAYER_ID));
+      setLocalRoom(roomAfterPlayerMove);
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);

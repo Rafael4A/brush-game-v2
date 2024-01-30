@@ -1,10 +1,38 @@
-import { CardCode, Room, evaluateCardCode } from "shared-code";
+import { CardCode, Room, evaluateCardCode, playCard } from "shared-code";
 import { LOCAL_COMPUTER_ID } from "../resources/constants";
 
 interface Move {
   card: CardCode;
   tableCards: CardCode[];
 }
+
+function makeComputerMove(
+  room: Room,
+  { card, tableCards }: Move
+): [CardCode, Room] {
+  try {
+    return [card, playCard(room, LOCAL_COMPUTER_ID, card, tableCards)];
+  } catch (computerTurnError) {
+    if (computerTurnError instanceof Error) {
+      throw new Error(
+        "ERROR CALCULATING COMPUTER TURN!:" + computerTurnError.message
+      );
+    } else {
+      throw new Error("ERROR CALCULATING COMPUTER TURN!: Unable to play card");
+    }
+  }
+}
+
+/**
+ * If there are no cards in the table, play the worst card for the next player: 4, 3, 2, A, K, 5, J, 6, Q, 7
+ * If there are cards in the table, analyze all combinations of cards that sum to 15.
+ * If there are no combinations that sum to 15, play the worst card for the next player. That would be any card that makes the sum of the cards in the table greater than 15. Follow worst cards order for preference.
+ * If there are combinations that sum to 15, evaluate their worth considering the following rules:
+ *     STRONGLY Prefer combinations that use the 7 of diamonds
+ *     Prefer combinations that use diamonds
+ *     Prefer combinations that use more cards
+ *     Prefer combinations that use number cards
+ */
 
 export function playComputerCard(room: Room) {
   const computerPlayer = room.players.find(
@@ -23,7 +51,7 @@ export function playComputerCard(room: Room) {
     });
   }
 
-  const summableToFifteen: { computer: CardCode; table: CardCode[] }[] = [];
+  const summableToFifteen: Move[] = [];
 
   const tableCombinations = getCombinations(tableCards);
 
@@ -37,15 +65,30 @@ export function playComputerCard(room: Room) {
       const sumWithComputerCard = sum + evaluateCardCode(computerCard);
       if (sumWithComputerCard === 15) {
         summableToFifteen.push({
-          computer: computerCard,
-          table: tableCombination,
+          card: computerCard,
+          tableCards: tableCombination,
         });
       }
     }
   }
 
   if (summableToFifteen.length > 0) {
-    //TODO choose best combination and make the move
+    let bestMove: Move = summableToFifteen[0];
+    let bestMoveScore = -Infinity;
+
+    for (const combination of summableToFifteen) {
+      const score = evaluateCombination([
+        ...combination.tableCards,
+        combination.card,
+      ]);
+
+      if (score > bestMoveScore || !bestMove) {
+        bestMove = combination;
+        bestMoveScore = score;
+      }
+    }
+
+    return makeComputerMove(room, bestMove);
   }
 
   const tableCardsSum = tableCards.reduce(
@@ -89,17 +132,6 @@ export function playComputerCard(room: Room) {
   });
 }
 
-/**
- * If there are no cards in the table, play the worst card for the next player: 4, 3, 2, A, K, 5, J, 6, Q, 7
- * If there are cards in the table, analyze all combinations of cards that sum to 15.
- * If there are no combinations that sum to 15, play the worst card for the next player. That would be any card that makes the sum of the cards in the table greater than 15. Follow worst cards order for preference.
- * If there are combinations that sum to 15, evaluate their worth considering the following rules:
- *     STRONGLY Prefer combinations that use the 7 of diamonds
- *     Prefer combinations that use diamonds
- *     Prefer combinations that use more cards
- *     Prefer combinations that use number cards
- */
-
 function getCombinations<T>(arr: T[]): T[][] {
   const result: T[][] = [];
   const generator = (prefix: T[], arr: T[]) => {
@@ -137,7 +169,20 @@ function getWorstCard(cards: CardCode[]) {
   }, cards[0]);
 }
 
-function makeComputerMove(room: Room, move: Move) {
-  // TODO should be similar to play card, just with the computer perspective and no validations
-  // Should return updatedRoom
+function evaluateCombination(cards: CardCode[]) {
+  const valuableCardValues = ["4", "5", "6", "7"];
+
+  let score = cards.length;
+
+  for (const card of cards) {
+    if (card === "7D") score += 100;
+
+    if (card.charAt(1) === "D") score += 1;
+
+    const position = valuableCardValues.indexOf(card.charAt(0));
+
+    if (position > 0) score += position * position;
+  }
+
+  return score;
 }

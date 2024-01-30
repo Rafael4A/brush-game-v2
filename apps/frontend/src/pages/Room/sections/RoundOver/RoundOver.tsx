@@ -19,11 +19,15 @@ import {
 } from "./styles";
 import { CardMiniature } from "./components";
 
-export function RoundOver() {
+interface RoundOverProps {
+  isLocalGame?: boolean;
+}
+
+export function RoundOver({ isLocalGame }: Readonly<RoundOverProps>) {
   const [roomData] = useRoom();
-  const { data } = useGetReport();
+  const { data } = useGetReport(isLocalGame);
   const { colors } = useTheme();
-  const { nextRound, isLoading } = useNextRound();
+  const { nextRound, isLoading } = useNextRound(isLocalGame);
 
   if (!roomData) return null;
 

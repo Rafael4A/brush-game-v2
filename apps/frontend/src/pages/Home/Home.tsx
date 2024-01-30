@@ -17,7 +17,7 @@ import { useEditNickname, useJoinRoom, useCreateRoom } from "./hooks";
 import { NicknameLabel, RoomIdLabel, Title } from "./styles";
 import Icon from "@mdi/react";
 import { mdiCardsPlaying } from "@mdi/js";
-import { useLocalRoom, usePlayerId, useRoom } from "../../context";
+import { useLocalRoom, usePlayerId } from "../../context";
 import {
   CARDS_CODES,
   GameState,
@@ -28,6 +28,7 @@ import {
 } from "shared-code";
 import {
   LOCAL_COMPUTER_ID,
+  LOCAL_COMPUTER_NICK,
   LOCAL_PLAYER_ID,
   LOCAL_ROOM_ID,
   ROUTES,
@@ -75,7 +76,7 @@ export function HomeScreen() {
       },
       {
         cards: [],
-        nickname: "Computer 1",
+        nickname: LOCAL_COMPUTER_NICK,
         collectedCards: [],
         currentBrushCount: 0,
         id: LOCAL_COMPUTER_ID,
@@ -98,8 +99,6 @@ export function HomeScreen() {
     };
 
     const startedRoom = startGame(newRoom, LOCAL_PLAYER_ID);
-
-    console.log(startedRoom);
 
     setPlayerId(LOCAL_PLAYER_ID);
     setLocalRoom(startedRoom);
@@ -188,6 +187,7 @@ export function HomeScreen() {
             <Button
               fullWidth
               color={theme.colors.palette_dark_blue}
+              disabled={!hasValidNickname}
               onClick={handlePlayOffline}
             >
               Play Offline

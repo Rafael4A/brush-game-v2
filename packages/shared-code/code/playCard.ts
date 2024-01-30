@@ -76,7 +76,6 @@ function playCardValidations(
   cardCode: CardCode,
   usedTableCardsCodes: CardCode[]
 ) {
-  console.log(room, player, cardCode, usedTableCardsCodes);
   if (room.gameState !== GameState.Playing)
     throw new Error("The game is not in progress");
 

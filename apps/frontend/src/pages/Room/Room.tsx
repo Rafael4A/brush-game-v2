@@ -8,6 +8,7 @@ import { FullscreenLoader, MainContainer } from "../../components";
 import { delay } from "../../utils";
 import { useGetRoom, useWebsocket } from "./hooks";
 import { GamePlay, RoundOver, WaitingForPlayers } from "./sections";
+import { useRoom } from "../../context";
 
 interface RoomScreenProps {
   isLocalGame?: boolean;
@@ -16,28 +17,29 @@ interface RoomScreenProps {
 export function RoomScreen({ isLocalGame }: Readonly<RoomScreenProps>) {
   const { id } = useParams();
 
-  const { data } = useGetRoom(id, isLocalGame);
+  useGetRoom(id, isLocalGame);
+  const [room] = useRoom();
 
   const [delayedGameState, setDelayedGameState] = useState<GameState>();
 
   const { sendReaction } = useWebsocket();
 
   useEffect(() => {
-    if (!delayedGameState) setDelayedGameState(data?.gameState);
-    else if (data?.gameState !== delayedGameState)
+    if (!delayedGameState) setDelayedGameState(room?.gameState);
+    else if (room?.gameState !== delayedGameState)
       (async () => {
         if (
-          data?.gameState === GameState.RoundOver ||
-          data?.gameState === GameState.GameOver
+          room?.gameState === GameState.RoundOver ||
+          room?.gameState === GameState.GameOver
         ) {
           await delay(3000);
         }
-        setDelayedGameState(data?.gameState);
+        setDelayedGameState(room?.gameState);
       })();
-  }, [data?.gameState, delayedGameState]);
+  }, [room?.gameState, delayedGameState]);
 
   const section = () => {
-    if (!data) return <FullscreenLoader />;
+    if (!room) return <FullscreenLoader />;
 
     switch (delayedGameState) {
       case GameState.WaitingForPlayers:
@@ -46,7 +48,7 @@ export function RoomScreen({ isLocalGame }: Readonly<RoomScreenProps>) {
         return <GamePlay sendReaction={sendReaction} />;
       case GameState.RoundOver:
       case GameState.GameOver:
-        return <RoundOver />;
+        return <RoundOver isLocalGame={isLocalGame} />;
     }
   };
 
