@@ -9,7 +9,7 @@ import {
   LoadingButton,
   Row,
 } from "../../../../components";
-import { useRoom } from "../../../../context";
+import { GameTypes, useGameType, useRoom } from "../../../../context";
 import { useGetReport, useNextRound } from "./hooks";
 import {
   ButtonsContainer,
@@ -19,15 +19,12 @@ import {
 } from "./styles";
 import { CardMiniature } from "./components";
 
-interface RoundOverProps {
-  isLocalGame?: boolean;
-}
-
-export function RoundOver({ isLocalGame }: Readonly<RoundOverProps>) {
+export function RoundOver() {
+  const [gameType] = useGameType();
   const [roomData] = useRoom();
-  const { data } = useGetReport(isLocalGame);
+  const { data } = useGetReport(gameType === GameTypes.Local);
   const { colors } = useTheme();
-  const { nextRound, isLoading } = useNextRound(isLocalGame);
+  const { nextRound, isLoading } = useNextRound(gameType === GameTypes.Local);
 
   if (!roomData) return null;
 

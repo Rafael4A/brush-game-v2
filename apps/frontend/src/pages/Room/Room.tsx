@@ -6,19 +6,14 @@ import { GameState } from "shared-code";
 
 import { FullscreenLoader, MainContainer } from "../../components";
 import { delay } from "../../utils";
-import { useGetRoom, useWebsocket } from "./hooks";
+import { useWebsocket } from "./hooks";
 import { GamePlay, RoundOver, WaitingForPlayers } from "./sections";
 import { useRoom } from "../../context";
 
-interface RoomScreenProps {
-  isLocalGame?: boolean;
-}
-
-export function RoomScreen({ isLocalGame }: Readonly<RoomScreenProps>) {
+export function RoomScreen() {
   const { id } = useParams();
 
-  useGetRoom(id, isLocalGame);
-  const [room] = useRoom();
+  const [room] = useRoom(id);
 
   const [delayedGameState, setDelayedGameState] = useState<GameState>();
 
@@ -48,7 +43,7 @@ export function RoomScreen({ isLocalGame }: Readonly<RoomScreenProps>) {
         return <GamePlay sendReaction={sendReaction} />;
       case GameState.RoundOver:
       case GameState.GameOver:
-        return <RoundOver isLocalGame={isLocalGame} />;
+        return <RoundOver />;
     }
   };
 
