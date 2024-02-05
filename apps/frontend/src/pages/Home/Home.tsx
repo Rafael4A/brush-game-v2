@@ -34,6 +34,7 @@ import {
   ROUTES,
 } from "../../resources/constants";
 import { useNavigate } from "react-router-dom";
+import { disableAutoCompleteProps } from "../../utils";
 
 export function HomeScreen() {
   const componentId = useId();
@@ -132,9 +133,7 @@ export function HomeScreen() {
               <label htmlFor={nicknameId}>Nickname:</label>
               {isEditingNick ? (
                 <TextInput
-                  autoComplete="false"
-                  data-lpignore="true"
-                  data-form-type="other"
+                  {...disableAutoCompleteProps}
                   id={nicknameId}
                   placeholder="Your Nickname"
                   value={editableNickname}
@@ -153,9 +152,7 @@ export function HomeScreen() {
             <Row gap="8px" fullWidth>
               <RoomIdLabel htmlFor={nicknameId}>Room ID:</RoomIdLabel>
               <TextInput
-                autoComplete="false"
-                data-lpignore="true"
-                data-form-type="other"
+                {...disableAutoCompleteProps}
                 id={nicknameId}
                 placeholder="Ask your friend or create a room"
                 value={roomId}

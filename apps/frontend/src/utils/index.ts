@@ -3,3 +3,4 @@ export * from "./generateAltForCardCode";
 export * from "./reactionMapper";
 export * from "./shareRoom";
 export * from "./isRoomLocal";
+export * from "./disableAutoCompleteProps";
