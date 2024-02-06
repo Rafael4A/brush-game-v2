@@ -1,20 +1,24 @@
-import { AxiosError, isAxiosError } from "axios";
 import { useMutation } from "react-query";
 import { toast } from "react-toastify";
 import { BasicRoomResponseDto, StartGameDto, nextRound } from "shared-code";
 
-import { useLocalRoom, usePlayerId, useRoom } from "../../../../../context";
 import {
-  RequestError,
+  GameTypes,
+  useGameType,
+  useLocalRoom,
+  usePlayerId,
+  useRoom,
+} from "../../../../../context";
+import {
   axiosInstance,
-  getRequestErrorMessage,
+  handleRequestError,
 } from "../../../../../resources/api";
 
-export function useNextRound(isLocal?: boolean) {
+export function useNextRound() {
   const [room] = useRoom();
   const [localRoom, setLocalRoom] = useLocalRoom();
   const [playerId] = usePlayerId();
-
+  const [gameType] = useGameType();
   async function post(): Promise<BasicRoomResponseDto> {
     if (!room || !playerId) throw new Error("Room or player id is missing");
 
@@ -31,13 +35,7 @@ export function useNextRound(isLocal?: boolean) {
     try {
       await mutateAsync();
     } catch (error) {
-      if (isAxiosError(error)) {
-        const { response } = error as AxiosError<RequestError>;
-
-        toast.error(getRequestErrorMessage(response?.data));
-      } else {
-        toast.error("Unable to start next round");
-      }
+      handleRequestError(error, "Unable to start next round");
     }
   };
 
@@ -54,5 +52,15 @@ export function useNextRound(isLocal?: boolean) {
     }
   };
 
-  return { nextRound: isLocal ? nextLocalRound : nextRemoteRound, ...rest };
+  switch (gameType) {
+    case GameTypes.Online:
+      return { nextRound: nextRemoteRound, ...rest };
+
+    case GameTypes.Local:
+      return { nextRound: nextLocalRound, isLoading: false };
+
+    case GameTypes.Tutorial:
+    default:
+      throw new Error("Tutorial game type is not supported");
+  }
 }

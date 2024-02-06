@@ -1,15 +1,10 @@
-import { AxiosError, isAxiosError } from "axios";
 import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+
 import { BasicRoomResponseDto, NewRoomDtoType } from "shared-code";
 
 import { usePlayerId } from "../../../context";
-import {
-  RequestError,
-  axiosInstance,
-  getRequestErrorMessage,
-} from "../../../resources/api";
+import { axiosInstance, handleRequestError } from "../../../resources/api";
 
 export function useCreateRoom() {
   const [, setPlayerId] = usePlayerId();
@@ -31,13 +26,7 @@ export function useCreateRoom() {
       setPlayerId(playerId);
       navigate(`/room/${id}`);
     } catch (error) {
-      if (isAxiosError(error)) {
-        const { response } = error as AxiosError<RequestError>;
-
-        toast.error(getRequestErrorMessage(response?.data));
-      } else {
-        toast.error("Unable to create room");
-      }
+      handleRequestError(error, "Unable to create room");
     }
   };
 

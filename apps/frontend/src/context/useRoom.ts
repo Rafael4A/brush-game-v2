@@ -11,7 +11,10 @@ const [_useRoom, RoomProvider] = createGlobalState<
 
 const useRoom = (
   id?: string
-): [GetRoomResponseDto | undefined, (room: GetRoomResponseDto) => void] => {
+): [
+  GetRoomResponseDto | undefined,
+  React.Dispatch<React.SetStateAction<GetRoomResponseDto | undefined>>,
+] => {
   const { data } = useGetRoom(id);
 
   const [_room, _setRoom] = _useRoom();

@@ -12,12 +12,13 @@ import {
 } from "shared-code";
 import io, { Socket } from "socket.io-client";
 
-import { usePlayerId, useRoom } from "../../../context";
-import { isRoomLocal, reactionMapper } from "../../../utils";
+import { GameTypes, useGameType, usePlayerId, useRoom } from "../../../context";
+import { reactionMapper } from "../../../utils";
 
 export function useWebsocket() {
   const [room, setRoom] = useRoom();
   const [playerId] = usePlayerId();
+  const [gameType] = useGameType();
   const queryClient = useQueryClient();
   const updateRoom = useCallback(
     () => queryClient.invalidateQueries("room"),
@@ -31,9 +32,7 @@ export function useWebsocket() {
   useEffect(() => {
     if (!room?.id || !room?.player?.nickname || !playerId) {
       socket.current?.disconnect();
-    } else if (isRoomLocal(room)) {
-      return;
-    } else {
+    } else if (gameType === GameTypes.Online) {
       socket.current = io(window.location.origin, {
         query: {
           roomId: room?.id,
@@ -42,6 +41,8 @@ export function useWebsocket() {
         },
         path: "/api/socket.io",
       });
+    } else {
+      return;
     }
 
     for (const event of [

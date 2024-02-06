@@ -1,12 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { usePlayerId } from "../context";
-import {
-  RequestError,
-  axiosInstance,
-  getRequestErrorMessage,
-} from "../resources/api";
-import { AxiosError, isAxiosError } from "axios";
-import { toast } from "react-toastify";
+import { axiosInstance, handleRequestError } from "../resources/api";
+
 import { useQuery } from "react-query";
 import { GetRoomResponseDto } from "shared-code";
 
@@ -28,17 +23,7 @@ export function useGetRoom(roomId?: string) {
 
       return response.data;
     } catch (error) {
-      if (isAxiosError(error)) {
-        const { response } = error as AxiosError<RequestError>;
-
-        if (response?.status === 404) {
-          navigate(`/room/not-found`);
-        }
-
-        toast.error(getRequestErrorMessage(response?.data));
-      } else {
-        toast.error("Unable to get room information");
-      }
+      handleRequestError(error, "Unable to get room information");
       throw error;
     }
   }

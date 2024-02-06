@@ -7,7 +7,7 @@ import {
   Row,
   UnstyledButton,
 } from "../../../../../../components";
-import { useRoom } from "../../../../../../context";
+import { GameTypes, useGameType, useRoom } from "../../../../../../context";
 import {
   HeaderContainer,
   ReactionButton,
@@ -17,14 +17,14 @@ import {
 } from "./styles";
 import { useState } from "react";
 import { REACTIONS } from "../../../../../../resources/constants";
-import { isRoomLocal } from "../../../../../../utils";
+
 interface GameHeaderProps {
   sendReaction: (reaction: Reaction) => void;
 }
 
 export function GameHeader({ sendReaction }: Readonly<GameHeaderProps>) {
   const [room] = useRoom();
-
+  const [gameType] = useGameType();
   const [shouldShowReactionsMenu, setShouldShowReactionsMenu] = useState(false);
   const [areReactionsEnabled, setAreReactionsEnabled] = useState(true);
 
@@ -63,7 +63,7 @@ export function GameHeader({ sendReaction }: Readonly<GameHeaderProps>) {
             </span>
           </HoverTooltip>
         </Row>
-        {!isRoomLocal(room) && (
+        {gameType !== GameTypes.Local && (
           <ReactionsMenuWrapper>
             <UnstyledButton
               onClick={() => setShouldShowReactionsMenu((prev) => !prev)}

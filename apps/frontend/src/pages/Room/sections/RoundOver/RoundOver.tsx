@@ -9,7 +9,7 @@ import {
   LoadingButton,
   Row,
 } from "../../../../components";
-import { GameTypes, useGameType, useRoom } from "../../../../context";
+import { useRoom } from "../../../../context";
 import { useGetReport, useNextRound } from "./hooks";
 import {
   ButtonsContainer,
@@ -20,11 +20,10 @@ import {
 import { CardMiniature } from "./components";
 
 export function RoundOver() {
-  const [gameType] = useGameType();
   const [roomData] = useRoom();
-  const { data } = useGetReport(gameType === GameTypes.Local);
+  const { data } = useGetReport();
   const { colors } = useTheme();
-  const { nextRound, isLoading } = useNextRound(gameType === GameTypes.Local);
+  const { nextRound, isLoading } = useNextRound();
 
   if (!roomData) return null;
 

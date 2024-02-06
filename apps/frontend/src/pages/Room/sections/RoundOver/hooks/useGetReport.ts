@@ -1,21 +1,26 @@
-import { AxiosError, isAxiosError } from "axios";
 import { useQuery } from "react-query";
-import { toast } from "react-toastify";
+
 import { PlayerReport, generateReport } from "shared-code";
 
-import { useLocalRoom, usePlayerId, useRoom } from "../../../../../context";
 import {
-  RequestError,
+  GameTypes,
+  useGameType,
+  useLocalRoom,
+  usePlayerId,
+  useRoom,
+} from "../../../../../context";
+import {
   axiosInstance,
-  getRequestErrorMessage,
+  handleRequestError,
 } from "../../../../../resources/api";
 
-export function useGetReport(isLocal?: boolean) {
+export function useGetReport() {
   const [room] = useRoom();
   const [playerId] = usePlayerId();
   const [localRoom] = useLocalRoom();
+  const [gameType] = useGameType();
 
-  async function get(): Promise<PlayerReport[]> {
+  async function getRemote(): Promise<PlayerReport[]> {
     try {
       if (!room || !playerId) throw new Error("Room or player id is missing");
 
@@ -25,13 +30,8 @@ export function useGetReport(isLocal?: boolean) {
 
       return response.data;
     } catch (error) {
-      if (isAxiosError(error)) {
-        const { response } = error as AxiosError<RequestError>;
+      handleRequestError(error, "Unable to get report information");
 
-        toast.error(getRequestErrorMessage(response?.data));
-      } else {
-        toast.error("Unable to get report information");
-      }
       throw error;
     }
   }
@@ -40,7 +40,23 @@ export function useGetReport(isLocal?: boolean) {
     if (!localRoom) throw new Error("Local room is missing");
     return Promise.resolve(generateReport(localRoom));
   }
-  return useQuery(["report", room?.id, playerId], () =>
-    isLocal ? getLocal() : get()
-  );
+
+  let getFn;
+
+  switch (gameType) {
+    case GameTypes.Online:
+      getFn = getRemote;
+      break;
+    case GameTypes.Local:
+      getFn = getLocal;
+      break;
+    case GameTypes.Tutorial:
+      throw new Error("Tutorial game type is not supported");
+  }
+
+  return useQuery({
+    queryKey: ["report", room?.id, playerId],
+    queryFn: getFn,
+    enabled: gameType === GameTypes.Online,
+  });
 }

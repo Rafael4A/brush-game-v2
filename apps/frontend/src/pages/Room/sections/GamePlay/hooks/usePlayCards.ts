@@ -1,4 +1,3 @@
-import { AxiosError, isAxiosError } from "axios";
 import { useMutation } from "react-query";
 import { toast } from "react-toastify";
 import {
@@ -8,19 +7,23 @@ import {
   playCard,
 } from "shared-code";
 
-import { useLocalRoom, usePlayerId, useRoom } from "../../../../../context";
 import {
-  RequestError,
+  GameTypes,
+  useGameType,
+  useLocalRoom,
+  usePlayerId,
+  useRoom,
+} from "../../../../../context";
+import {
   axiosInstance,
-  getRequestErrorMessage,
+  handleRequestError,
 } from "../../../../../resources/api";
-
-import { isRoomLocal } from "../../../../../utils";
 
 export function usePlayCards() {
   const [playerId] = usePlayerId();
   const [room, setRoom] = useRoom();
   const [localRoom, setLocalRoom] = useLocalRoom();
+  const [gameType] = useGameType();
 
   async function post({
     playerId,
@@ -54,13 +57,7 @@ export function usePlayCards() {
 
       setRoom(updatedRoom);
     } catch (error) {
-      if (isAxiosError(error)) {
-        const { response } = error as AxiosError<RequestError>;
-
-        toast.error(getRequestErrorMessage(response?.data));
-      } else {
-        toast.error("Unable to play card");
-      }
+      handleRequestError(error, "Unable to play card");
     }
   };
 
@@ -84,8 +81,22 @@ export function usePlayCards() {
     }
   };
 
-  return {
-    playCards: isRoomLocal(room) ? playLocalCards : playServerCards,
-    ...rest,
-  };
+  let result;
+
+  switch (gameType) {
+    case GameTypes.Online:
+      result = {
+        playCards: playServerCards,
+        ...rest,
+      };
+      break;
+    case GameTypes.Local:
+      result = { playCards: playLocalCards, isLoading: false };
+      break;
+    case GameTypes.Tutorial:
+    default:
+      throw new Error("Tutorial game type is not supported");
+  }
+
+  return result;
 }

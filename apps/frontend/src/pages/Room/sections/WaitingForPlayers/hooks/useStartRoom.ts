@@ -1,13 +1,11 @@
-import { AxiosError, isAxiosError } from "axios";
 import { useMutation } from "react-query";
-import { toast } from "react-toastify";
+
 import { BasicRoomResponseDto, StartGameDto } from "shared-code";
 
 import { usePlayerId, useRoom } from "../../../../../context";
 import {
-  RequestError,
   axiosInstance,
-  getRequestErrorMessage,
+  handleRequestError,
 } from "../../../../../resources/api";
 
 export function useStartRoom() {
@@ -30,13 +28,7 @@ export function useStartRoom() {
     try {
       await mutateAsync();
     } catch (error) {
-      if (isAxiosError(error)) {
-        const { response } = error as AxiosError<RequestError>;
-
-        toast.error(getRequestErrorMessage(response?.data));
-      } else {
-        toast.error("Unable to start game");
-      }
+      handleRequestError(error, "Unable to start game");
     }
   };
 
