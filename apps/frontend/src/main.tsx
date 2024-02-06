@@ -13,6 +13,7 @@ import {
   NicknameProvider,
   PlayerIdProvider,
   RoomProvider,
+  ConfirmModalProvider,
 } from "./context";
 import { theme } from "./resources/theme";
 import Router from "./Router";
@@ -32,20 +33,22 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
                 <NicknameProvider>
                   <RoomProvider>
                     <LocalRoomProvider>
-                      <Router />
-                      <ToastContainer
-                        position="top-right"
-                        autoClose={2500}
-                        hideProgressBar={false}
-                        newestOnTop={false}
-                        closeOnClick
-                        rtl={false}
-                        pauseOnFocusLoss
-                        draggable={false}
-                        pauseOnHover
-                        theme="dark"
-                        className="custom-toast"
-                      />
+                      <ConfirmModalProvider>
+                        <Router />
+                        <ToastContainer
+                          position="top-right"
+                          autoClose={2500}
+                          hideProgressBar={false}
+                          newestOnTop={false}
+                          closeOnClick
+                          rtl={false}
+                          pauseOnFocusLoss
+                          draggable={false}
+                          pauseOnHover
+                          theme="dark"
+                          className="custom-toast"
+                        />
+                      </ConfirmModalProvider>
                     </LocalRoomProvider>
                   </RoomProvider>
                 </NicknameProvider>

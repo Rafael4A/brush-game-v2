@@ -21,7 +21,7 @@
 - BUSCAR POR THIS.ALGO nas funções extraídas para SHARED CODE
 - Fix bug that when a user clicks on leave game they receive a message saying that the connection was lost
 - Add chime option
-  BUSCAR POR SET ROOM E VER SE FUNCIONA LOCAL
+- Fix theme colors casing and filter only used
 
 #### Frontend
 

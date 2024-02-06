@@ -1,4 +1,4 @@
-import { useId, useState } from "react";
+import { useId } from "react";
 
 import { Helmet } from "react-helmet-async";
 import { useTheme } from "styled-components";
@@ -12,99 +12,34 @@ import {
   TextInput,
   Tooltip,
 } from "../../components";
-import { useQueryParams } from "../../hooks";
-import { useEditNickname, useJoinRoom, useCreateRoom } from "./hooks";
+
 import { NicknameLabel, RoomIdLabel, Title } from "./styles";
 import Icon from "@mdi/react";
 import { mdiCardsPlaying } from "@mdi/js";
-import { useLocalRoom, usePlayerId } from "../../context";
-import {
-  CARDS_CODES,
-  GameState,
-  Room,
-  randomInt,
-  shuffleCards,
-  startGame,
-} from "shared-code";
-import {
-  LOCAL_COMPUTER_ID,
-  LOCAL_COMPUTER_NICK,
-  LOCAL_PLAYER_ID,
-  LOCAL_ROOM_ID,
-  ROUTES,
-} from "../../resources/constants";
-import { useNavigate } from "react-router-dom";
+
 import { disableAutoCompleteProps } from "../../utils";
+import { useHomePage } from "./useHomePage";
 
 export function HomeScreen() {
   const componentId = useId();
   const nicknameId = `${componentId}-nickname-input`;
-
   const theme = useTheme();
-
   const {
+    createRoom,
     editableNickname,
+    handleJoinRoom,
+    handlePlayOffline,
+    hasValidNickname,
     isEditingNick,
+    isLoadingCreate,
+    isLoadingJoin,
     nickname,
     onNicknameChange,
+    roomId,
     saveOrEditNickname,
-    hasValidNickname,
-  } = useEditNickname();
-
-  const { roomId: routeRoomId } = useQueryParams();
-  const [roomId, setRoomId] = useState(routeRoomId ?? "");
-  const { joinRoom, isLoading: isLoadingJoin } = useJoinRoom();
-  const { createRoom, isLoading: isLoadingCreate } = useCreateRoom();
-  const [, setLocalRoom] = useLocalRoom();
-  const [, setPlayerId] = usePlayerId();
-  const navigate = useNavigate();
-
-  const handleJoinRoom = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    joinRoom(nickname, roomId);
-  };
-
-  const handlePlayOffline = () => {
-    const players = [
-      {
-        cards: [],
-        nickname: nickname,
-        collectedCards: [],
-        currentBrushCount: 0,
-        id: LOCAL_PLAYER_ID,
-        isOwner: true,
-        previousPoints: 0,
-      },
-      {
-        cards: [],
-        nickname: LOCAL_COMPUTER_NICK,
-        collectedCards: [],
-        currentBrushCount: 0,
-        id: LOCAL_COMPUTER_ID,
-        isOwner: false,
-        previousPoints: 0,
-      },
-    ];
-
-    const startingPlayerNick = players[randomInt(0, players.length)].nickname;
-
-    const newRoom: Room = {
-      cards: shuffleCards(CARDS_CODES),
-      players: players,
-      table: [],
-      creationDate: new Date(),
-      gameState: GameState.WaitingForPlayers,
-      id: LOCAL_ROOM_ID,
-      currentTurn: startingPlayerNick,
-      firstPlayerNick: startingPlayerNick,
-    };
-
-    const startedRoom = startGame(newRoom, LOCAL_PLAYER_ID);
-
-    setPlayerId(LOCAL_PLAYER_ID);
-    setLocalRoom(startedRoom);
-    navigate(ROUTES.LOCAL_GAME);
-  };
+    setRoomId,
+    handleStartTutorial,
+  } = useHomePage();
 
   return (
     <>
@@ -190,8 +125,12 @@ export function HomeScreen() {
               Play Offline
             </Button>
 
-            <Button fullWidth color={theme.colors.palette_dark_blue}>
-              Tutorial
+            <Button
+              fullWidth
+              color={theme.colors.palette_dark_blue}
+              onClick={handleStartTutorial}
+            >
+              Start Tutorial
             </Button>
           </Column>
         </Column>
