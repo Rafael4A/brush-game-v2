@@ -48,6 +48,8 @@ After each round, points are calculated based on the following criteria:
 
 4. **Highest Sum of Different Suits and Numbers:** The player with the highest sum of collected cards from different suits and with numbers (2 to 7) on them receives 1 point. Each card in this sum must have a different suit, and the maximum possible sum is 28 (since Q, J, and K are not considered numbers).
 
+5. **Brush:** During gameplay, whenever a player leaves the table empty, they receive 1 point. This is called a brush.
+
 ## Winning the Game
 
 The game continues with multiple rounds until one player accumulates at least 15 points in total from all rounds.

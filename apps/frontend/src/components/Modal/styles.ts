@@ -1,6 +1,5 @@
 import styled from "styled-components";
-
-import { Column, Row } from "../../components";
+import { Row, Column } from "../FlexBoxes";
 
 export const StyledModal = styled.dialog(({ theme }) => ({
   position: "fixed",
@@ -15,7 +14,7 @@ export const StyledModal = styled.dialog(({ theme }) => ({
 
   width: "calc(100% - 16px)",
   maxWidth: 850,
-  backgroundColor: theme.colors.dark_gray,
+  backgroundColor: theme.colors.background_dark_green,
   "&::backdrop": {
     background: "rgba(0, 0, 0, 0.7)",
   },
@@ -23,6 +22,7 @@ export const StyledModal = styled.dialog(({ theme }) => ({
 
 export const ModalTopBar = styled(Row)({
   padding: "6px",
+  fontSize: "1.25rem",
 });
 
 export const ModalContainer = styled(Column)({

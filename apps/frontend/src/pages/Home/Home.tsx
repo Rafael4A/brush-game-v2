@@ -19,8 +19,9 @@ import { mdiCardsPlaying } from "@mdi/js";
 
 import { disableAutoCompleteProps } from "../../utils";
 import { useHomePage } from "./useHomePage";
+import { Tutorial, TutorialProvider, useTutorial } from "./components";
 
-export function HomeScreen() {
+function InnerHomeScreen() {
   const componentId = useId();
   const nicknameId = `${componentId}-nickname-input`;
   const theme = useTheme();
@@ -38,8 +39,8 @@ export function HomeScreen() {
     roomId,
     saveOrEditNickname,
     setRoomId,
-    handleStartTutorial,
   } = useHomePage();
+  const { open } = useTutorial();
 
   return (
     <>
@@ -128,13 +129,22 @@ export function HomeScreen() {
             <Button
               fullWidth
               color={theme.colors.palette_dark_blue}
-              onClick={handleStartTutorial}
+              onClick={open}
             >
               Start Tutorial
             </Button>
           </Column>
         </Column>
       </MainContainer>
+      <Tutorial />
     </>
+  );
+}
+
+export function HomeScreen() {
+  return (
+    <TutorialProvider>
+      <InnerHomeScreen />
+    </TutorialProvider>
   );
 }

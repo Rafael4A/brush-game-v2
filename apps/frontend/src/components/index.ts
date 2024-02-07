@@ -7,3 +7,7 @@ export * from "./Switch";
 export * from "./Tooltip";
 export * from "./LineLoader";
 export * from "./Loader";
+export * from "./Modal/BaseModal";
+export * from "./Modal/styles";
+export * from "./WizardStepWrapper";
+export * from "./Modal/StyledModalWithCloseButton";

@@ -7,7 +7,7 @@ import {
   useContext,
 } from "react";
 
-import { BaseModalProps, BaseModal } from "./BaseModal";
+import { BaseModalProps, BaseModal } from "../../components";
 
 interface ConfirmModalOptions
   extends Omit<BaseModalProps, "open" | "onClose" | "children"> {
@@ -32,7 +32,7 @@ export function ConfirmModalProvider({
   children,
 }: Readonly<ConfirmModalProviderProps>) {
   const [open, setOpen] = useState(false);
-
+  // TODO remover useCallback
   const dismiss = useCallback(() => {
     setOpen(false);
   }, []);

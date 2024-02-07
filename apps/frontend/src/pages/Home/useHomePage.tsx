@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useConfirmModal, useLocalRoom, usePlayerId } from "../../context";
+import { useLocalRoom, usePlayerId } from "../../context";
 import { useCreateRoom, useEditNickname, useJoinRoom } from "./hooks";
 import { useQueryParams } from "../../hooks";
 import { useNavigate } from "react-router-dom";
@@ -20,8 +20,6 @@ import {
 } from "shared-code";
 
 export function useHomePage() {
-  const { confirm } = useConfirmModal();
-
   const { roomId: routeRoomId } = useQueryParams();
   const [roomId, setRoomId] = useState(routeRoomId ?? "");
   const { joinRoom, isLoading: isLoadingJoin } = useJoinRoom();
@@ -85,25 +83,6 @@ export function useHomePage() {
     navigate(ROUTES.LOCAL_GAME);
   };
 
-  const handleStartTutorial = () => {
-    // TODO FAZER WIZARD DE TUTORIAL
-    confirm({
-      id: "Start Tutorial",
-      actions: [
-        {
-          label: "Sim",
-          type: "close-button",
-          onClick: () => {
-            navigate(ROUTES.TUTORIAL);
-          },
-        },
-        { label: "Não", type: "close-button" },
-      ],
-      content: () => "Tem certeza que deseja apagar esse jogo?",
-      title: "How to play",
-    });
-  };
-
   return {
     roomId,
     setRoomId,
@@ -118,6 +97,5 @@ export function useHomePage() {
     onNicknameChange,
     saveOrEditNickname,
     hasValidNickname,
-    handleStartTutorial,
   };
 }
