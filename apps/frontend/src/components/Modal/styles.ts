@@ -28,6 +28,7 @@ export const ModalTopBar = styled(Row)({
 export const ModalContainer = styled(Column)({
   padding: 8,
   paddingTop: 0,
+  gap: "8px",
 });
 
 export const ModalFooter = styled(Row)({

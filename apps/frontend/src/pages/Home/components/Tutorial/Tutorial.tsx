@@ -4,6 +4,7 @@ import {
   ModalContainer,
   ModalFooter,
   ModalTopBar,
+  ProgressBar,
   StyledModalWithCloseButton,
   WizardStepWrapper,
 } from "../../../../components";
@@ -81,10 +82,10 @@ function TutorialInner({ titleId }: Readonly<TutorialInnerProps>) {
           {component}
         </WizardStepWrapper>
       ))}
-      {formattedProgress}%
-      <progress id="tutorial-progress" max="100" value={formattedProgress}>
+
+      <ProgressBar id="tutorial-progress" max="100" value={formattedProgress}>
         {formattedProgress}%
-      </progress>
+      </ProgressBar>
       <ModalFooter>
         <Button
           disabled={activeStep <= 0}

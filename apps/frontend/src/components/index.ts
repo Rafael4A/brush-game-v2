@@ -11,3 +11,4 @@ export * from "./Modal/BaseModal";
 export * from "./Modal/styles";
 export * from "./WizardStepWrapper";
 export * from "./Modal/StyledModalWithCloseButton";
+export * from "./ProgressBar";
