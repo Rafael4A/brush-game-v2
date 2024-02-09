@@ -125,7 +125,7 @@ function InnerHomeScreen() {
               Play Offline
             </Button>
 
-            <Button fullWidth color={colors.palette_dark_blue} onClick={open}>
+            <Button fullWidth color={colors.gray_blue} onClick={open}>
               Start Tutorial
             </Button>
           </Column>

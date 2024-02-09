@@ -18,6 +18,7 @@ import {
   shuffleCards,
   startGame,
 } from "shared-code";
+import { toast } from "react-toastify";
 
 export function useHomePage() {
   const { roomId: routeRoomId } = useQueryParams();
@@ -42,6 +43,11 @@ export function useHomePage() {
   };
 
   const handlePlayOffline = () => {
+    if (nickname === LOCAL_COMPUTER_NICK) {
+      toast.error("Reserved nickname! You can't use this nickname offline!");
+      return;
+    }
+
     const players = [
       {
         cards: [],

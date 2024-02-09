@@ -4,7 +4,7 @@
 - Free up old and completed games id
 - Create docker compose that runs everything (including PostgreSQL) check if env is working
 - Add github actions for auto-deploy
-- Leader Board
+- Leader Board?
 - Tentar servir react buildado com back
 - Criar migrations
 - Tratar 404 (front)
