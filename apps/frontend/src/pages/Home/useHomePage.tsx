@@ -45,7 +45,7 @@ export function useHomePage() {
     const players = [
       {
         cards: [],
-        nickname: nickname ?? "Player",
+        nickname: nickname || "Player",
         collectedCards: [],
         currentBrushCount: 0,
         id: LOCAL_PLAYER_ID,

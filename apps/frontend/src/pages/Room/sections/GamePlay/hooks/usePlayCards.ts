@@ -25,22 +25,6 @@ export function usePlayCards() {
   const [localRoom, setLocalRoom] = useLocalRoom();
   const [gameType] = useGameType();
 
-  async function post({
-    playerId,
-    cardCode,
-    tableCardCodes,
-  }: PlayCardDtoType): Promise<GetRoomResponseDto> {
-    if (!room || !playerId) throw new Error("Room or player id is missing");
-
-    const response = await axiosInstance.post(`/room/${room.id}/play-card`, {
-      playerId,
-      cardCode,
-      tableCardCodes,
-    });
-
-    return response.data;
-  }
-
   const { mutateAsync, ...rest } = useMutation("playCards", post);
 
   const playServerCards = async (
@@ -53,6 +37,7 @@ export function usePlayCards() {
         playerId,
         cardCode,
         tableCardCodes,
+        roomId: room.id,
       });
 
       setRoom(updatedRoom);
@@ -87,4 +72,25 @@ export function usePlayCards() {
       ...rest,
     };
   else return { playCards: playLocalCards, isLoading: false };
+}
+
+interface PlayCardPostArgs extends PlayCardDtoType {
+  roomId: string;
+}
+
+async function post({
+  playerId,
+  cardCode,
+  tableCardCodes,
+  roomId,
+}: PlayCardPostArgs): Promise<GetRoomResponseDto> {
+  if (!roomId || !playerId) throw new Error("Room or player id is missing");
+
+  const response = await axiosInstance.post(`/room/${roomId}/play-card`, {
+    playerId,
+    cardCode,
+    tableCardCodes,
+  });
+
+  return response.data;
 }

@@ -23,4 +23,5 @@ export function useDelayedGameState(room: GetRoomResponseDto | undefined) {
 
     return () => !!timeout && clearTimeout(timeout);
   }, [room?.gameState, delayedGameState]);
+  return delayedGameState;
 }
