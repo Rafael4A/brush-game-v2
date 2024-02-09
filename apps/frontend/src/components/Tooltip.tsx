@@ -12,7 +12,7 @@ export const HoverTooltip = styled.span({
     padding: "0.25rem 0.25rem",
     borderRadius: "6px",
     position: "absolute",
-    zIndex: 1,
+    zIndex: 100,
     top: "100%",
     left: "50%",
     marginLeft: "-60px",
