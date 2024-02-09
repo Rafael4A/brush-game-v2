@@ -83,9 +83,14 @@ export function useHomePage() {
     navigate(ROUTES.LOCAL_GAME);
   };
 
+  const handleRoomIdChange = ({
+    target,
+  }: React.ChangeEvent<HTMLInputElement>) =>
+    setRoomId(target.value.toLowerCase());
+
   return {
     roomId,
-    setRoomId,
+    handleRoomIdChange,
     handleJoinRoom,
     isLoadingJoin,
     createRoom,

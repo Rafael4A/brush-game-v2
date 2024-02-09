@@ -63,3 +63,15 @@ export class PlayCardDto {
 }
 
 export type PlayCardDtoType = typeof PlayCardDto.prototype;
+
+export class KickPlayerdDto {
+  @IsNotEmpty({ message: "Player id is required" })
+  @IsString({ message: "Player id must be a string" })
+  playerId: string;
+
+  @IsNotEmpty({ message: "Kicked player nickname is required" })
+  @IsString({ message: "Kicked player nickname must be a string" })
+  kickedPlayerNick: string;
+}
+
+export type KickPlayerdDtoType = typeof KickPlayerdDto.prototype;

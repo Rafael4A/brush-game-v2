@@ -1,9 +1,15 @@
 import { useNavigate } from "react-router-dom";
 import { usePlayerId } from "../context";
-import { axiosInstance, handleRequestError } from "../resources/api";
+import {
+  RequestError,
+  axiosInstance,
+  handleRequestError,
+} from "../resources/api";
 
 import { useQuery } from "react-query";
 import { GetRoomResponseDto } from "shared-code";
+import { toast } from "react-toastify";
+import { AxiosError, isAxiosError } from "axios";
 
 export function useGetRoom(roomId?: string) {
   const navigate = useNavigate();
@@ -23,6 +29,17 @@ export function useGetRoom(roomId?: string) {
 
       return response.data;
     } catch (error) {
+      if (isAxiosError(error)) {
+        const { response } = error as AxiosError<RequestError>;
+        if (
+          response?.data.message ===
+          "This player cannot access the requested room"
+        ) {
+          toast.error("You don't have access to this room");
+          navigate(`/`);
+          throw error;
+        }
+      }
       handleRequestError(error, "Unable to get room information");
       throw error;
     }

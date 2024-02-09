@@ -4,13 +4,11 @@
 - Free up old and completed games id
 - Create docker compose that runs everything (including PostgreSQL) check if env is working
 - Add github actions for auto-deploy
-- Room creator may kick anyone
 - Leader Board
 - Tentar servir react buildado com back
 - Criar migrations
 - Tratar 404 (front)
 - Tratar 404 (back)
-- Disable auto complete for room id field
 - Fix import order (set shared-code package to be the last of the dependencies group)
 - Review SonarLint issues
 - Fix bug that when a user clicks on leave game they receive a message saying that the connection was lost
@@ -21,8 +19,6 @@
 
 - Fix manifest
 - Add G-TAG and add cookie banner
-- Add titles
-- Change room id placeholder and add tooltip with phrase
 
 ### Game flow
 

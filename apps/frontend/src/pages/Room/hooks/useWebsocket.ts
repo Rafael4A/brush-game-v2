@@ -26,8 +26,16 @@ export function useWebsocket() {
   );
 
   const hasLostConnection = useRef(false);
+  const intentionalDisconnection = useRef(false);
 
   const socket = useRef<Socket>();
+
+  useEffect(() => {
+    intentionalDisconnection.current = false;
+    return () => {
+      intentionalDisconnection.current = true;
+    };
+  }, []);
 
   useEffect(() => {
     if (!room?.id || !room?.player?.nickname || !playerId) {
@@ -65,7 +73,7 @@ export function useWebsocket() {
     });
 
     socket.current?.on(SocketEvents.Disconnect, () => {
-      toast.error("Lost connection to server");
+      if (!intentionalDisconnection) toast.error("Disconnected from server");
       hasLostConnection.current = true;
     });
 
@@ -98,6 +106,7 @@ export function useWebsocket() {
     updateRoom,
     setRoom,
     hasLostConnection,
+    intentionalDisconnection,
   ]);
 
   const sendReaction = useCallback(

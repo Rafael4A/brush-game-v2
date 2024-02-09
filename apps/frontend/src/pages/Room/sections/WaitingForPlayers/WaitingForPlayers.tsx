@@ -49,6 +49,7 @@ export function WaitingForPlayers() {
             isOwner={opponent.isOwner}
             nickname={opponent.nickname}
             position={index + OPPONENT_INDEX_OFFSET}
+            isKickable={room.player.isOwner}
           />
         ))}
       </Column>

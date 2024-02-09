@@ -38,7 +38,7 @@ function InnerHomeScreen() {
     onNicknameChange,
     roomId,
     saveOrEditNickname,
-    setRoomId,
+    handleRoomIdChange,
   } = useHomePage();
   const { open } = useTutorial();
 
@@ -92,7 +92,7 @@ function InnerHomeScreen() {
                 id={nicknameId}
                 placeholder="Ask your friend or create a room"
                 value={roomId}
-                onChange={({ target }) => setRoomId(target.value)}
+                onChange={handleRoomIdChange}
               />
             </Row>
             <LoadingButton

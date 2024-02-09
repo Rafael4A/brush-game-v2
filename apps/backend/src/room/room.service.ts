@@ -189,4 +189,26 @@ export class RoomService {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
+
+  public async kickPlayer(
+    id: string,
+    playerId: string,
+    kickedPlayerNick: string
+  ) {
+    const room = await this.findById(id, playerId);
+    this.validations.kickPlayer(room, playerId, kickedPlayerNick);
+
+    try {
+      const updatedRoom: Room = {
+        ...room,
+        players: room.players.filter((p) => p.nickname !== kickedPlayerNick),
+      };
+
+      await this.roomRepository.save(updatedRoom);
+
+      this.appGateway.server.to(room.id).emit(SocketEvents.LeftRoom);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
 }

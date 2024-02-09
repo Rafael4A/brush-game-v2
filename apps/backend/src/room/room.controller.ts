@@ -10,7 +10,12 @@ import {
   HttpStatus,
 } from "@nestjs/common";
 
-import { NewRoomDto, PlayCardDto, StartGameDto } from "shared-code";
+import {
+  KickPlayerdDto,
+  NewRoomDto,
+  PlayCardDto,
+  StartGameDto,
+} from "shared-code";
 
 import { RoomService } from "./room.service";
 
@@ -76,5 +81,13 @@ export class RoomController {
     @Query("playerId") playerId: string
   ) {
     return this.roomService.getReport(id, playerId);
+  }
+
+  @Delete("/room/:id/kick-player")
+  async kickPlayer(
+    @Param("id") id: string,
+    @Body() { kickedPlayerNick, playerId }: KickPlayerdDto
+  ) {
+    return this.roomService.kickPlayer(id, playerId, kickedPlayerNick);
   }
 }
