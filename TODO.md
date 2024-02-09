@@ -1,7 +1,6 @@
 ## Todo
 
 - Delete getAll deleteAll
-- Free up old and completed games id
 - Create docker compose that runs everything (including PostgreSQL) check if env is working
 - Add github actions for auto-deploy
 - Leader Board?
@@ -11,7 +10,6 @@
 - Tratar 404 (back)
 - Fix import order (set shared-code package to be the last of the dependencies group)
 - Review SonarLint issues
-- Fix bug that when a user clicks on leave game they receive a message saying that the connection was lost
 - Add chime option
 - Fix theme colors casing and filter only used
 

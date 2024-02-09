@@ -1,5 +1,6 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
+import { ScheduleModule } from "@nestjs/schedule";
 import { ServeStaticModule } from "@nestjs/serve-static";
 import { TypeOrmModule, TypeOrmModuleOptions } from "@nestjs/typeorm";
 
@@ -7,6 +8,7 @@ import { join } from "path";
 
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
+import { CronModule } from "./cron/cron.module";
 import { GatewayModule } from "./gateway/gateway.module";
 import { Player, Room } from "./room/entities";
 import { RoomModule } from "./room/room.module";
@@ -34,6 +36,9 @@ import { RoomModule } from "./room/room.module";
     GatewayModule,
 
     RoomModule,
+
+    ScheduleModule.forRoot(),
+    CronModule,
   ],
   controllers: [AppController],
   providers: [AppService],

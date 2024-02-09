@@ -3,13 +3,12 @@ import { InjectRepository } from "@nestjs/typeorm";
 
 import { Repository } from "typeorm";
 
-import { Room, Player } from "../../room/entities";
+import { Room } from "../../room/entities";
 
 @Injectable()
 export class ValidationService {
   constructor(
-    @InjectRepository(Room) private roomRepository: Repository<Room>,
-    @InjectRepository(Player) private playerRepository: Repository<Player>
+    @InjectRepository(Room) private roomRepository: Repository<Room>
   ) {}
 
   async getRoomForPlayer(roomId: string, playerId: string) {
