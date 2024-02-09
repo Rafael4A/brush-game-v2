@@ -50,7 +50,7 @@ export function RoomScreen() {
   return (
     <>
       <Helmet>
-        <title>Home - Brush Game</title>
+        <title>Playing - Brush Game</title>
         <meta name="description" content="Brush card game" />
       </Helmet>
 

@@ -7,5 +7,4 @@ export const [useGameType, GameTypeProvider] = createGlobalState<
 export enum GameTypes {
   Online = "Online",
   Local = "Local",
-  Tutorial = "Tutorial",
 }

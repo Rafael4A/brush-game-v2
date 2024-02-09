@@ -52,15 +52,9 @@ export function useNextRound() {
     }
   };
 
-  switch (gameType) {
-    case GameTypes.Online:
-      return { nextRound: nextRemoteRound, ...rest };
-
-    case GameTypes.Local:
-      return { nextRound: nextLocalRound, isLoading: false };
-
-    case GameTypes.Tutorial:
-    default:
-      throw new Error("Tutorial game type is not supported");
+  if (GameTypes.Online === gameType) {
+    return { nextRound: nextRemoteRound, ...rest };
+  } else {
+    return { nextRound: nextLocalRound, isLoading: false };
   }
 }

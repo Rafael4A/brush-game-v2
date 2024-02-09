@@ -24,14 +24,6 @@ export default function Router() {
           </GameTypeProvider>
         }
       />
-      <Route
-        path={ROUTES.TUTORIAL}
-        element={
-          <GameTypeProvider initialValue={GameTypes.Tutorial}>
-            <RoomScreen />
-          </GameTypeProvider>
-        }
-      />
       {/* <Route path='*' element={<NotFoundScreen />} /> */}
     </Routes>
   );

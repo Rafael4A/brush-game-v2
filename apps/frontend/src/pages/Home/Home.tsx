@@ -24,7 +24,7 @@ import { Tutorial, TutorialProvider, useTutorial } from "./components";
 function InnerHomeScreen() {
   const componentId = useId();
   const nicknameId = `${componentId}-nickname-input`;
-  const theme = useTheme();
+  const { colors } = useTheme();
   const {
     createRoom,
     editableNickname,
@@ -79,7 +79,7 @@ function InnerHomeScreen() {
                 <NicknameLabel>{nickname}</NicknameLabel>
               )}
             </Row>
-            <Button fullWidth color={theme.colors.palette_violet} type="submit">
+            <Button fullWidth color={colors.palette_violet} type="submit">
               {isEditingNick ? "Save nickname" : "Edit nickname"}
             </Button>
           </Column>
@@ -98,7 +98,7 @@ function InnerHomeScreen() {
             <LoadingButton
               isLoading={isLoadingJoin}
               fullWidth
-              color={theme.colors.palette_light_cyan}
+              color={colors.palette_light_cyan}
               disabled={!hasValidNickname || !roomId}
               type="submit"
             >
@@ -110,7 +110,7 @@ function InnerHomeScreen() {
             <LoadingButton
               isLoading={isLoadingCreate}
               fullWidth
-              color={theme.colors.palette_blue}
+              color={colors.palette_blue}
               disabled={!hasValidNickname}
               onClick={() => createRoom(nickname)}
             >
@@ -119,18 +119,13 @@ function InnerHomeScreen() {
 
             <Button
               fullWidth
-              color={theme.colors.palette_dark_blue}
-              disabled={!hasValidNickname}
+              color={colors.palette_dark_blue}
               onClick={handlePlayOffline}
             >
               Play Offline
             </Button>
 
-            <Button
-              fullWidth
-              color={theme.colors.palette_dark_blue}
-              onClick={open}
-            >
+            <Button fullWidth color={colors.palette_dark_blue} onClick={open}>
               Start Tutorial
             </Button>
           </Column>

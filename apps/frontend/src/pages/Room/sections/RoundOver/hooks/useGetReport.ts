@@ -41,22 +41,8 @@ export function useGetReport() {
     return Promise.resolve(generateReport(localRoom));
   }
 
-  let getFn;
-
-  switch (gameType) {
-    case GameTypes.Online:
-      getFn = getRemote;
-      break;
-    case GameTypes.Local:
-      getFn = getLocal;
-      break;
-    case GameTypes.Tutorial:
-      throw new Error("Tutorial game type is not supported");
-  }
-
   return useQuery({
     queryKey: ["report", room?.id, playerId],
-    queryFn: getFn,
-    enabled: gameType === GameTypes.Online,
+    queryFn: gameType === GameTypes.Online ? getRemote : getLocal,
   });
 }

@@ -81,22 +81,10 @@ export function usePlayCards() {
     }
   };
 
-  let result;
-
-  switch (gameType) {
-    case GameTypes.Online:
-      result = {
-        playCards: playServerCards,
-        ...rest,
-      };
-      break;
-    case GameTypes.Local:
-      result = { playCards: playLocalCards, isLoading: false };
-      break;
-    case GameTypes.Tutorial:
-    default:
-      throw new Error("Tutorial game type is not supported");
-  }
-
-  return result;
+  if (gameType === GameTypes.Online)
+    return {
+      playCards: playServerCards,
+      ...rest,
+    };
+  else return { playCards: playLocalCards, isLoading: false };
 }

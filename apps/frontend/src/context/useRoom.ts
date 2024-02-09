@@ -1,9 +1,11 @@
-import { GetRoomResponseDto } from "shared-code";
+import { GetRoomResponseDto, RequestedRoomMapper } from "shared-code";
 
 import { createGlobalState } from "./base/createGlobalState";
 
 import { useGetRoom } from "../hooks";
 import { useEffect } from "react";
+import { useLocalRoom } from "./useLocalRoom";
+import { LOCAL_PLAYER_ID } from "../resources/constants";
 
 const [_useRoom, RoomProvider] = createGlobalState<
   GetRoomResponseDto | undefined
@@ -16,15 +18,18 @@ const useRoom = (
   React.Dispatch<React.SetStateAction<GetRoomResponseDto | undefined>>,
 ] => {
   const { data } = useGetRoom(id);
+  const [localRoom] = useLocalRoom();
 
   const [_room, _setRoom] = _useRoom();
 
-  // This is effect is only needed because the room needs to be mutable but update when refetched
   useEffect(() => {
+    // This is effect is only needed because the room needs to be mutable but update when refetched
     if (id && data) {
       _setRoom(data);
+    } else if (localRoom) {
+      _setRoom(RequestedRoomMapper.map(localRoom, LOCAL_PLAYER_ID));
     }
-  }, [id, data]);
+  }, [id, data, localRoom]);
 
   return [_room, _setRoom];
 };

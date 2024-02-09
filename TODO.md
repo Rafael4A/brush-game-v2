@@ -1,7 +1,5 @@
 ## Todo
 
-- Check if types and mappers are where they should be
-- Check if mappers should really be a class
 - Delete getAll deleteAll
 - Free up old and completed games id
 - Create docker compose that runs everything (including PostgreSQL) check if env is working
@@ -10,15 +8,11 @@
 - Leader Board
 - Tentar servir react buildado com back
 - Criar migrations
-- Impedir mais de um jogo ao mesmo tempo
-- Criar toast handler
 - Tratar 404 (front)
 - Tratar 404 (back)
 - Disable auto complete for room id field
 - Fix import order (set shared-code package to be the last of the dependencies group)
-- Review functions that avoid too much mutability (look for reduces)
 - Review SonarLint issues
-- BUSCAR POR THIS.ALGO nas funções extraídas para SHARED CODE
 - Fix bug that when a user clicks on leave game they receive a message saying that the connection was lost
 - Add chime option
 - Fix theme colors casing and filter only used
