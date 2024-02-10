@@ -1,10 +1,9 @@
 export enum Reaction {
-  Like = "Like",
-  Dislike = "Dislike",
   Love = "Love",
   Laugh = "Laugh",
   Cry = "Cry",
   Angry = "Angry",
+  Bored = "Bored",
 }
 
 export interface ServerReactionEvent {

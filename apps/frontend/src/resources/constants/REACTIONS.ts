@@ -7,20 +7,12 @@ interface ReactionObject {
 
 export const REACTIONS: ReactionObject[] = [
   {
-    name: Reaction.Like,
-    icon: "👍",
-  },
-  {
-    name: Reaction.Dislike,
-    icon: "👎",
-  },
-  {
     name: Reaction.Love,
     icon: "❤️",
   },
   {
     name: Reaction.Laugh,
-    icon: "😂",
+    icon: "🤣",
   },
   {
     name: Reaction.Cry,
@@ -29,5 +21,9 @@ export const REACTIONS: ReactionObject[] = [
   {
     name: Reaction.Angry,
     icon: "😡",
+  },
+  {
+    name: Reaction.Bored,
+    icon: "🥱",
   },
 ];
