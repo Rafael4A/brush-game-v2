@@ -18,6 +18,7 @@ import {
   LoaderContainer,
 } from "./styles";
 import { CardMiniature } from "./components";
+import { ROUTES } from "../../../../resources/constants";
 
 export function RoundOver() {
   const [roomData] = useRoom();
@@ -83,7 +84,7 @@ export function RoundOver() {
       <ButtonsContainer>
         {roomData.gameState === GameState.GameOver && (
           <Button color={colors.dark_red}>
-            <Link to="/" style={{ textDecoration: "none" }}>
+            <Link to={ROUTES.HOME} style={{ textDecoration: "none" }}>
               Leave Room
             </Link>
           </Button>

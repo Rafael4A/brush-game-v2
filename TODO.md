@@ -6,7 +6,6 @@
 - Leader Board?
 - Tentar servir react buildado com back
 - Criar migrations
-- Tratar 404 (front)
 - Tratar 404 (back)
 - Fix import order (set shared-code package to be the last of the dependencies group)
 - Review SonarLint issues

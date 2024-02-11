@@ -10,6 +10,7 @@ import { useQuery } from "react-query";
 import { GetRoomResponseDto } from "shared-code";
 import { toast } from "react-toastify";
 import { AxiosError, isAxiosError } from "axios";
+import { ROUTES } from "../resources/constants";
 
 export function useGetRoom(roomId?: string) {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ export function useGetRoom(roomId?: string) {
   async function get(): Promise<GetRoomResponseDto> {
     try {
       if (!roomId || !playerId) {
-        navigate(`/`);
+        navigate(ROUTES.HOME);
         throw new Error("Room or player id is missing");
       }
 
@@ -36,7 +37,7 @@ export function useGetRoom(roomId?: string) {
           "This player cannot access the requested room"
         ) {
           toast.error("You don't have access to this room");
-          navigate(`/`);
+          navigate(ROUTES.HOME);
           throw error;
         }
       }
