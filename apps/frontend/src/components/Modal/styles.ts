@@ -14,7 +14,7 @@ export const StyledModal = styled.dialog(({ theme }) => ({
 
   width: "calc(100% - 16px)",
   maxWidth: 850,
-  backgroundColor: theme.colors.background_dark_green,
+  backgroundColor: theme.colors.backgroundDarkGreen,
   "&::backdrop": {
     background: "rgba(0, 0, 0, 0.7)",
   },

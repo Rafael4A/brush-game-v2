@@ -20,7 +20,7 @@ export const StyledModalWithCloseButton = forwardRef<
         style={{ position: "absolute", right: 8, top: 4 }}
         onClick={dismissFn}
       >
-        <Icon path={mdiWindowClose} size={1.2} color={colors.light_red} />
+        <Icon path={mdiWindowClose} size={1.2} color={colors.lightRed} />
       </UnstyledButton>
       {children}
     </StyledModal>

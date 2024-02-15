@@ -79,7 +79,7 @@ function InnerHomeScreen() {
                 <NicknameLabel>{nickname}</NicknameLabel>
               )}
             </Row>
-            <Button fullWidth color={colors.palette_violet} type="submit">
+            <Button fullWidth color={colors.paletteViolet} type="submit">
               {isEditingNick ? "Save nickname" : "Edit nickname"}
             </Button>
           </Column>
@@ -98,7 +98,7 @@ function InnerHomeScreen() {
             <LoadingButton
               isLoading={isLoadingJoin}
               fullWidth
-              color={colors.palette_light_cyan}
+              color={colors.paletteLightCyan}
               disabled={!hasValidNickname || !roomId}
               type="submit"
             >
@@ -110,7 +110,7 @@ function InnerHomeScreen() {
             <LoadingButton
               isLoading={isLoadingCreate}
               fullWidth
-              color={colors.palette_blue}
+              color={colors.paletteBlue}
               disabled={!hasValidNickname}
               onClick={() => createRoom(nickname)}
             >
@@ -119,13 +119,13 @@ function InnerHomeScreen() {
 
             <Button
               fullWidth
-              color={colors.palette_dark_blue}
+              color={colors.paletteDarkBlue}
               onClick={handlePlayOffline}
             >
               Play Offline
             </Button>
 
-            <Button fullWidth color={colors.gray_blue} onClick={open}>
+            <Button fullWidth color={colors.grayBlue} onClick={open}>
               Start Tutorial
             </Button>
           </Column>

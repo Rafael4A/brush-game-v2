@@ -3,9 +3,9 @@ import styled, { StyledObject } from "styled-components";
 const LoaderSpinner = styled.div(
   ({ theme }) =>
     ({
-      borderColor: theme.colors.light_gray,
+      borderColor: theme.colors.lightGray,
       borderStyle: "solid",
-      borderLeftColor: theme.colors.light_blue,
+      borderLeftColor: theme.colors.lightBlue,
       borderRadius: "50%",
       margin: "0 auto",
       transform: "rotate(45deg)",

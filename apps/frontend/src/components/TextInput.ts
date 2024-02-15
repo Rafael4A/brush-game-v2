@@ -4,7 +4,7 @@ export const TextInput = styled.input.attrs({ type: "text" })(({ theme }) => ({
   backgroundColor: "transparent",
   border: "none",
   borderRadius: "0",
-  borderBottom: `2px solid ${theme.colors.light_gray}`,
+  borderBottom: `2px solid ${theme.colors.lightGray}`,
 
   padding: "4px 0 2px",
   width: "100%",
