@@ -7,6 +7,7 @@ import {
   OnGatewayConnection,
   OnGatewayDisconnect,
 } from "@nestjs/websockets";
+import { Socket, Server } from "socket.io";
 
 import {
   Reaction,
@@ -14,7 +15,6 @@ import {
   SocketEvents,
   SocketQuery,
 } from "shared-code";
-import { Socket, Server } from "socket.io";
 
 import { ValidationService } from "./sockets/validation.service";
 

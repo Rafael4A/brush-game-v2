@@ -1,4 +1,5 @@
 import styled from "styled-components";
+
 import { Loader } from "./Loader";
 
 interface ButtonProps extends React.HTMLProps<HTMLButtonElement> {

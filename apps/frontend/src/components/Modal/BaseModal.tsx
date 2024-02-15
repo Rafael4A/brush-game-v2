@@ -1,9 +1,9 @@
 import { useEffect, useRef, useId } from "react";
+
 import { DefaultTheme } from "styled-components";
 
 import { Button } from "../Button";
 import { Column } from "../FlexBoxes";
-
 import {
   StyledModal,
   ModalContainer,

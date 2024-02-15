@@ -1,11 +1,11 @@
+import { useEffect } from "react";
+
 import { GetRoomResponseDto, RequestedRoomMapper } from "shared-code";
 
-import { createGlobalState } from "./base/createGlobalState";
-
 import { useGetRoom } from "../hooks";
-import { useEffect } from "react";
-import { useLocalRoom } from "./useLocalRoom";
 import { LOCAL_PLAYER_ID } from "../resources/constants";
+import { createGlobalState } from "./base/createGlobalState";
+import { useLocalRoom } from "./useLocalRoom";
 
 const [_useRoom, RoomProvider] = createGlobalState<
   GetRoomResponseDto | undefined
@@ -29,7 +29,7 @@ const useRoom = (
     } else if (localRoom) {
       _setRoom(RequestedRoomMapper.map(localRoom, LOCAL_PLAYER_ID));
     }
-  }, [id, data, localRoom]);
+  }, [id, data, localRoom, _setRoom]);
 
   return [_room, _setRoom];
 };

@@ -2,6 +2,8 @@ import { useCallback, useEffect, useRef } from "react";
 
 import { useQueryClient } from "react-query";
 import { toast } from "react-toastify";
+import io, { Socket } from "socket.io-client";
+
 import {
   CardCode,
   GetRoomResponseDto,
@@ -10,7 +12,6 @@ import {
   ServerReactionEvent,
   SocketEvents,
 } from "shared-code";
-import io, { Socket } from "socket.io-client";
 
 import { GameTypes, useGameType, usePlayerId, useRoom } from "../../../context";
 import { reactionMapper } from "../../../utils";
@@ -107,6 +108,7 @@ export function useWebsocket() {
     setRoom,
     hasLostConnection,
     intentionalDisconnection,
+    gameType,
   ]);
 
   const sendReaction = useCallback(

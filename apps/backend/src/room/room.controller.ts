@@ -11,7 +11,7 @@ import {
 } from "@nestjs/common";
 
 import {
-  KickPlayerdDto,
+  KickPlayerDto,
   NewRoomDto,
   PlayCardDto,
   StartGameDto,
@@ -86,7 +86,7 @@ export class RoomController {
   @Delete("/room/:id/kick-player")
   async kickPlayer(
     @Param("id") id: string,
-    @Body() { kickedPlayerNick, playerId }: KickPlayerdDto
+    @Body() { kickedPlayerNick, playerId }: KickPlayerDto
   ) {
     return this.roomService.kickPlayer(id, playerId, kickedPlayerNick);
   }

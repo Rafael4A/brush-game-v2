@@ -1,5 +1,4 @@
 import { HttpStatus } from "@nestjs/common";
-
 import { NextFunction, Request, Response } from "express";
 
 const allowedUrls: string[] = ["/allowed-url1", "/allowed-url2"]; // Add your allowed URLs here

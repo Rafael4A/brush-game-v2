@@ -1,9 +1,12 @@
 import { HTMLProps, forwardRef } from "react";
-import { StyledModal } from "./styles";
+
 import { UnstyledButton } from "..";
-import Icon from "@mdi/react";
+
 import { mdiWindowClose } from "@mdi/js";
+import Icon from "@mdi/react";
 import { useTheme } from "styled-components";
+
+import { StyledModal } from "./styles";
 
 interface StyledModalWithCloseButtonProps extends HTMLProps<HTMLDialogElement> {
   dismissFn: () => void;

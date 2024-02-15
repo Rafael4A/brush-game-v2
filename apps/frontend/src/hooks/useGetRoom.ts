@@ -1,15 +1,16 @@
+import { AxiosError, isAxiosError } from "axios";
+import { useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+
+import { GetRoomResponseDto } from "shared-code";
+
 import { usePlayerId } from "../context";
 import {
   RequestError,
   axiosInstance,
   handleRequestError,
 } from "../resources/api";
-
-import { useQuery } from "react-query";
-import { GetRoomResponseDto } from "shared-code";
-import { toast } from "react-toastify";
-import { AxiosError, isAxiosError } from "axios";
 import { ROUTES } from "../resources/constants";
 
 export function useGetRoom(roomId?: string) {

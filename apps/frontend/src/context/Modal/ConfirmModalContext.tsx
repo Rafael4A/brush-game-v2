@@ -28,11 +28,16 @@ const ConfirmModalContext = createContext<ConfirmModalContextOptions>(
   {} as ConfirmModalContextOptions
 );
 
+// eslint-disable-next-line react-refresh/only-export-components
+export function useConfirmModal(): ConfirmModalContextOptions {
+  return useContext(ConfirmModalContext);
+}
+
 export function ConfirmModalProvider({
   children,
 }: Readonly<ConfirmModalProviderProps>) {
   const [open, setOpen] = useState(false);
-  // TODO remover useCallback
+
   const dismiss = useCallback(() => {
     setOpen(false);
   }, []);
@@ -72,8 +77,4 @@ export function ConfirmModalProvider({
       )}
     </ConfirmModalContext.Provider>
   );
-}
-
-export function useConfirmModal(): ConfirmModalContextOptions {
-  return useContext(ConfirmModalContext);
 }

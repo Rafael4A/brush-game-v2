@@ -1,5 +1,7 @@
 import { useState } from "react";
+
 import { CardCode } from "shared-code";
+
 import { generateAltForCardCode } from "../../../../../utils";
 
 interface CardMiniatureProps {

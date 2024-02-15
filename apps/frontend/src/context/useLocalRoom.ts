@@ -1,12 +1,13 @@
+import { nextGameState } from "shared-code/code/nextGameState";
+
 import { GameState, Room } from "shared-code";
 
-import { createGlobalStorageState } from "./base/createGlobalStorageState";
+import { playComputerCard } from "../gameLogic";
 import {
   LOCAL_COMPUTER_NICK,
   LOCAL_STORAGE_KEYS,
 } from "../resources/constants";
-import { playComputerCard } from "../gameLogic";
-import { nextGameState } from "shared-code/code/nextGameState";
+import { createGlobalStorageState } from "./base/createGlobalStorageState";
 
 const [_useLocalRoom, LocalRoomProvider] = createGlobalStorageState<
   Room | undefined

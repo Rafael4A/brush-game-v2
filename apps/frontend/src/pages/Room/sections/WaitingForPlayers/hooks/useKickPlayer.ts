@@ -1,6 +1,6 @@
 import { useMutation } from "react-query";
 
-import { KickPlayerdDtoType } from "shared-code";
+import { KickPlayerDtoType } from "shared-code";
 
 import { usePlayerId, useRoom } from "../../../../../context";
 import {
@@ -14,13 +14,13 @@ export function useKickPlayer() {
 
   async function deleteRequest({
     kickedPlayerNick,
-  }: Pick<KickPlayerdDtoType, "kickedPlayerNick">) {
+  }: Pick<KickPlayerDtoType, "kickedPlayerNick">) {
     if (!room || !playerId) throw new Error("Room or player id is missing");
 
     const response = await axiosInstance.delete(
       `/room/${room.id}/kick-player`,
       {
-        data: { playerId, kickedPlayerNick } satisfies KickPlayerdDtoType,
+        data: { playerId, kickedPlayerNick } satisfies KickPlayerDtoType,
       }
     );
 

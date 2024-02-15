@@ -1,8 +1,8 @@
 import { Route, Routes } from "react-router-dom";
 
+import { GameTypeProvider, GameTypes } from "./context";
 import { RoomScreen, HomeScreen, NotFoundScreen } from "./pages";
 import { ROUTES } from "./resources/constants";
-import { GameTypeProvider, GameTypes } from "./context";
 
 export default function Router() {
   return (

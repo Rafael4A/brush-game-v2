@@ -1,4 +1,5 @@
-import { WizardProvider, WizardStep, useWizard } from "../../../../context";
+import { useEffect, useId, useRef } from "react";
+
 import {
   Button,
   ModalContainer,
@@ -8,6 +9,7 @@ import {
   StyledModalWithCloseButton,
   WizardStepWrapper,
 } from "../../../../components";
+import { WizardProvider, WizardStep, useWizard } from "../../../../context";
 import {
   DrawingCardsStep,
   GameEndStep,
@@ -18,7 +20,6 @@ import {
   OnlineGameStep,
   ScoringStep,
 } from "./steps";
-import { useEffect, useId, useRef } from "react";
 import { useTutorial } from "./TutorialContext";
 
 const steps: WizardStep[] = Array.from(
@@ -70,7 +71,7 @@ function TutorialInner({ titleId }: Readonly<TutorialInnerProps>) {
 
   useEffect(() => {
     if (!isOpen) to(0);
-  }, [isOpen]);
+  }, [isOpen, to]);
 
   const hasReachedEnd = activeStep === steps.length - 1;
 

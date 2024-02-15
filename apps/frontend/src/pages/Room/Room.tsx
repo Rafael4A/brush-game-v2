@@ -1,12 +1,13 @@
 import { Helmet } from "react-helmet-async";
 import { useParams } from "react-router-dom";
+
 import { GameState } from "shared-code";
 
 import { FullscreenLoader, MainContainer } from "../../components";
-import { useWebsocket } from "./hooks";
-import { GamePlay, RoundOver, WaitingForPlayers } from "./sections";
 import { useRoom } from "../../context";
+import { useWebsocket } from "./hooks";
 import { useDelayedGameState } from "./hooks/useDelayedGameState";
+import { GamePlay, RoundOver, WaitingForPlayers } from "./sections";
 
 export function RoomScreen() {
   const { id } = useParams();

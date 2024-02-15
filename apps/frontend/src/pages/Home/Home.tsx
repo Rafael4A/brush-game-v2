@@ -1,5 +1,7 @@
 import { useId } from "react";
 
+import { mdiCardsPlaying } from "@mdi/js";
+import Icon from "@mdi/react";
 import { Helmet } from "react-helmet-async";
 import { useTheme } from "styled-components";
 
@@ -12,14 +14,10 @@ import {
   TextInput,
   Tooltip,
 } from "../../components";
-
-import { NicknameLabel, RoomIdLabel, Title } from "./styles";
-import Icon from "@mdi/react";
-import { mdiCardsPlaying } from "@mdi/js";
-
 import { disableAutoCompleteProps } from "../../utils";
-import { useHomePage } from "./useHomePage";
 import { Tutorial, TutorialProvider, useTutorial } from "./components";
+import { NicknameLabel, RoomIdLabel, Title } from "./styles";
+import { useHomePage } from "./useHomePage";
 
 function InnerHomeScreen() {
   const componentId = useId();

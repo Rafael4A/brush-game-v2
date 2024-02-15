@@ -1,4 +1,5 @@
 import styled from "styled-components";
+
 import { Row, Column } from "../FlexBoxes";
 
 export const StyledModal = styled.dialog(({ theme }) => ({

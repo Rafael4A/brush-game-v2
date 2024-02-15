@@ -1,10 +1,11 @@
+import { Entity, Column, PrimaryColumn, OneToMany } from "typeorm";
+
 import {
   CARDS_CODES,
   CardCode,
   GameState,
   Room as RoomInterface,
 } from "shared-code";
-import { Entity, Column, PrimaryColumn, OneToMany } from "typeorm";
 
 import { Player } from "./player.entity";
 

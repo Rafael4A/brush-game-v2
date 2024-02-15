@@ -1,5 +1,8 @@
+import { useState } from "react";
+
 import { mdiEmoticonOutline, mdiHelpCircleOutline } from "@mdi/js";
 import Icon from "@mdi/react";
+
 import { GameState, Reaction } from "shared-code";
 
 import {
@@ -8,6 +11,7 @@ import {
   UnstyledButton,
 } from "../../../../../../components";
 import { GameTypes, useGameType, useRoom } from "../../../../../../context";
+import { REACTIONS } from "../../../../../../resources/constants";
 import {
   HeaderContainer,
   ReactionButton,
@@ -15,8 +19,6 @@ import {
   ReactionsMenuWrapper,
   RoomTitleContainer,
 } from "./styles";
-import { useState } from "react";
-import { REACTIONS } from "../../../../../../resources/constants";
 
 interface GameHeaderProps {
   sendReaction: (reaction: Reaction) => void;

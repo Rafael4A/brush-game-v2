@@ -1,5 +1,6 @@
-import { CardCode, Player as PlayerInterface } from "shared-code";
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from "typeorm";
+
+import { CardCode, Player as PlayerInterface } from "shared-code";
 
 import { Room } from "./room.entity";
 

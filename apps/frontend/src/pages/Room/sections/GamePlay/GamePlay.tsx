@@ -3,6 +3,8 @@ import { createRef, useRef } from "react";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { useTheme } from "styled-components";
 
+import { Reaction } from "shared-code";
+
 import { LoadingButton } from "../../../../components";
 import { useRoom } from "../../../../context";
 import { Card, GameHeader } from "./components";
@@ -13,7 +15,6 @@ import {
   PlayerCardsContainer,
   TableCardsContainer,
 } from "./styles";
-import { Reaction } from "shared-code";
 
 interface GamePlayProps {
   sendReaction: (reaction: Reaction) => void;

@@ -1,15 +1,8 @@
 import { useState } from "react";
-import { useLocalRoom, usePlayerId } from "../../context";
-import { useCreateRoom, useEditNickname, useJoinRoom } from "./hooks";
-import { useQueryParams } from "../../hooks";
+
 import { useNavigate } from "react-router-dom";
-import {
-  LOCAL_COMPUTER_ID,
-  LOCAL_COMPUTER_NICK,
-  LOCAL_PLAYER_ID,
-  LOCAL_ROOM_ID,
-  ROUTES,
-} from "../../resources/constants";
+import { toast } from "react-toastify";
+
 import {
   CARDS_CODES,
   GameState,
@@ -18,7 +11,17 @@ import {
   shuffleCards,
   startGame,
 } from "shared-code";
-import { toast } from "react-toastify";
+
+import { useLocalRoom, usePlayerId } from "../../context";
+import { useQueryParams } from "../../hooks";
+import {
+  LOCAL_COMPUTER_ID,
+  LOCAL_COMPUTER_NICK,
+  LOCAL_PLAYER_ID,
+  LOCAL_ROOM_ID,
+  ROUTES,
+} from "../../resources/constants";
+import { useCreateRoom, useEditNickname, useJoinRoom } from "./hooks";
 
 export function useHomePage() {
   const { roomId: routeRoomId } = useQueryParams();

@@ -8,7 +8,7 @@ export function OnlineGameStep() {
         set a nickname and create a room, share the room id with your friends.
         Once they join, you can start playing the game. If you are a friend
         trying to join a room, you can do so by setting your nickname and
-        entering the room's id.
+        entering the room&apos;s id.
       </p>
     </Column>
   );

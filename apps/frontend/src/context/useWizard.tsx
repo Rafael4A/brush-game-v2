@@ -1,6 +1,7 @@
 import {
   PropsWithChildren,
   createContext,
+  useCallback,
   useContext,
   useMemo,
   useState,
@@ -22,6 +23,7 @@ interface WizardProviderProps {
 
 const WizardContext = createContext<WizardContext>({} as WizardContext);
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useWizard(): WizardContext {
   return useContext(WizardContext);
 }
@@ -33,11 +35,14 @@ export function WizardProvider({
 }: PropsWithChildren<WizardProviderProps>) {
   const [activeStep, setActiveStep] = useState(initialActiveStep);
 
-  const next = () => setActiveStep((current) => current + 1);
+  const next = useCallback(() => setActiveStep((current) => current + 1), []);
 
-  const previous = () => setActiveStep((current) => current - 1);
+  const previous = useCallback(
+    () => setActiveStep((current) => current - 1),
+    []
+  );
 
-  const to = (index: number) => setActiveStep(index);
+  const to = useCallback((index: number) => setActiveStep(index), []);
 
   const progress = useMemo(
     () => 100 * ((activeStep + 1) / stepsCount),

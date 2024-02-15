@@ -14,6 +14,7 @@ export interface TutorialContext {
 
 const TutorialContext = createContext<TutorialContext>({} as TutorialContext);
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useTutorial(): TutorialContext {
   return useContext(TutorialContext);
 }
@@ -21,16 +22,13 @@ export function useTutorial(): TutorialContext {
 export function TutorialProvider({ children }: Readonly<PropsWithChildren>) {
   const [isOpen, setIsOpen] = useState(false);
 
-  const open = () => setIsOpen(true);
-  const close = () => setIsOpen(false);
-
   const contextValue = useMemo(
     () => ({
-      open,
-      close,
+      open: () => setIsOpen(true),
+      close: () => setIsOpen(false),
       isOpen,
     }),
-    [open, close, isOpen]
+    [isOpen]
   );
 
   return (

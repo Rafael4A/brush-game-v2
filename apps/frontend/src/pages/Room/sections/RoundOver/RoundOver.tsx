@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
-import { GameState, PlayerReport } from "shared-code";
 import { useTheme } from "styled-components";
+
+import { GameState, PlayerReport } from "shared-code";
 
 import {
   Button,
@@ -10,6 +11,8 @@ import {
   Row,
 } from "../../../../components";
 import { useRoom } from "../../../../context";
+import { ROUTES } from "../../../../resources/constants";
+import { CardMiniature } from "./components";
 import { useGetReport, useNextRound } from "./hooks";
 import {
   ButtonsContainer,
@@ -17,8 +20,6 @@ import {
   FullReportContainer,
   LoaderContainer,
 } from "./styles";
-import { CardMiniature } from "./components";
-import { ROUTES } from "../../../../resources/constants";
 
 export function RoundOver() {
   const [roomData] = useRoom();
