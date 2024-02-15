@@ -9,8 +9,7 @@
 - Tratar 404 (back)
 - Fix import order (set shared-code package to be the last of the dependencies group)
 - Review SonarLint issues
-- Add chime option
-- Fix theme colors casing and filter only used
+- Fix theme colors: filter only used
 
 #### Frontend
 

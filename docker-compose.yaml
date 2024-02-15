@@ -1,0 +1,14 @@
+nginx:
+  # build:
+  #     dockerfile: ./docker/nginx.dockerfile
+  #     context: .
+  image: nginx
+  container_name: brush-v2-nginx
+  ports:
+    - "80:80"
+  # networks:
+  #     - minha-rede
+  # depends_on:
+  #     - "app1"
+  #     - "app2"
+  #     - "app3"

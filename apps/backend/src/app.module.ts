@@ -1,10 +1,7 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { ScheduleModule } from "@nestjs/schedule";
-import { ServeStaticModule } from "@nestjs/serve-static";
 import { TypeOrmModule, TypeOrmModuleOptions } from "@nestjs/typeorm";
-
-import { join } from "path";
 
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
@@ -28,10 +25,13 @@ import { RoomModule } from "./room/room.module";
       entities: [Room, Player],
     } as TypeOrmModuleOptions),
 
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, "..", "client"), // adjust this path to point to your React app's build directory
-      exclude: ["/api*"], // exclude API routes from static files serving
-    }),
+    // ServeStaticModule.forRoot({
+    //   rootPath: join(__dirname, "..", "client"),
+    //   exclude: ["/api*"],
+    //   serveStaticOptions: {
+    //     index: false,
+    //   },
+    // }),
 
     GatewayModule,
 
