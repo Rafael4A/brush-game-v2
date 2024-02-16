@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import {
   CardCode,
   GetRoomResponseDto,
-  PlayCardDtoType,
+  PlayCardDto,
   playCard,
 } from "shared-code";
 
@@ -75,7 +75,7 @@ export function usePlayCards() {
   else return { playCards: playLocalCards, isLoading: false };
 }
 
-interface PlayCardPostArgs extends PlayCardDtoType {
+interface PlayCardPostArgs extends PlayCardDto {
   roomId: string;
 }
 

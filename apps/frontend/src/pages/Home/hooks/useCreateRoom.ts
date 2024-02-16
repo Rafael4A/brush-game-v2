@@ -1,7 +1,7 @@
 import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
 
-import { BasicRoomResponseDto, NewRoomDtoType } from "shared-code";
+import { BasicRoomResponseDto, NewRoomDto } from "shared-code";
 
 import { usePlayerId } from "../../../context";
 import { axiosInstance, handleRequestError } from "../../../resources/api";
@@ -10,9 +10,7 @@ export function useCreateRoom() {
   const [, setPlayerId] = usePlayerId();
   const navigate = useNavigate();
 
-  async function post({
-    nickname,
-  }: NewRoomDtoType): Promise<BasicRoomResponseDto> {
+  async function post({ nickname }: NewRoomDto): Promise<BasicRoomResponseDto> {
     const response = await axiosInstance.post("/room", { nickname });
 
     return response.data;
