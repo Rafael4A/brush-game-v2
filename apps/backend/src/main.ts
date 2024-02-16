@@ -2,8 +2,8 @@ import { ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { IoAdapter } from "@nestjs/platform-socket.io";
-
 import { join } from "path";
+
 import { AppModule } from "./app.module";
 
 async function bootstrap() {
@@ -11,7 +11,7 @@ async function bootstrap() {
   // app.enableCors();
 
   // Set up the global prefix for your API routes
-  app.setGlobalPrefix("api");
+  app.setGlobalPrefix("api", { exclude: ["/"] });
 
   // Serve your static files (React app)
   // TODO CREATE FOLDER AND SERVE IT
