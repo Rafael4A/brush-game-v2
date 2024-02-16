@@ -60,20 +60,6 @@ export class RoomService {
     return room;
   }
 
-  // TODO APAGAR ANTES DE CHEGAR EM PRODUÇÃO
-  async getAll() {
-    return await this.roomRepository.find({
-      relations: ["players"],
-    });
-  }
-
-  // TODO APAGAR ANTES DE CHEGAR EM PRODUÇÃO
-  async deleteAll() {
-    await this.entityManager.transaction(async (manager) => {
-      await manager.delete(Room, {});
-    });
-  }
-
   async create(nickname: string) {
     try {
       let id = this.generateId();

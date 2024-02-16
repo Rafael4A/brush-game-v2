@@ -23,16 +23,6 @@ import { RoomService } from "./room.service";
 export class RoomController {
   constructor(private readonly roomService: RoomService) {}
 
-  @Get("/rooms")
-  async getAll() {
-    return this.roomService.getAll();
-  }
-
-  @Delete("/rooms")
-  async deleteAll() {
-    return this.roomService.deleteAll();
-  }
-
   @Post("/room")
   async create(@Body() { nickname }: NewRoomDto) {
     return this.roomService.create(nickname);

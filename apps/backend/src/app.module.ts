@@ -21,17 +21,9 @@ import { RoomModule } from "./room/room.module";
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      synchronize: true, // TODO Set to false in production
+      synchronize: process.env.IS_DEV == "true",
       entities: [Room, Player],
     } as TypeOrmModuleOptions),
-
-    // ServeStaticModule.forRoot({
-    //   rootPath: join(__dirname, "..", "client"),
-    //   exclude: ["/api*"],
-    //   serveStaticOptions: {
-    //     index: false,
-    //   },
-    // }),
 
     GatewayModule,
 

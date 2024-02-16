@@ -3,11 +3,7 @@
 - Delete getAll deleteAll
 - Create docker compose that runs everything (including PostgreSQL) check if env is working
 - Add github actions for auto-deploy
-- Leader Board?
-- Tentar servir react buildado com back
 - Criar migrations
-- Tratar 404 (back)
-- Fix import order (set shared-code package to be the last of the dependencies group)
 - Review SonarLint issues
 - Fix theme colors: filter only used
 
