@@ -2,7 +2,6 @@
 
 - Create docker compose that runs everything (including PostgreSQL) check if env is working
 - Add github actions for auto-deploy
-- Criar migrations
 - Review SonarLint issues
 - Fix theme colors: filter only used
 

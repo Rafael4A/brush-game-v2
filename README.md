@@ -8,6 +8,11 @@
 - This projects uses postgresql please run it locally for development and set the connection parameters in a .env file on the backend root
 - Run the development version using npm run dev
 
+## Migrations
+
+- Run migrations with: `npm run migration:generate -- src/migrations/first_migration`
+- Reference: https://thriveread.com/typeorm-nestjs-migrations/
+
 ### Example of postgresql and pgadmin compose for local development
 
 ```
