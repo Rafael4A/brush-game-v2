@@ -1,6 +1,5 @@
 ## Todo
 
-- Delete getAll deleteAll
 - Create docker compose that runs everything (including PostgreSQL) check if env is working
 - Add github actions for auto-deploy
 - Criar migrations
