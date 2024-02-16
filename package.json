@@ -2,6 +2,7 @@
   "private": true,
   "scripts": {
     "build": "turbo run build --no-daemon",
+    "prod": "npm run build && turbo run start:prod --filter=backend --no-daemon",
     "dev": "turbo run dev --no-daemon",
     "lint": "turbo run lint --no-daemon",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",

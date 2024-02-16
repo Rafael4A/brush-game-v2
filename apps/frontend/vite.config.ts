@@ -8,7 +8,7 @@ export default defineConfig({
   },
   build: {
     commonjsOptions: {
-      include: [/shared-code/],
+      include: [/shared-code/, /node_modules/],
     },
   },
   plugins: [react()],

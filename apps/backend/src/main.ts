@@ -15,7 +15,9 @@ async function bootstrap() {
 
   // Serve your static files (React app)
   // TODO CREATE FOLDER AND SERVE IT
-  app.useStaticAssets(join(__dirname, "..", "client"), { index: false });
+  app.useStaticAssets(join(__dirname, "..", "..", "frontend", "dist"), {
+    index: false,
+  });
 
   app.useWebSocketAdapter(new IoAdapter(app));
   app.useGlobalPipes(new ValidationPipe());

@@ -36,7 +36,6 @@ export function RoomScreen() {
     <>
       <Helmet>
         <title>Playing - Brush Game</title>
-        <meta name="description" content="Brush card game" />
       </Helmet>
 
       <MainContainer>{section()}</MainContainer>

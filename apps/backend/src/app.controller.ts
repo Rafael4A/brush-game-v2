@@ -10,7 +10,14 @@ export class AppController {
 
   @Get()
   index(@Res() res: Response) {
-    const filePath = join(__dirname, "..", "client", "index.html");
+    const filePath = join(
+      __dirname,
+      "..",
+      "..",
+      "frontend",
+      "dist",
+      "index.html"
+    );
 
     res.status(200);
 

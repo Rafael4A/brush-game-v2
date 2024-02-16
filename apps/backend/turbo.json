@@ -3,6 +3,7 @@
   "pipeline": {
     "dev": {
       "dependsOn": ["^build"]
-    }
+    },
+    "start:prod": {}
   }
 }

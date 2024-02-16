@@ -44,7 +44,6 @@ function InnerHomeScreen() {
     <>
       <Helmet>
         <title>Home - Brush Game</title>
-        <meta name="description" content="Brush card game" />
       </Helmet>
       <MainContainer>
         <Title>
