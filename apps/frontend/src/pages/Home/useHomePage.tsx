@@ -10,6 +10,7 @@ import {
   randomInt,
   shuffleCards,
   startGame,
+  ROUTES,
 } from "shared-code";
 
 import { useLocalRoom, usePlayerId } from "../../context";
@@ -19,7 +20,6 @@ import {
   LOCAL_COMPUTER_NICK,
   LOCAL_PLAYER_ID,
   LOCAL_ROOM_ID,
-  ROUTES,
 } from "../../resources/constants";
 import { useCreateRoom, useEditNickname, useJoinRoom } from "./hooks";
 

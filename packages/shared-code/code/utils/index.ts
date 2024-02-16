@@ -10,3 +10,4 @@ export * from "./shuffleCards";
 export * from "./willSumToFifteen";
 export * from "./randomInt";
 export * from "./updateTurn";
+export * from "./drawCardsForEachPlayer";

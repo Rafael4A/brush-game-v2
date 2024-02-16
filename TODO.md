@@ -15,6 +15,7 @@
 
 - Fix manifest
 - Add G-TAG and add cookie banner
+- Look into route lazy loading and cards preload (fetch whole deck before showing)
 
 ### Game flow
 

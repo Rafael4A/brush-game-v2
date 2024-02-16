@@ -4,7 +4,7 @@ export function playerWithHigherProperty(
   independentReport: IndependentReport[],
   propertyName: keyof IndependentReport
 ): string | null {
-  const result = independentReport.reduce(
+  const result = independentReport.reduce<HighestPropertyFinderResult>(
     (acc, pr) => {
       const property = pr[propertyName];
       if (typeof property !== "number")
@@ -22,4 +22,10 @@ export function playerWithHigherProperty(
     { highest: -1, hasRepeated: false, nickname: null }
   );
   return result.hasRepeated ? null : result.nickname;
+}
+
+interface HighestPropertyFinderResult {
+  highest: number;
+  hasRepeated: boolean;
+  nickname: string | null;
 }

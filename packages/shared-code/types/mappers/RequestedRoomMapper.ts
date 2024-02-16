@@ -8,7 +8,7 @@ export class RequestedRoomMapper {
       id: room.id,
       currentTurn: room.currentTurn,
       gameState: room.gameState,
-      player: room.players.find((p) => p.id === playerId),
+      player: room.players.find((p) => p.id === playerId)!,
       remainingCards: room.cards.length,
       table: room.table,
       opponents: room.players

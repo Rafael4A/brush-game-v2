@@ -3,7 +3,7 @@ import { useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-import { GetRoomResponseDto } from "shared-code";
+import { GetRoomResponseDto, ROUTES } from "shared-code";
 
 import { usePlayerId } from "../context";
 import {
@@ -11,7 +11,6 @@ import {
   axiosInstance,
   handleRequestError,
 } from "../resources/api";
-import { ROUTES } from "../resources/constants";
 
 export function useGetRoom(roomId?: string) {
   const navigate = useNavigate();

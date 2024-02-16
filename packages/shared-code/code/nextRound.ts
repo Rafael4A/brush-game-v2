@@ -1,10 +1,15 @@
 import { CARDS_CODES } from "../constants";
 import { GameState, Player, Room } from "../types";
 import { generateReport } from "./generateReport";
-import { drawCards, nextTurnIndex, shuffleCards } from "./utils";
+import {
+  drawCards,
+  drawCardsForEachPlayer,
+  nextTurnIndex,
+  shuffleCards,
+} from "./utils";
 
 export function nextRound(room: Room, playerId: string): Room {
-  const player = room.players.find((p) => p.id === playerId);
+  const player = room.players.find((p) => p.id === playerId)!;
 
   nextRoundValidations(room, player);
   const newRoom = { ...room };
@@ -25,7 +30,7 @@ export function nextRound(room: Room, playerId: string): Room {
       cards: [],
       collectedCards: [],
       currentBrushCount: 0,
-      previousPoints: report.find((r) => r.nickname === p.nickname)
+      previousPoints: report.find((r) => r.nickname === p.nickname)!
         .currentPoints,
     };
   });
@@ -35,18 +40,9 @@ export function nextRound(room: Room, playerId: string): Room {
     remainingCards: remainingCardsAfterTableIsDealt,
   } = drawCards(newRoom.cards, 4);
 
-  // Each player draws 3 cards
-  const { players: updatedPlayers, remainingCards } = newRoom.players.reduce(
-    ({ players, remainingCards }, player) => {
-      const { drawn, remainingCards: remainingCardsAfterPlayerIsDealt } =
-        drawCards(remainingCards, 3);
-
-      return {
-        players: [...players, { ...player, cards: drawn }],
-        remainingCards: remainingCardsAfterPlayerIsDealt,
-      };
-    },
-    { players: [], remainingCards: remainingCardsAfterTableIsDealt }
+  const { players: updatedPlayers, remainingCards } = drawCardsForEachPlayer(
+    newRoom.players,
+    remainingCardsAfterTableIsDealt
   );
 
   return {

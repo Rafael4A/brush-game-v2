@@ -6,6 +6,8 @@
     "strictPropertyInitialization": false,
     "module": "CommonJS",
     "emitDecoratorMetadata": true,
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "strict": true,
+    "skipLibCheck": true
   }
 }

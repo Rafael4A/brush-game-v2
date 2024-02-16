@@ -1,9 +1,9 @@
 import { GameState, Player, Room } from "../types";
-import { drawCards } from "./utils";
+import { drawCards, drawCardsForEachPlayer } from "./utils";
 import { randomInt } from "./utils/randomInt";
 
 export function startGame(room: Room, playerId: string) {
-  const player = room.players.find((p) => p.id === playerId);
+  const player = room.players.find((p) => p.id === playerId)!;
   startGameValidations(room, player);
 
   const startingPlayer =
@@ -14,18 +14,9 @@ export function startGame(room: Room, playerId: string) {
     remainingCards: remainingCardsAfterTableIsDealt,
   } = drawCards(room.cards, 4);
 
-  // Each player draws 3 cards
-  const { players: updatedPlayers, remainingCards } = room.players.reduce(
-    ({ players, remainingCards }, player) => {
-      const { drawn, remainingCards: remainingCardsAfterPlayerIsDealt } =
-        drawCards(remainingCards, 3);
-
-      return {
-        players: [...players, { ...player, cards: drawn }],
-        remainingCards: remainingCardsAfterPlayerIsDealt,
-      };
-    },
-    { players: [], remainingCards: remainingCardsAfterTableIsDealt }
+  const { players: updatedPlayers, remainingCards } = drawCardsForEachPlayer(
+    room.players,
+    remainingCardsAfterTableIsDealt
   );
 
   const updatedRoom = {

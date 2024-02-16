@@ -3,15 +3,18 @@
   "globalDependencies": [".env"],
   "globalDotEnv": [".env"],
   "pipeline": {
-    "build": {
-      "dependsOn": ["^build"],
-      "outputs": [".next/**", "!.next/cache/**"]
-    },
     "lint": {},
     "dev": {
       "cache": false,
       "persistent": true,
       "dotEnv": [".env"]
-    }
+    },
+    "backend#build": {
+      "dependsOn": ["frontend#build", "^build"]
+    },
+    "frontend#build": {
+      "dependsOn": ["^build"]
+    },
+    "shared-code#build": {}
   }
 }

@@ -8,7 +8,7 @@ export function playCard(
   cardCode: CardCode,
   usedTableCardsCodes: CardCode[]
 ) {
-  const player = room.players.find((p) => p.id === playerId);
+  const player = room.players.find((p) => p.id === playerId)!;
 
   playCardValidations(room, player, cardCode, usedTableCardsCodes);
 
@@ -80,7 +80,7 @@ function playCardValidations(
     throw new Error("The game is not in progress");
 
   if (
-    room.players.find((p) => p.nickname === room.currentTurn).id !== player.id
+    room.players.find((p) => p.nickname === room.currentTurn)!.id !== player.id
   )
     throw new Error("It's not your turn");
 
