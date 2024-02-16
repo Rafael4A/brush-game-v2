@@ -1,5 +1,4 @@
 import { Helmet } from "react-helmet-async";
-import { useParams } from "react-router-dom";
 
 import { GameState } from "shared-code";
 
@@ -10,9 +9,7 @@ import { useDelayedGameState } from "./hooks/useDelayedGameState";
 import { GamePlay, RoundOver, WaitingForPlayers } from "./sections";
 
 export function RoomScreen() {
-  const { id } = useParams();
-
-  const [room] = useRoom(id);
+  const [room] = useRoom();
 
   const delayedGameState = useDelayedGameState(room);
 
