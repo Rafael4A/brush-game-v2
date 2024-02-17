@@ -63,7 +63,7 @@ export function WaitingForPlayers() {
         {room.player.isOwner ? (
           <LoadingButton
             isLoading={isLoading}
-            color={colors.paletteBlue}
+            color={colors.palette.cyanCobalt}
             onClick={startRoom}
             disabled={room.opponents?.length === 0}
           >

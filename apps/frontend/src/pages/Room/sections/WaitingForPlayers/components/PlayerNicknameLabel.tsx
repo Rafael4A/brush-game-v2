@@ -30,7 +30,7 @@ export function PlayerNicknameLabel({
       <span
         style={{
           textDecoration: isClient
-            ? `underline solid ${colors.lightBlue} 3px`
+            ? `underline solid ${colors.palette.lightBlue} 3px`
             : undefined,
         }}
       >

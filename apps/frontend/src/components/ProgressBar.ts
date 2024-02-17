@@ -10,11 +10,11 @@ export const ProgressBar = styled.progress(({ theme }) => ({
   border: "none",
 
   "&::-moz-progress-bar": {
-    backgroundColor: theme.colors.blue,
+    backgroundColor: theme.colors.palette.blue,
     borderRadius: "4px",
   },
   "&::-webkit-progress-value": {
-    backgroundColor: theme.colors.blue,
+    backgroundColor: theme.colors.palette.blue,
     borderRadius: "4px",
   },
 }));

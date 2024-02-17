@@ -7,7 +7,7 @@ export const MainContainer = styled(Column)(({ theme }) => ({
   width: "100%",
   maxWidth: "100%",
   justifyContent: "flex-start",
-  backgroundColor: theme.colors.backgroundGreen,
+  backgroundColor: theme.colors.main.background,
   padding: "4px 16px 0",
   gap: "16px",
 }));

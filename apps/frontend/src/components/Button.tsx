@@ -9,14 +9,14 @@ interface ButtonProps extends React.HTMLProps<HTMLButtonElement> {
 
 export const Button = styled.button<ButtonProps>(
   ({ theme, fullWidth, color }) => ({
-    backgroundColor: color ?? theme.colors.mainGray,
+    backgroundColor: color ?? theme.colors.main.altBackground,
     border: "none",
     borderRadius: "4px",
     padding: "8px 16px",
     cursor: "pointer",
     width: fullWidth ? "100%" : "auto",
     "&:disabled": {
-      backgroundColor: theme.colors.lightestGray,
+      backgroundColor: theme.colors.main.disabled,
       cursor: "not-allowed",
     },
   })

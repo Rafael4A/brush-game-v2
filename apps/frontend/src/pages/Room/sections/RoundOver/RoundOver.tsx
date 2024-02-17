@@ -83,7 +83,7 @@ export function RoundOver() {
 
       <ButtonsContainer>
         {roomData.gameState === GameState.GameOver && (
-          <Button color={colors.darkRed}>
+          <Button color={colors.palette.darkRed}>
             <Link to={ROUTES.HOME} style={{ textDecoration: "none" }}>
               Leave Room
             </Link>
@@ -93,7 +93,7 @@ export function RoundOver() {
           !!roomData.player.isOwner && (
             <LoadingButton
               isLoading={isLoading}
-              color={colors.paletteBlue}
+              color={colors.palette.cyanCobalt}
               onClick={nextRound}
             >
               Next Round

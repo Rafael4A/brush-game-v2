@@ -20,7 +20,7 @@ export const StyledModal = styled.dialog(({ theme }) => ({
 
   width: "calc(100% - 16px)",
   maxWidth: 850,
-  backgroundColor: theme.colors.backgroundDarkGreen,
+  backgroundColor: theme.colors.main.darkBackground,
   "&::backdrop": {
     background: "rgba(0, 0, 0, 0.7)",
   },
@@ -73,7 +73,11 @@ export const StyledModalWithCloseButton = forwardRef<
         style={{ position: "absolute", right: 8, top: 4 }}
         onClick={dismissFn}
       >
-        <Icon path={mdiWindowClose} size={1.2} color={colors.lightRed} />
+        <Icon
+          path={mdiWindowClose}
+          size={1.2}
+          color={colors.palette.lightRed}
+        />
       </UnstyledButton>
       {children}
     </StyledModal>

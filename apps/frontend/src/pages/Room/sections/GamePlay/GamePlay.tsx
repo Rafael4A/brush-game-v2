@@ -35,6 +35,7 @@ export function GamePlay({ sendReaction }: Readonly<GamePlayProps>) {
     isLoading,
   } = useGamePlay();
   const brushBannerRef = useRef<HTMLDivElement>(null);
+  console.log(colors);
 
   return (
     <>
@@ -78,7 +79,7 @@ export function GamePlay({ sendReaction }: Readonly<GamePlayProps>) {
 
         <LoadingButton
           isLoading={isLoading}
-          color={colors.blue}
+          color={colors.palette.blue}
           largeFont
           disabled={!selectedCard || !isOnTurn()}
           onClick={handlePlayCards}

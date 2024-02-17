@@ -20,7 +20,7 @@ export const CardContainer = styled.button<CardContainerProps>(
     border: "6px solid transparent",
     borderRadius: "7%",
     ...(isSelected && {
-      borderColor: theme.colors.orange,
+      borderColor: theme.colors.palette.orange,
       zIndex: 5,
     }),
 
