@@ -16,7 +16,7 @@ services:
     restart: unless-stopped
 
   app:
-    container_name: brush-game-v2-app-main
+    container_name: brush-game-v2
     restart: unless-stopped
     build: .
     environment:
@@ -28,11 +28,6 @@ services:
       - DB_DATABASE
     networks:
       - shared-bridge
-
-  temp:
-    container_name: brush-game-v2-app-temp
-    extends:
-      service: app
 
 networks:
   shared-bridge:
