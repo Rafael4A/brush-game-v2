@@ -32,6 +32,11 @@ export function useGetRoom(roomId?: string) {
     } catch (error) {
       if (isAxiosError(error)) {
         const { response } = error as AxiosError<RequestError>;
+        if (response?.data.statusCode === 404) {
+          toast.error("Room not found");
+          navigate(ROUTES.HOME);
+          throw error;
+        }
         if (
           response?.data.message ===
           "This player cannot access the requested room"
