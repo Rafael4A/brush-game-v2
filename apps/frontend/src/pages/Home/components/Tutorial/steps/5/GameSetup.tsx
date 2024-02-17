@@ -1,8 +1,7 @@
-import styled from "styled-components";
-
 import { CardCode, evaluateCardCode } from "shared-code";
 
 import { Column } from "../../../../../../components";
+import { CardsGrid } from "./styles";
 
 const cardExamplesLines: CardCode[] = [
   "AC",
@@ -17,15 +16,6 @@ const cardExamplesLines: CardCode[] = [
   "KD",
 ];
 
-export const GamesGrid = styled.div<{ iconSize: number }>(({ iconSize }) => ({
-  display: "grid",
-  gridTemplateColumns: `repeat( auto-fill, minmax(${iconSize}px, 1fr))`,
-  justifyItems: "center",
-  gap: "8px",
-  width: "calc(100vw - 32px)",
-  maxWidth: "550px",
-}));
-
 export function GameSetupStep() {
   return (
     <Column gap="8px">
@@ -38,7 +28,7 @@ export function GameSetupStep() {
         the most points at the end of the game wins.
       </p>
 
-      <GamesGrid iconSize={100}>
+      <CardsGrid>
         {cardExamplesLines.map((cardCode) => {
           const cardValue = evaluateCardCode(cardCode);
           return (
@@ -52,7 +42,7 @@ export function GameSetupStep() {
             </Column>
           );
         })}
-      </GamesGrid>
+      </CardsGrid>
     </Column>
   );
 }
