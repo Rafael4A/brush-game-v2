@@ -88,7 +88,7 @@ export function useWebsocket() {
     socket.current?.on(
       SocketEvents.ReceiveReaction,
       ({ nickname, reaction }: ServerReactionEvent) => {
-        toast.info(`${nickname}: ${reactionMapper(reaction)}`);
+        toast(`${nickname}: ${reactionMapper(reaction)}`);
       }
     );
 

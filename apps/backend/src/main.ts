@@ -27,7 +27,7 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe());
 
-  app.enableCors({ origin: /\.quorzen\.com$/ });
+  app.enableCors({ origin: ["https://quorzen.com", /\.quorzen\.com$/] });
 
   await app.listen(3001);
 }
