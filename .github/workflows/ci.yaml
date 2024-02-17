@@ -21,4 +21,4 @@ jobs:
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           TARGET: ./brush-game-v2
           SCRIPT_AFTER: |
-            node deploy-script.mjs "brush-game-v2" "brush.quorzen.com"
+            node deploy-script.mjs "brush-game-v2-app" "brush.quorzen.com"
