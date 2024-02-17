@@ -26,7 +26,8 @@
     "react-transition-group": "^4.4.5",
     "shared-code": "*",
     "socket.io-client": "^4.7.2",
-    "styled-components": "^6.1.0"
+    "styled-components": "^6.1.0",
+    "vite-plugin-pwa": "^0.18.2"
   },
   "devDependencies": {
     "@types/react": "^18.2.15",
