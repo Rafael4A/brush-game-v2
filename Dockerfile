@@ -12,6 +12,7 @@ COPY package*.json ./
 RUN npm install
 
 COPY . .
+
 # Run again to install shared-code
 RUN npm install
 RUN npm run build
