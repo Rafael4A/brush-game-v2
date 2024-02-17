@@ -4,7 +4,7 @@ import { ROUTES } from "shared-code";
 
 import { MainContainer } from "../../components";
 
-export function NotFoundScreen() {
+export function Component() {
   return (
     <MainContainer>
       <h1>404 - Not Found</h1>
@@ -13,3 +13,4 @@ export function NotFoundScreen() {
     </MainContainer>
   );
 }
+Component.displayName = "NotFoundScreen";

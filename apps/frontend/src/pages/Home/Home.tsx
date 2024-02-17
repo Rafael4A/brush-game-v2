@@ -133,10 +133,11 @@ function InnerHomeScreen() {
   );
 }
 
-export function HomeScreen() {
+export function Component() {
   return (
     <TutorialProvider>
       <InnerHomeScreen />
     </TutorialProvider>
   );
 }
+Component.displayName = "HomeScreen";
