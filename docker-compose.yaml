@@ -1,14 +1,42 @@
-nginx:
-  # build:
-  #     dockerfile: ./docker/nginx.dockerfile
-  #     context: .
-  image: nginx
-  container_name: brush-v2-nginx
-  ports:
-    - "80:80"
-  # networks:
-  #     - minha-rede
-  # depends_on:
-  #     - "app1"
-  #     - "app2"
-  #     - "app3"
+version: "3.5"
+
+name: brush-game-v2
+services:
+  postgres:
+    container_name: brush-game-v2-postgres
+    image: postgres
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      PGDATA: /data/postgres
+    volumes:
+      - postgres:/data/postgres
+    networks:
+      - shared-bridge
+    restart: unless-stopped
+
+  app:
+    container_name: brush-game-v2-app-main
+    restart: unless-stopped
+    build: .
+    environment:
+      - DB_TYPE
+      - DB_HOST
+      - DB_PORT
+      - DB_USERNAME
+      - DB_PASSWORD
+      - DB_DATABASE
+    networks:
+      - shared-bridge
+
+  temp:
+    container_name: brush-game-v2-app-temp
+    extends:
+      service: app
+
+networks:
+  shared-bridge:
+    external: true
+
+volumes:
+  postgres:
