@@ -35,7 +35,6 @@ export function GamePlay({ sendReaction }: Readonly<GamePlayProps>) {
     isLoading,
   } = useGamePlay();
   const brushBannerRef = useRef<HTMLDivElement>(null);
-  console.log(colors);
 
   return (
     <>
