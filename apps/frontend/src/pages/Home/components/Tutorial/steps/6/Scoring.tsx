@@ -24,8 +24,8 @@ export function ScoringStep() {
           diamond suit cards receives 1 point.
         </li>
         <li>
-          <b>7 of Diamonds:</b> If a player has collected the 7 of diamonds
-          during the round, they receive 1 point.
+          <b>Beauty:</b> If a player has collected the 7 of diamonds during the
+          round, they receive 1 point.
         </li>
         <li>
           <b>Brush:</b> Whenever a player leaves the table empty after

@@ -5,5 +5,5 @@
 - Look into route lazy loading
 - Cards preload (fetch whole deck before showing)
 - Add logging to API
-- Cleanup hooks (remove useWConfirmModal)
+- Create releases to main
 - (OTHER PROJECT) Create quorzen analytics

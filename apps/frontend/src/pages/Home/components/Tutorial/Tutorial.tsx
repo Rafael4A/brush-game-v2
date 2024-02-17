@@ -29,10 +29,6 @@ const steps: WizardStep[] = Array.from(
       component: <IntroductionStep />,
     },
     {
-      title: "Game Setup",
-      component: <GameSetupStep />,
-    },
-    {
       title: "Initial Setup",
       component: <InitialSetupStep />,
     },
@@ -43,6 +39,10 @@ const steps: WizardStep[] = Array.from(
     {
       title: "Gameplay Overview",
       component: <GameplayOverviewStep />,
+    },
+    {
+      title: "Game Setup",
+      component: <GameSetupStep />,
     },
     {
       title: "Scoring",
@@ -88,17 +88,12 @@ function TutorialInner({ titleId }: Readonly<TutorialInnerProps>) {
         {formattedProgress}%
       </ProgressBar>
       <ModalFooter>
-        <Button
-          disabled={activeStep <= 0}
-          //color={color}
-          onClick={previous}
-        >
-          Previous
-        </Button>
-        <Button
-          //color={color}
-          onClick={hasReachedEnd ? close : next}
-        >
+        {activeStep > 0 && (
+          <Button disabled={activeStep <= 0} onClick={previous}>
+            Previous
+          </Button>
+        )}
+        <Button onClick={hasReachedEnd ? close : next}>
           {hasReachedEnd ? "Finish!" : "Next"}
         </Button>
       </ModalFooter>
