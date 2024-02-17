@@ -1,7 +1,7 @@
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
-import { InjectEntityManager, InjectRepository } from "@nestjs/typeorm";
+import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
 import * as crypto from "crypto";
-import { EntityManager, Repository } from "typeorm";
+import { Repository } from "typeorm";
 
 import {
   CardCode,
@@ -25,10 +25,10 @@ export class RoomService {
   constructor(
     @InjectRepository(Room) private roomRepository: Repository<Room>,
     @InjectRepository(Player) private playerRepository: Repository<Player>,
-    @InjectEntityManager() private entityManager: EntityManager,
     private appGateway: AppGateway,
     private validations: RoomValidations
   ) {}
+  private logger: Logger = new Logger("RoomService");
 
   private generateId() {
     return crypto.randomBytes(3).toString("hex");
@@ -41,6 +41,7 @@ export class RoomService {
     });
 
     if (!room) {
+      this.logger.error(`Room not found: ${id}`);
       throw new HttpException("Room not found", HttpStatus.NOT_FOUND);
     }
 
@@ -51,6 +52,7 @@ export class RoomService {
     const player = room.players.some((p) => p.id === playerId);
 
     if (!player) {
+      this.logger.error(`Player ${playerId} not allowed to access room ${id}`);
       throw new HttpException(
         "This player cannot access the requested room",
         HttpStatus.UNAUTHORIZED
@@ -78,6 +80,7 @@ export class RoomService {
 
       return BasicRoomMapper.map(savedRoom, savedRoom.players[0].id);
     } catch (error) {
+      this.logger.error("Error creating room: " + error?.message, error?.stack);
       throw new HttpException(
         "Error creating room",
         HttpStatus.INTERNAL_SERVER_ERROR
@@ -92,27 +95,42 @@ export class RoomService {
   }
 
   async join(id: string, nickname: string) {
-    const room = await this.findById(id);
+    try {
+      const room = await this.findById(id);
 
-    this.validations.joinValidations(room, nickname);
+      this.validations.joinValidations(room, nickname);
 
-    const newPlayer = this.playerRepository.create({
-      nickname,
-      id: crypto.randomUUID(),
-    });
-
-    await this.roomRepository.manager.transaction(async (manager) => {
-      const roomRepository = manager.getRepository(Room);
-      const updatedRoom = await roomRepository.findOne({
-        where: { id },
-        relations: ["players"],
+      const newPlayer = this.playerRepository.create({
+        nickname,
+        id: crypto.randomUUID(),
       });
-      updatedRoom.players.push(newPlayer);
-      await manager.save(Room, updatedRoom);
-    });
 
-    this.appGateway.server.to(room.id).emit(SocketEvents.JoinedRoom);
-    return BasicRoomMapper.map(room, newPlayer.id);
+      await this.roomRepository.manager.transaction(async (manager) => {
+        const roomRepository = manager.getRepository(Room);
+        const updatedRoom = await roomRepository.findOne({
+          where: { id },
+          relations: ["players"],
+        });
+        updatedRoom.players.push(newPlayer);
+        await manager.save(Room, updatedRoom);
+      });
+
+      this.appGateway.server.to(room.id).emit(SocketEvents.JoinedRoom);
+      return BasicRoomMapper.map(room, newPlayer.id);
+    } catch (error) {
+      this.logger.error(
+        "Error joining room: " + error?.message,
+        error?.stack,
+        "room: ",
+        id,
+        "nickname: ",
+        nickname
+      );
+      throw new HttpException(
+        "Error joining room",
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 
   async startRoomGame(id: string, playerId: string) {
@@ -123,6 +141,14 @@ export class RoomService {
 
       await this.roomRepository.save(updatedRoom);
     } catch (error) {
+      this.logger.error(
+        "Error starting room game: " + error?.message,
+        error?.stack,
+        "room: ",
+        id,
+        "player: ",
+        playerId
+      );
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
 
@@ -153,6 +179,18 @@ export class RoomService {
 
       return RequestedRoomMapper.map(updatedRoom, playerId);
     } catch (error) {
+      this.logger.error(
+        "Error playing card: " + error?.message,
+        error?.stack,
+        "room: ",
+        id,
+        "player: ",
+        playerId,
+        "cardCode: ",
+        cardCode,
+        "usedTableCardsCodes: ",
+        usedTableCardsCodes
+      );
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
@@ -172,6 +210,14 @@ export class RoomService {
 
       this.appGateway.server.to(room.id).emit(SocketEvents.GameStarted);
     } catch (error) {
+      this.logger.error(
+        "Error advancing round: " + error?.message,
+        error?.stack,
+        "room: ",
+        id,
+        "player: ",
+        playerId
+      );
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
@@ -194,6 +240,16 @@ export class RoomService {
 
       this.appGateway.server.to(room.id).emit(SocketEvents.LeftRoom);
     } catch (error) {
+      this.logger.error(
+        "Error kicking player: " + error?.message,
+        error?.stack,
+        "room: ",
+        id,
+        "player: ",
+        playerId,
+        "kickPlayerNick: ",
+        kickedPlayerNick
+      );
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }

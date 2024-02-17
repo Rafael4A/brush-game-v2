@@ -51,7 +51,7 @@ export class AppGateway
   }
 
   afterInit(_server: Server) {
-    this.logger.log("Initialized!");
+    this.logger.log("WebSocketGateway Initialized");
   }
 
   async handleConnection(client: Socket) {
