@@ -64,6 +64,7 @@ export default defineConfig({
         type: "module",
         navigateFallback: "index.html",
       },
+      includeAssets: "resources/cards/**/*",
     }),
   ],
   server: {

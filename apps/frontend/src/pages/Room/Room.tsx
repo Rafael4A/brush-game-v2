@@ -1,6 +1,8 @@
+import { useEffect } from "react";
+
 import { Helmet } from "react-helmet-async";
 
-import { GameState } from "shared-code";
+import { CARDS_CODES, GameState } from "shared-code";
 
 import { FullscreenLoader, MainContainer } from "../../components";
 import { useRoom } from "../../context";
@@ -28,6 +30,20 @@ export function RoomScreen() {
         return <RoundOver />;
     }
   };
+
+  useEffect(() => {
+    const cardImagesUrls = [
+      "/resources/cards/default_webp/card-back.webp",
+      ...CARDS_CODES.map(
+        (code) => `/resources/cards/default_webp/${code}.webp`
+      ),
+    ];
+
+    cardImagesUrls.forEach((url) => {
+      const img = new Image();
+      img.src = url;
+    });
+  }, []);
 
   return (
     <>
