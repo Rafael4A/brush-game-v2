@@ -14,6 +14,7 @@ import {
   TextInput,
   Tooltip,
 } from "../../components";
+import { TITLE_SUFFIX } from "../../resources/constants";
 import { disableAutoCompleteProps } from "../../utils";
 import { Tutorial, TutorialProvider, useTutorial } from "./components";
 import { NicknameLabel, RoomIdLabel, Title } from "./styles";
@@ -43,7 +44,7 @@ function InnerHomeScreen() {
   return (
     <>
       <Helmet>
-        <title>Home - Brush Game</title>
+        <title>Home - {TITLE_SUFFIX}</title>
       </Helmet>
       <MainContainer>
         <Title>

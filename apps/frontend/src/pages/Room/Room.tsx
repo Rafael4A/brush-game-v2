@@ -6,6 +6,7 @@ import { CARDS_CODES, GameState } from "shared-code";
 
 import { FullscreenLoader, MainContainer } from "../../components";
 import { useRoom } from "../../context";
+import { TITLE_SUFFIX } from "../../resources/constants";
 import { useWebsocket } from "./hooks";
 import { useDelayedGameState } from "./hooks/useDelayedGameState";
 import { GamePlay, RoundOver, WaitingForPlayers } from "./sections";
@@ -48,7 +49,7 @@ export function RoomScreen() {
   return (
     <>
       <Helmet>
-        <title>Playing - Brush Game</title>
+        <title>Playing - {TITLE_SUFFIX}</title>
       </Helmet>
 
       <MainContainer>{section()}</MainContainer>
