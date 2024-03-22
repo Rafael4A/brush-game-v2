@@ -80,4 +80,12 @@ export class RoomController {
   ) {
     return this.roomService.kickPlayer(id, playerId, kickedPlayerNick);
   }
+
+  @Delete("/room/:id/leave")
+  async leaveRoom(
+    @Param("id") id: string,
+    @Query("playerId") playerId: string
+  ) {
+    return this.roomService.leaveRoom(id, playerId);
+  }
 }

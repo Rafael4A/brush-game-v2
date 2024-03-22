@@ -5,7 +5,7 @@ import { GameState } from "shared-code";
 import { Room } from "./entities";
 @Injectable()
 export class RoomValidations {
-  public joinValidations(room: Room, nickname: string) {
+  public join(room: Room, nickname: string) {
     if (room.gameState !== GameState.WaitingForPlayers)
       throw new HttpException(
         "The game has already started",
@@ -34,5 +34,9 @@ export class RoomValidations {
         "This player is not in the room",
         HttpStatus.BAD_REQUEST
       );
+  }
+  public playerIdPresent(playerId: string) {
+    if (!playerId)
+      throw new HttpException("PlayerId is required", HttpStatus.UNAUTHORIZED);
   }
 }

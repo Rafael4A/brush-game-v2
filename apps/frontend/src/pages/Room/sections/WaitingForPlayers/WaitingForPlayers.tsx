@@ -12,7 +12,7 @@ import {
 import { useRoom } from "../../../../context";
 import { shareRoom } from "../../../../utils";
 import { PlayerNicknameLabel } from "./components";
-import { useStartRoom } from "./hooks";
+import { useLeaveRoom, useStartRoom } from "./hooks";
 import { WaitingForPlayersContainer } from "./styles";
 
 const OPPONENT_INDEX_OFFSET = 2;
@@ -24,7 +24,8 @@ export function WaitingForPlayers() {
 
   const { colors } = useTheme();
 
-  const { startRoom, isLoading } = useStartRoom();
+  const { startRoom, isLoading: isLoadingStart } = useStartRoom();
+  const { leaveRoom, isLoading: isLoadingLeave } = useLeaveRoom();
 
   return (
     <WaitingForPlayersContainer>
@@ -62,7 +63,7 @@ export function WaitingForPlayers() {
         </h2>
         {room.player.isOwner ? (
           <LoadingButton
-            isLoading={isLoading}
+            isLoading={isLoadingStart}
             color={colors.palette.cyanCobalt}
             onClick={startRoom}
             disabled={room.opponents?.length === 0}
@@ -74,6 +75,14 @@ export function WaitingForPlayers() {
             <LineLoader />
           </Row>
         )}
+
+        <LoadingButton
+          isLoading={isLoadingLeave}
+          color={colors.palette.darkRed}
+          onClick={leaveRoom}
+        >
+          Leave Room
+        </LoadingButton>
       </Column>
     </WaitingForPlayersContainer>
   );

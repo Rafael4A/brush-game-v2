@@ -89,6 +89,8 @@ export class RoomService {
   }
 
   async get(id: string, playerId: string) {
+    this.validations.playerIdPresent(playerId);
+
     const room = await this.findById(id, playerId);
 
     return RequestedRoomMapper.map(room, playerId);
@@ -98,7 +100,7 @@ export class RoomService {
     try {
       const room = await this.findById(id);
 
-      this.validations.joinValidations(room, nickname);
+      this.validations.join(room, nickname);
 
       const newPlayer = this.playerRepository.create({
         nickname,
@@ -196,6 +198,7 @@ export class RoomService {
   }
 
   async getReport(id: string, playerId: string) {
+    this.validations.playerIdPresent(playerId);
     const room = await this.findById(id, playerId);
     return generateReport(room);
   }
@@ -228,6 +231,7 @@ export class RoomService {
     kickedPlayerNick: string
   ) {
     const room = await this.findById(id, playerId);
+
     this.validations.kickPlayer(room, playerId, kickedPlayerNick);
 
     try {
@@ -249,6 +253,33 @@ export class RoomService {
         playerId,
         "kickPlayerNick: ",
         kickedPlayerNick
+      );
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  public async leaveRoom(id: string, playerId: string) {
+    this.validations.playerIdPresent(playerId);
+
+    const room = await this.findById(id, playerId);
+
+    try {
+      const updatedRoom: Room = {
+        ...room,
+        players: room.players.filter((p) => p.id !== playerId),
+      };
+
+      await this.roomRepository.save(updatedRoom);
+
+      this.appGateway.server.to(room.id).emit(SocketEvents.LeftRoom);
+    } catch (error) {
+      this.logger.error(
+        "Error leaving room: " + error?.message,
+        error?.stack,
+        "room: ",
+        id,
+        "player: ",
+        playerId
       );
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
