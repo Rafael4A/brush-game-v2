@@ -1,66 +1,86 @@
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
-import { InjectModel } from "@nestjs/mongoose";
-
+import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
 import * as crypto from "crypto";
-import { Model } from "mongoose";
-import { GameState, Player } from "shared-types";
+import { Repository } from "typeorm";
 
-import { drawCards, nextTurnIndex } from "../utils";
-import { willSumToFifteen } from "../utils/will-sum-to-fifteen";
-import { Room, BasicRoomMapper, RequestedRoomMapper } from "./room.interface";
-import { PLAYER_MODEL_NAME, ROOM_MODEL_NAME } from "./room.schema";
+import {
+  CardCode,
+  MoveBroadcast,
+  SocketEvents,
+  shuffleCards,
+  startGame,
+  playCard,
+  generateReport,
+  nextRound,
+  CARDS_CODES,
+  RequestedRoomMapper,
+} from "shared-code";
 
+import { AppGateway } from "../gateway/app.gateway";
+import { Player, Room } from "./entities";
+import { BasicRoomMapper } from "./room.mapper";
+import { RoomValidations } from "./room.validations";
 @Injectable()
 export class RoomService {
   constructor(
-    @InjectModel(ROOM_MODEL_NAME) private roomModel: Model<Room>,
-    @InjectModel(PLAYER_MODEL_NAME) private playerModel: Model<Player>
+    @InjectRepository(Room) private roomRepository: Repository<Room>,
+    @InjectRepository(Player) private playerRepository: Repository<Player>,
+    private appGateway: AppGateway,
+    private validations: RoomValidations
   ) {}
+  private logger: Logger = new Logger("RoomService");
 
   private generateId() {
     return crypto.randomBytes(3).toString("hex");
   }
 
   private async findById(id: string, playerId?: string) {
-    const room = await this.roomModel.findOne({ id }).lean().exec();
-    if (!room) throw new HttpException("Room not found", HttpStatus.NOT_FOUND);
+    const room = await this.roomRepository.findOne({
+      where: { id },
+      relations: ["players"],
+    });
 
-    if (!playerId) return room;
+    if (!room) {
+      this.logger.error(`Room not found: ${id}`);
+      throw new HttpException("Room not found", HttpStatus.NOT_FOUND);
+    }
+
+    if (!playerId) {
+      return room;
+    }
 
     const player = room.players.some((p) => p.id === playerId);
-    if (!player)
+
+    if (!player) {
+      this.logger.error(`Player ${playerId} not allowed to access room ${id}`);
       throw new HttpException(
         "This player cannot access the requested room",
         HttpStatus.UNAUTHORIZED
       );
+    }
 
     return room;
-  }
-
-  // TODO APAGAR ANTES DE CHEGAR EM PRODUÇÃO
-  async getAll() {
-    return this.roomModel.find().lean().exec();
-  }
-  // TODO APAGAR ANTES DE CHEGAR EM PRODUÇÃO
-  async deleteAll() {
-    return this.roomModel.deleteMany({}).exec();
   }
 
   async create(nickname: string) {
     try {
       let id = this.generateId();
 
-      while (await this.roomModel.findOne({ id }).lean().exec()) {
+      while (await this.roomRepository.findOne({ where: { id } })) {
         id = this.generateId();
       }
 
-      const room = new this.roomModel({ id, players: [{ nickname }] });
+      const room = this.roomRepository.create({
+        id,
+        players: [{ nickname, isOwner: true, id: crypto.randomUUID() }],
+        cards: shuffleCards(CARDS_CODES),
+      });
 
-      const savedRoom = await room.save();
+      const savedRoom = await this.roomRepository.save(room);
 
       return BasicRoomMapper.map(savedRoom, savedRoom.players[0].id);
     } catch (error) {
-      console.error(error);
+      this.logger.error("Error creating room: " + error?.message, error?.stack);
       throw new HttpException(
         "Error creating room",
         HttpStatus.INTERNAL_SERVER_ERROR
@@ -69,242 +89,199 @@ export class RoomService {
   }
 
   async get(id: string, playerId: string) {
+    this.validations.playerIdPresent(playerId);
+
     const room = await this.findById(id, playerId);
 
     return RequestedRoomMapper.map(room, playerId);
   }
 
   async join(id: string, nickname: string) {
-    const room = await this.findById(id);
+    try {
+      const room = await this.findById(id);
 
-    if (room.gameState !== GameState.WaitingForPlayers)
-      throw new HttpException(
-        "The game has already started",
-        HttpStatus.BAD_REQUEST
+      this.validations.join(room, nickname);
+
+      const newPlayer = this.playerRepository.create({
+        nickname,
+        id: crypto.randomUUID(),
+      });
+
+      await this.roomRepository.manager.transaction(async (manager) => {
+        const roomRepository = manager.getRepository(Room);
+        const updatedRoom = await roomRepository.findOne({
+          where: { id },
+          relations: ["players"],
+        });
+        updatedRoom.players.push(newPlayer);
+        await manager.save(Room, updatedRoom);
+      });
+
+      this.appGateway.server.to(room.id).emit(SocketEvents.JoinedRoom);
+      return BasicRoomMapper.map(room, newPlayer.id);
+    } catch (error) {
+      this.logger.error(
+        "Error joining room: " + error?.message,
+        error?.stack,
+        "room: ",
+        id,
+        "nickname: ",
+        nickname
       );
-
-    const player = room.players.some((p) => p.nickname === nickname);
-    if (player)
       throw new HttpException(
-        "A player with the same name is already in the room",
-        HttpStatus.BAD_REQUEST
-      );
-
-    const newPlayer = new this.playerModel({ nickname });
-
-    const updatedRoom = await this.roomModel
-      .findOneAndUpdate(
-        { id },
-        { $push: { players: newPlayer } },
-        { returnDocument: "after" }
-      )
-      .lean()
-      .exec();
-
-    const updatedNewPlayer =
-      updatedRoom.players[updatedRoom.players.length - 1];
-
-    return BasicRoomMapper.map(updatedRoom, updatedNewPlayer.id);
-  }
-
-  async startGame(id: string, playerId: string) {
-    const room = await this.findById(id, playerId);
-
-    if (room.players[0].id !== playerId) {
-      throw new HttpException(
-        "Only the room owner can start the game",
-        HttpStatus.BAD_REQUEST
+        "Error joining room",
+        HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
-
-    if (room.gameState !== GameState.WaitingForPlayers)
-      throw new HttpException(
-        "The game has already started",
-        HttpStatus.BAD_REQUEST
-      );
-
-    if (room.players.length <= 1)
-      throw new HttpException(
-        "The game needs at least 2 players",
-        HttpStatus.BAD_REQUEST
-      );
-
-    const startingPlayer = crypto.randomInt(0, room.players.length);
-
-    const {
-      drawn: roomTableCards,
-      remainingCards: remainingCardsAfterTableIsDealt,
-    } = drawCards(room.cards, 4);
-
-    // Each player draws 3 cards
-    const { players: updatedPlayers, remainingCards } = room.players.reduce(
-      ({ players, remainingCards }, player) => {
-        const { drawn, remainingCards: remainingCardsAfterPlayerIsDealt } =
-          drawCards(remainingCards, 3);
-
-        return {
-          players: [...players, { ...player, cards: drawn }],
-          remainingCards: remainingCardsAfterPlayerIsDealt,
-        };
-      },
-      { players: [], remainingCards: remainingCardsAfterTableIsDealt }
-    );
-
-    const updatedRoom = {
-      ...room,
-      gameState: GameState.Playing,
-      currentTurn: startingPlayer,
-      firstPlayerIndex: startingPlayer,
-      table: roomTableCards,
-      cards: remainingCards,
-      players: updatedPlayers,
-    };
-
-    await this.roomModel.updateOne({ id }, updatedRoom).exec();
   }
 
-  async playCard(
+  async startRoomGame(id: string, playerId: string) {
+    const room = await this.findById(id, playerId);
+
+    try {
+      const updatedRoom = startGame(room, playerId);
+
+      await this.roomRepository.save(updatedRoom);
+    } catch (error) {
+      this.logger.error(
+        "Error starting room game: " + error?.message,
+        error?.stack,
+        "room: ",
+        id,
+        "player: ",
+        playerId
+      );
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+
+    this.appGateway.server.to(room.id).emit(SocketEvents.GameStarted);
+  }
+
+  async playRoomCard(
     id: string,
     playerId: string,
-    cardCode: string,
-    usedTableCardsCodes: string[]
+    cardCode: CardCode,
+    usedTableCardsCodes: CardCode[]
   ) {
     const room = await this.findById(id, playerId);
 
-    if (room.gameState !== GameState.Playing)
-      throw new HttpException(
-        "The game is not in progress",
-        HttpStatus.BAD_REQUEST
+    try {
+      const updatedRoom = playCard(
+        room,
+        playerId,
+        cardCode,
+        usedTableCardsCodes
       );
 
-    if (room.players[room.currentTurn].id !== playerId)
-      throw new HttpException("It's not your turn", HttpStatus.UNAUTHORIZED);
+      await this.roomRepository.save(updatedRoom);
 
-    const player = room.players.find((p) => p.id === playerId);
+      this.appGateway.server.to(room.id).emit(SocketEvents.MoveBroadcast, {
+        playedCard: cardCode,
+      } satisfies MoveBroadcast);
 
-    const card = player.cards.find((c) => c.code === cardCode);
-
-    if (!card)
-      throw new HttpException(
-        "You don't have this card",
-        HttpStatus.BAD_REQUEST
+      return RequestedRoomMapper.map(updatedRoom, playerId);
+    } catch (error) {
+      this.logger.error(
+        "Error playing card: " + error?.message,
+        error?.stack,
+        "room: ",
+        id,
+        "player: ",
+        playerId,
+        "cardCode: ",
+        cardCode,
+        "usedTableCardsCodes: ",
+        usedTableCardsCodes
       );
-
-    const roomTableCardsCodes = room.table.map((c) => c.code);
-    const tableCardsAreValid = usedTableCardsCodes.every((c) =>
-      roomTableCardsCodes.includes(c)
-    );
-
-    if (!tableCardsAreValid)
-      throw new HttpException("Invalid table cards", HttpStatus.BAD_REQUEST);
-
-    const allCardsCodes = [cardCode, ...usedTableCardsCodes];
-
-    if (usedTableCardsCodes.length === 0) {
-      // Simply moves card from player to table
-      const updatedTable = [...room.table, card];
-      const updatedPlayerCards = player.cards.filter(
-        (c) => c.code !== cardCode
-      );
-      const updatedPlayers = room.players.map((p) =>
-        p.id === playerId ? { ...p, cards: updatedPlayerCards } : p
-      );
-      const updatedRoom = {
-        ...room,
-        table: updatedTable,
-        players: updatedPlayers,
-      };
-
-      return this.handleTurnEnd(updatedRoom, playerId);
-    } else if (willSumToFifteen(allCardsCodes)) {
-      const usedTableCards = room.table.filter((c) =>
-        usedTableCardsCodes.includes(c.code)
-      );
-
-      const updatedPlayerCollectedCards = [
-        ...player.collectedCards,
-        ...usedTableCards,
-        card,
-      ];
-
-      const updatedTable = room.table.filter(
-        (c) => !usedTableCardsCodes.includes(c.code)
-      );
-      const updatedPlayerCards = player.cards.filter(
-        (c) => c.code !== cardCode
-      );
-
-      const updatedPlayers = room.players.map((p) =>
-        p.id === playerId
-          ? {
-              ...p,
-              cards: updatedPlayerCards,
-              collectedCards: updatedPlayerCollectedCards,
-            }
-          : p
-      );
-
-      const updatedRoom = {
-        ...room,
-        table: updatedTable,
-        players: updatedPlayers,
-      };
-
-      return this.handleTurnEnd(updatedRoom, playerId);
-    } else {
-      throw new HttpException("Cards sum is not 15", HttpStatus.BAD_REQUEST);
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
-  private async handleTurnEnd(room: Room, playerId: string) {
-    const player = room.players.find((p) => p.id === playerId);
-    const roomAfterDraw = this.drawCardsIfPossible(room, player);
-    const roomAfterTurnUpdate = this.updateTurn(roomAfterDraw);
-    const isRoundOver = this.checkIfRoundIsOver(roomAfterTurnUpdate);
-    const updatedRoom = isRoundOver
-      ? {
-          ...room,
-          gameState: GameState.RoundOver,
-        }
-      : roomAfterTurnUpdate;
 
-    await this.roomModel.updateOne({ id: updatedRoom.id }, updatedRoom).exec();
+  async getReport(id: string, playerId: string) {
+    this.validations.playerIdPresent(playerId);
+    const room = await this.findById(id, playerId);
+    return generateReport(room);
   }
 
-  private drawCardsIfPossible(room: Room, player: Player) {
-    if (player.cards.length === 0 && room.cards.length >= 3) {
-      const { drawn, remainingCards: updatedRoomCards } = drawCards(
-        room.cards,
-        3
+  public async nextRoomRound(id: string, playerId: string) {
+    const room = await this.findById(id, playerId);
+
+    try {
+      const updatedRoom = nextRound(room, playerId);
+
+      await this.roomRepository.save(updatedRoom);
+
+      this.appGateway.server.to(room.id).emit(SocketEvents.GameStarted);
+    } catch (error) {
+      this.logger.error(
+        "Error advancing round: " + error?.message,
+        error?.stack,
+        "room: ",
+        id,
+        "player: ",
+        playerId
       );
-
-      const updatedPlayerCards = [...player.cards, ...drawn];
-
-      const updatedPlayers = room.players.map((p) =>
-        p.id === player.id ? { ...p, cards: updatedPlayerCards } : p
-      );
-
-      return {
-        ...room,
-        cards: updatedRoomCards,
-        players: updatedPlayers,
-      };
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
-    return room;
   }
 
-  private checkIfRoundIsOver(room: Room) {
-    return (
-      room.cards.length +
-        room.players.reduce((acc, p) => acc + p.cards.length, 0) ===
-      0
-    );
+  public async kickPlayer(
+    id: string,
+    playerId: string,
+    kickedPlayerNick: string
+  ) {
+    const room = await this.findById(id, playerId);
+
+    this.validations.kickPlayer(room, playerId, kickedPlayerNick);
+
+    try {
+      const updatedRoom: Room = {
+        ...room,
+        players: room.players.filter((p) => p.nickname !== kickedPlayerNick),
+      };
+
+      await this.roomRepository.save(updatedRoom);
+
+      this.appGateway.server.to(room.id).emit(SocketEvents.LeftRoom);
+    } catch (error) {
+      this.logger.error(
+        "Error kicking player: " + error?.message,
+        error?.stack,
+        "room: ",
+        id,
+        "player: ",
+        playerId,
+        "kickPlayerNick: ",
+        kickedPlayerNick
+      );
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
   }
 
-  private updateTurn(room: Room) {
-    const nextPlayerIndex = nextTurnIndex(
-      room.currentTurn,
-      room.players.length
-    );
-    return { ...room, currentTurn: nextPlayerIndex };
+  public async leaveRoom(id: string, playerId: string) {
+    this.validations.playerIdPresent(playerId);
+
+    const room = await this.findById(id, playerId);
+
+    try {
+      const updatedRoom: Room = {
+        ...room,
+        players: room.players.filter((p) => p.id !== playerId),
+      };
+
+      await this.roomRepository.save(updatedRoom);
+
+      this.appGateway.server.to(room.id).emit(SocketEvents.LeftRoom);
+    } catch (error) {
+      this.logger.error(
+        "Error leaving room: " + error?.message,
+        error?.stack,
+        "room: ",
+        id,
+        "player: ",
+        playerId
+      );
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
   }
 }

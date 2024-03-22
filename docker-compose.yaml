@@ -1,0 +1,37 @@
+version: "3.5"
+
+name: brush-game-v2
+services:
+  postgres:
+    container_name: brush-game-v2-postgres
+    image: postgres
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      PGDATA: /data/postgres
+    volumes:
+      - postgres:/data/postgres
+    networks:
+      - shared-bridge
+    restart: unless-stopped
+
+  app:
+    container_name: brush-game-v2
+    restart: unless-stopped
+    build: .
+    environment:
+      - DB_TYPE
+      - DB_HOST
+      - DB_PORT
+      - DB_USERNAME
+      - DB_PASSWORD
+      - DB_DATABASE
+    networks:
+      - shared-bridge
+
+networks:
+  shared-bridge:
+    external: true
+
+volumes:
+  postgres:

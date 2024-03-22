@@ -31,10 +31,12 @@ module.exports = {
       {
         newlinesBetween: "always",
         groups: [
-          "/^@nestjs/",
-          ["module", "/^shared/"],
-          ["parent", "sibling", "index"],
+          "/^react$/",
+          "module",
+          "/^shared-code$/",
+          [("parent", "sibling", "index")],
         ],
+
         alphabetize: { order: "asc", ignoreCase: true },
       },
     ],

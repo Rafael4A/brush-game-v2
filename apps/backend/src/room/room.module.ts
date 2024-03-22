@@ -1,23 +1,15 @@
 import { Module } from "@nestjs/common";
-import { MongooseModule } from "@nestjs/mongoose";
+import { TypeOrmModule } from "@nestjs/typeorm";
 
+import { GatewayModule } from "../gateway/gateway.module";
+import { Player, Room } from "./entities";
 import { RoomController } from "./room.controller";
-import {
-  PLAYER_MODEL_NAME,
-  PlayerSchema,
-  ROOM_MODEL_NAME,
-  RoomSchema,
-} from "./room.schema";
 import { RoomService } from "./room.service";
+import { RoomValidations } from "./room.validations";
 
 @Module({
-  imports: [
-    MongooseModule.forFeature([
-      { name: ROOM_MODEL_NAME, schema: RoomSchema },
-      { name: PLAYER_MODEL_NAME, schema: PlayerSchema },
-    ]),
-  ],
+  imports: [TypeOrmModule.forFeature([Room, Player]), GatewayModule],
   controllers: [RoomController],
-  providers: [RoomService],
+  providers: [RoomService, RoomValidations],
 })
 export class RoomModule {}
