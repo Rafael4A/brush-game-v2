@@ -1,5 +1,4 @@
 import { CardCode } from "../../types";
-
 import { evaluateCardCode } from "./evaluateCardCode";
 
 export function willSumToFifteen(cardsCodes: CardCode[]) {

@@ -7,7 +7,8 @@
     "dev": "turbo run dev --no-daemon",
     "lint": "turbo run lint --no-daemon",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "clean": "turbo daemon clean"
+    "clean": "turbo daemon clean",
+    "test": "turbo run test --no-daemon"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^6.7.4",

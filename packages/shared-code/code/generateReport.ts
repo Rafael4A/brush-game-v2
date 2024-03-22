@@ -1,9 +1,8 @@
 import { PlayerReport, Room } from "../types";
-
-import { generateIndependentReport, playerWithHigherProperty } from "./utils";
+import { generateIndependentReports, playerWithHigherProperty } from "./utils";
 
 export function generateReport(room: Room) {
-  const independentReport = generateIndependentReport(room);
+  const independentReport = generateIndependentReports(room);
 
   const playerWithMostCards = playerWithHigherProperty(
     independentReport,

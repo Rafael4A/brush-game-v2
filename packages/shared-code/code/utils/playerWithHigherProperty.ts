@@ -1,8 +1,8 @@
-import { IndependentReport } from "../../types";
+import { IndependentReportUnit } from "../../types";
 
 export function playerWithHigherProperty(
-  independentReport: IndependentReport[],
-  propertyName: keyof IndependentReport
+  independentReport: IndependentReportUnit[],
+  propertyName: keyof IndependentReportUnit
 ): string | null {
   const result = independentReport.reduce<HighestPropertyFinderResult>(
     (acc, pr) => {

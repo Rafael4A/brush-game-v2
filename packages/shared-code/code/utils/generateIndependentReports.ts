@@ -1,8 +1,11 @@
-import { IndependentReport, Room } from "../../types";
-import { calculateCardsSum, getSummableCards } from "./calculateNumberCardsSum";
+import { IndependentReportUnit, Room } from "../../types";
+import { calculateNumberCardsSum } from "./calculateNumberCardsSum";
 import { getCardCodeSuit } from "./getCardCodeSuit";
+import { getSummableCards } from "./getSummableCards";
 
-export function generateIndependentReport(room: Room): IndependentReport[] {
+export function generateIndependentReports(
+  room: Room
+): IndependentReportUnit[] {
   return room.players.map((p) => {
     const summableCards = getSummableCards(p.collectedCards);
     return {
@@ -10,7 +13,7 @@ export function generateIndependentReport(room: Room): IndependentReport[] {
       hasBeauty: p.collectedCards.some((c) => c === "7D"),
       nickname: p.nickname,
       previousPoints: p.previousPoints,
-      sum: calculateCardsSum(summableCards),
+      sum: calculateNumberCardsSum(summableCards),
       sumCards: summableCards,
       totalCards: p.collectedCards.length,
       totalDiamonds: p.collectedCards.filter(

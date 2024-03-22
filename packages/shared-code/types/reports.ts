@@ -1,6 +1,6 @@
 import { CardCode } from "./card";
 
-export interface IndependentReport {
+export interface IndependentReportUnit {
   nickname: string;
   previousPoints: number;
   brushes: number;
