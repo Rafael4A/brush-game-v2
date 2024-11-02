@@ -18,7 +18,7 @@
     "eslint-plugin-react-refresh": "^0.4.3",
     "prettier": "^3.0.3",
     "tsconfig": "*",
-    "turbo": "^1.10.16"
+    "turbo": "^2.2.3"
   },
   "name": "brush-game-v2",
   "packageManager": "npm@10.1.0",
